@@ -8,7 +8,7 @@
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && node scripts/content-lint.mjs && vitepress build",
     "preview": "vitepress preview",
-    "validate": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && node scripts/content-drift.mjs && node scripts/content-lint.mjs && node scripts/test-content.mjs",
+    "validate": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && node scripts/content-drift.mjs && node scripts/content-lint.mjs && node scripts/lint-shell.mjs && node scripts/test-content.mjs",
     "validate:strict": "node scripts/validate-contract.mjs --strict",
     "verify": "node scripts/verify.mjs",
     "sync": "node scripts/sync-release.mjs",
@@ -29,7 +29,8 @@
     "verify:full": "node scripts/verify.mjs --with-deploy",
     "conformance:fixtures": "node scripts/conformance-fixtures.mjs",
     "test:conformance": "node scripts/test-conformance.mjs",
-    "test:proposal": "node scripts/test-proposal-review.mjs"
+    "test:proposal": "node scripts/test-proposal-review.mjs",
+    "lint:shell": "node scripts/lint-shell.mjs"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",

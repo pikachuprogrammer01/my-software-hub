@@ -41,10 +41,12 @@ console.log('【设备与运行时】')
 console.log(`  node=${process.version} platform=${process.platform} arch=${process.arch}`)
 console.log(`  os=${os.type()} ${os.release()} 内存=${(os.totalmem() / 1024 / 1024 / 1024).toFixed(1)}GB`)
 
-await step('Node 版本满足要求（>=22.5）', () => {
+const testedThrough = 26
+await step('Node 版本在支持区间内（>=22.5 <27）', () => {
   const [major, minor] = process.version.slice(1).split('.').map(Number)
   if (major < 22 || (major === 22 && minor < 5)) throw new Error(`当前 ${process.version}，需要 >= 22.5`)
-  return process.version
+  if (major >= 27) throw new Error(`当前 ${process.version} 超出已声明区间 <27，先确认依赖是否已支持`)
+  return major > testedThrough ? `${process.version}（高于已验证的 v${testedThrough}，以下实测项为准）` : process.version
 })
 
 let Database = null

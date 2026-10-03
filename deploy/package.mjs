@@ -128,7 +128,9 @@ const manifest = {
   version,
   builtAt: new Date().toISOString(),
   gitCommit: gitCommit(),
-  node: { requiredMajor: Number(process.version.slice(1).split('.')[0]), buildMachine: { platform: process.platform, arch: process.arch } },
+  // 只声明支持区间并记下构建机版本：设备主版本不同是常态（Termux 跟 current），
+  // 由设备侧驱动兼容性试验判定可用性，不在这里拿构建机主版本卡人。
+  node: { range: '>=22.5.0 <27.0.0', builtWith: process.version, buildMachine: { platform: process.platform, arch: process.arch } },
   lockedDependencies: locked,
   runtimeDependencies: prodDependencies,
   migrations: { folder: 'migrations', tags: migrationTags, journal: readJson(path.join(staging, 'migrations', 'meta', '_journal.json')).entries.map((entry) => entry.tag) },
@@ -142,7 +144,14 @@ const manifest = {
   excludes: ['.hub-data（数据库与备份）', 'node_modules（必须在设备上安装）', '任何 token/secret/.env/登录态', 'proposals/ 文件队列', 'Git 目录', 'Automation 目录']
 }
 fs.writeFileSync(path.join(staging, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`)
-fs.writeFileSync(path.join(staging, 'RELEASE'), `${version}\ncommit=${manifest.gitCommit}\nbuilt=${manifest.builtAt}\nnode>=${manifest.node.requiredMajor}.0.0 需要内置 node:sqlite 或可编译 better-sqlite3\n`)
+fs.writeFileSync(path.join(staging, 'RELEASE'), [
+  version,
+  `commit=${manifest.gitCommit}`,
+  `built=${manifest.builtAt}`,
+  `node=${manifest.node.range}（构建机 ${manifest.node.builtWith}；设备主版本不同只告警，以 sqlite-compat-check 实跑结果为准）`,
+  `sqlite=better-sqlite3@${prodDependencies['better-sqlite3']}，需在设备上编译或取到匹配预编译产物`,
+  ''
+].join('\n'))
 // manifest 自身要能被校验
 const manifestHash = sha256File(path.join(staging, 'manifest.json'))
 
