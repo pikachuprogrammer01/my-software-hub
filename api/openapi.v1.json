@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "my-software-hub 提案与内容分发 API",
-    "version": "1.6.1",
+    "version": "1.0.0",
     "description": "运行在 Android + Termux 上的单进程服务：静态站点、/health、提案 API。 内容事实主源仍是站点仓内容源，发布仓仍是版本事实与内容包分发面； SQLite 只保存提案状态、审计与发布任务，不拼装内容包。 提案不会移动 latest，也不会写 Git。批准后的变更由电脑侧受控流程进入站点仓。"
   },
   "servers": [

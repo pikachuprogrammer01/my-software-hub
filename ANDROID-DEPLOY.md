@@ -27,9 +27,11 @@ pnpm install                # 本机依赖
 pnpm api:build              # tsc 编译 server/ → .server-dist/
 node scripts/export-openapi.mjs
 pnpm build                  # 契约校验 + 内容生成 + vitepress build
-node deploy/package.mjs --version 1.7.0-rc1
-# 产物：deploy/out/hub-1.7.0-rc1.tar.gz 与 .sha256
+node deploy/package.mjs --version 1.0.0-rc1
+# 产物：deploy/out/hub-1.0.0-rc1.tar.gz 与 .sha256
 ```
+
+版本号属于本运行时自己，与 table-flow / WPS Enhancer 的产品版本无关；省略 `--version` 时取 `package.json` 的 `1.0.0` 拼上 commit 前缀（如 `1.0.0-g9e8a8860`）。
 
 `deploy/package.mjs` 会拒绝出包的情形：缺 `.server-dist`、缺 `.vitepress/dist`、缺 `api/openapi.v1.json`、内容包自校验不过。包里不含数据库、token、登录态、`node_modules`、`proposals/` 与 `Automation`。
 
@@ -37,7 +39,7 @@ node deploy/package.mjs --version 1.7.0-rc1
 
 ```bash
 # 电脑 → 手机（同网，用 scp/adb push/下载均可；adb 属可选传输通道，不是运行依赖）
-scp deploy/out/hub-1.7.0-rc1.tar.gz* u0_a1:/data/data/com.termux/files/home/downloads/
+scp deploy/out/hub-1.0.0-rc1.tar.gz* u0_a1:/data/data/com.termux/files/home/downloads/
 ```
 
 Termux 内：
@@ -51,10 +53,10 @@ export HUB_HOME=$HOME/hub
 export HUB_DATA_DIR=$HUB_HOME/data               # Termux 私有目录，禁止 /sdcard
 export HOST=127.0.0.1 PORT=8787
 
-bash hub-1.7.0-rc1/scripts/sqlite-compat-check.mjs   # 驱动兼容性试验，先跑这个
-bash hub-1.7.0-rc1/scripts/hubctl install ~/downloads/hub-1.7.0-rc1.tar.gz
-bash hub-1.7.0-rc1/scripts/hubctl start
-bash hub-1.7.0-rc1/scripts/hubctl status
+bash hub-1.0.0-rc1/scripts/sqlite-compat-check.mjs   # 驱动兼容性试验，先跑这个
+bash hub-1.0.0-rc1/scripts/hubctl install ~/downloads/hub-1.0.0-rc1.tar.gz
+bash hub-1.0.0-rc1/scripts/hubctl start
+bash hub-1.0.0-rc1/scripts/hubctl status
 ```
 
 `install` 的固定节律：校验 tar 与逐文件 SHA-256 → 设备侧 `npm ci --omit=dev`（依赖在设备上编译）→ 驱动试验 → **迁移前先备份** → 临时端口预演迁移与健康检查 → 通过才切换 `current`。任一步失败都保留原版本并打印日志尾部；不会静默改用其它数据库。

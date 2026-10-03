@@ -1,6 +1,6 @@
 {
   "name": "my-software-hub",
-  "version": "1.6.1",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "名下所有产品的对外门户与文档站（内容源为 markdown；数据面在 my-software-releases）",
