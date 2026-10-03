@@ -63,9 +63,16 @@ for (const item of steps) {
   if (res.status === 0) {
     console.log(`  ✅ ${item.name}（${seconds}s）`)
   } else {
-    failed.push({ name: item.name, output })
+    const logFile = path.join(os.tmpdir(), `hub-verify-fail-${item.name.replace(/[\/\s]/g, '_')}.log`)
+    fs.writeFileSync(logFile, output)
+    failed.push({ name: item.name, output, logFile })
     console.error(`  ❌ ${item.name}（${seconds}s，exit=${res.status ?? 'signal'}）`)
-    console.error(output.trim().split('\n').slice(-14).map((line) => `     ${line}`).join('\n'))
+    // 只截尾部会把第一条真实错误切掉，这里显式把首个失败块和全量日志位置给出来
+    const marker = output.indexOf('❌')
+    if (marker >= 0) {
+      console.error(output.slice(marker, marker + 1600).split('\n').map((line) => `     ${line}`).join('\n'))
+    }
+    console.error(`     全量日志：${logFile}`)
   }
 }
 
@@ -85,7 +92,7 @@ if (!failed.length) {
 fs.rmSync(verifyOut, { recursive: true, force: true })
 console.log(`\n结果：${steps.filter((s) => !s.skipped).length - failed.length} 通过 / ${failed.length} 失败`)
 if (failed.length) {
-  for (const item of failed) console.error(`   · ${item.name}`)
+  for (const item of failed) console.error(`   · ${item.name}${item.logFile ? ` → ${item.logFile}` : ''}`)
   process.exit(1)
 }
 console.log('✅ 全部通过')
