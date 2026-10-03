@@ -35,7 +35,7 @@ TableFlow 采用**订阅制**：核心采集与导出功能免费，Pro 功能�
 
 ## 价格与购买
 
-- **月付 ¥5 / 年付 ¥40**
+- **月付 <Fact product="table-flow" id="pricing.pro.monthly" /> / 年付 <Fact product="table-flow" id="pricing.pro.yearly" />**
 - 支付渠道：微信 / 支付宝（各含月费、年费两张收款码，均在订阅页内展示）
 
 **三步**：

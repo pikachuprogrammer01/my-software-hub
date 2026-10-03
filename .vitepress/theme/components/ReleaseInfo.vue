@@ -1,43 +1,55 @@
 <script setup>
-// 版本号与下载直链只来自线上 update.json（.vitepress/release.json 由构建期同步写入），
-// 页面文案一律写在 markdown 里，本组件不承载任何产品介绍文字。
+// 版本号与下载直链只来自线上 update.json 快照（.vitepress/release.json 由构建期同步写入），
+// 且快照只属于它声明的那一个产品：别的产品不能借用它的直链。
+import { computed } from 'vue'
 import release from '../../release.json'
-
-const contentPackages = import.meta.glob('../../../data/generated/*/content-latest.v1.json', {
-  eager: true,
-  import: 'default'
-})
+import registry from '../../../data/products.json'
+import { useProductContent } from '../composables/useContent.js'
 
 const props = defineProps({
   productId: { type: String, default: 'table-flow' },
   variant: { type: String, default: 'block' }
 })
 
-const contentEntry = Object.entries(contentPackages).find(([file]) =>
-  file.endsWith(`/${props.productId}/content-latest.v1.json`)
-)
-const productContent = contentEntry?.[1]
-const ready = Boolean(release.version && release.url)
+const content = useProductContent(props.productId)
+const product = registry.products.find((item) => item.id === props.productId)
+// 旧快照没有 product 字段时视为不可比，避免把 table-flow 的直链发给别的产品。
+const directLink = release.product === props.productId && release.version && release.url ? release : null
+const builtInUpdater = product?.updateMechanism === 'built-in-updater'
+const version = computed(() => content.value?.facts?.['version.current']?.value)
 </script>
 
 <template>
   <div class="release" :class="variant">
-    <template v-if="ready">
-      <a class="vp-btn" :href="release.url" target="_blank" rel="noopener">
-        免费下载 v{{ release.version }}
-      </a>
-      <p v-if="productContent?.update?.summary || release.notes" class="notes">
-        {{ productContent?.update?.summary || release.notes }}
+    <template v-if="builtInUpdater">
+      <p class="notes">
+        <template v-if="version">当前版本 v{{ version }}。</template>
+        新版本由应用内更新器检查并提示，本站不再提供第二条下载路径，避免用户覆盖回旧安装包。
       </p>
-      <p v-if="release.fetchedAt" class="fetched">
-        版本信息取自扩展同款更新清单（同步于 {{ release.fetchedAt.slice(0, 10) }}）
-      </p>
-      <p v-if="productContent?.contentRevision" class="fetched">
-        内容 revision：{{ productContent.contentRevision }}
-      </p>
+      <p v-if="content?.update?.summary" class="notes">{{ content.update.summary }}</p>
+      <p v-if="content?.contentRevision" class="fetched">内容 revision：{{ content.contentRevision }}</p>
+      <p v-else class="warn">该产品内容包暂不可用，更新说明无法显示。</p>
     </template>
+
+    <template v-else-if="directLink">
+      <a class="vp-btn" :href="directLink.url" target="_blank" rel="noopener">
+        免费下载 v{{ directLink.version }}
+      </a>
+      <p v-if="content?.update?.summary || directLink.notes" class="notes">
+        {{ content?.update?.summary || directLink.notes }}
+      </p>
+      <p v-if="directLink.fetchedAt" class="fetched">
+        版本信息取自扩展同款更新清单（同步于 {{ directLink.fetchedAt.slice(0, 10) }}）
+      </p>
+      <p v-if="content?.contentRevision" class="fetched">内容 revision：{{ content.contentRevision }}</p>
+    </template>
+
     <template v-else>
-      <p class="warn">下载地址暂未同步，请稍后再试或查看发布仓 Releases 页。</p>
+      <p class="warn">
+        <template v-if="version">当前版本 v{{ version }}。</template>
+        该产品未同步到可用的更新清单快照，因此本页不显示下载按钮；请到对应发布仓的 Releases 页取安装包。
+      </p>
+      <p v-if="!content" class="warn">该产品内容包暂不可用。</p>
     </template>
   </div>
 </template>

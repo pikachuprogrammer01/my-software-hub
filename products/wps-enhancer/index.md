@@ -7,4 +7,6 @@ description: "WPS Enhancer 桌面端增强工具。"
 
 <ProductOverview product-id="wps-enhancer" />
 
-WPS Enhancer 的后续版本由应用内更新器检查。首次安装请使用对应平台的安装包。
+<ReleaseInfo product-id="wps-enhancer" />
+
+首次安装请使用对应平台的安装包。

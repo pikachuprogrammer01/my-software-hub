@@ -10,7 +10,13 @@ export const RELEASE_FILE = path.join(SITE_ROOT, '.vitepress', 'release.json')
 export const UPDATE_MANIFEST_URL =
   'https://gitee.com/pikachuprogrammer01/my-software-releases/raw/table-flow/update.json'
 
-const FALLBACK = { version: '0.0.0', url: '', notes: '', fetchedAt: null }
+/**
+ * 站点只同步这一个产品的 update.json 快照；渲染层与漂移检查都以此判定"哪个产品
+ * 才有下载直链可比"，避免把 table-flow 的直链当成别的产品的事实。
+ */
+export const RELEASE_SNAPSHOT_PRODUCT = 'table-flow'
+
+const FALLBACK = { product: RELEASE_SNAPSHOT_PRODUCT, version: '0.0.0', url: '', notes: '', fetchedAt: null }
 
 export function readRelease() {
   try {
@@ -39,6 +45,7 @@ export async function syncRelease({ timeoutMs = 8000 } = {}) {
     if (!isValid(json.version)) throw new Error(`版本号形态异常：${json.version}`)
     if (!String(json.url ?? '').startsWith('https://')) throw new Error('下载地址不是 https')
     const next = {
+      product: RELEASE_SNAPSHOT_PRODUCT,
       version: json.version,
       url: json.url,
       notes: typeof json.notes === 'string' ? json.notes.trim() : '',

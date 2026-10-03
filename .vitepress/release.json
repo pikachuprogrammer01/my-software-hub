@@ -1,6 +1,7 @@
 {
+  "product": "table-flow",
   "version": "1.6.1",
   "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
   "notes": "v1.6.1：修复在线激活码提示『未登记/激活码无效』",
-  "fetchedAt": "2026-10-03T15:53:13.375Z"
+  "fetchedAt": "2026-10-03T16:09:51.180Z"
 }

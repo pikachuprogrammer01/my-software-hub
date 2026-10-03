@@ -1,32 +1,42 @@
-import fs from 'node:fs'
-import path from 'node:path'
-import Ajv from 'ajv/dist/2020.js'
-import { SITE_ROOT, readRegistry, readSource, validateSource } from './content-lib.mjs'
+import { parseArgs, flagValue } from './lib/args.mjs'
+import { readRegistry, readSource, validateRegistry, validateSource } from './content-lib.mjs'
 
-const only = process.argv.find((arg) => arg.startsWith('--product='))?.split('=')[1]
+const { flags } = parseArgs()
+const only = flagValue(flags, 'product')
+
 const registry = readRegistry()
-const registrySchema = JSON.parse(fs.readFileSync(path.join(SITE_ROOT, 'schema', 'products.v1.json'), 'utf8'))
-const ajv = new Ajv({ allErrors: true, strict: false })
-const validRegistry = ajv.compile(registrySchema)(registry)
-if (!validRegistry) {
+const registryCheck = validateRegistry(registry)
+if (!registryCheck.ok) {
   console.error('❌ data/products.json 不符合 products.v1 schema')
-  for (const error of ajv.errors ?? []) console.error(`   ${error.instancePath || '/'} ${error.message}`)
+  for (const error of registryCheck.errors) console.error(`   ${error}`)
   process.exit(1)
 }
-if (new Set(registry.products.map((item) => item.id)).size !== registry.products.length) {
-  console.error('❌ data/products.json 存在重复产品 ID')
-  process.exit(1)
+console.log(`  ✅ data/products.json 通过 products.v1 schema（${registry.products.length} 个产品）`)
+
+if (only && !registry.products.some((item) => item.id === only)) {
+  console.error(`❌ 未知产品：${only}`)
+  process.exit(2)
 }
-const products = registry.products.filter((item) => !only || item.id === only)
+
 let failures = 0
-for (const product of products) {
-  if (!product.contentSource) { console.log(`  ⏭️ ${product.id}: 尚无结构化内容源（manual/待接入）`); continue }
+for (const product of registry.products.filter((item) => !only || item.id === only)) {
+  if (!product.contentSource) {
+    console.log(`  ⏭️ ${product.id}: 尚无结构化内容源（manual/待接入）`)
+    continue
+  }
   try {
     const { source } = readSource(product.id)
     const result = validateSource(source, product)
     if (result.ok) console.log(`  ✅ ${product.id}: 内容源通过`)
-    else { failures++; console.error(`  ❌ ${product.id}:\n    ${result.errors.map((e) => typeof e === 'string' ? e : JSON.stringify(e)).join('\n    ')}`) }
-  } catch (error) { failures++; console.error(`  ❌ ${product.id}: ${error.message}`) }
+    else {
+      failures += 1
+      console.error(`  ❌ ${product.id}:\n    ${result.errors.map((e) => (typeof e === 'string' ? e : JSON.stringify(e))).join('\n    ')}`)
+    }
+  } catch (error) {
+    failures += 1
+    console.error(`  ❌ ${product.id}: ${error.message}`)
+  }
 }
+
 console.log(`\n内容源校验：${failures ? '失败' : '通过'}`)
 if (failures) process.exit(1)
