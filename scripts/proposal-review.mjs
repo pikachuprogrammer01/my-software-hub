@@ -16,7 +16,8 @@ if (!['list', 'show', 'accept', 'reject', 'apply', 'tasks', 'export', 'import'].
   accept <proposalId> [--note <说明>]
   reject <proposalId> [--note <说明>]
   apply [--id <proposalId>] [--real]     把已批准的 copy 提案写进站点仓内容源（默认 dry-run）
-  tasks [--drain] [--real]               查看/继续处理发布任务（重启后可恢复）
+  tasks [--status pending|done|failed] [--drain] [--real]
+                                         查看/继续处理发布任务（重启后可恢复）
   export --out <目录>                     导出 JSON 文件队列（离线交接格式）
   import <文件或目录>                      从 JSON 文件队列导入提案
 
@@ -88,7 +89,7 @@ async function run() {
     }
     case 'tasks': {
       if (flags.drain) return review.drainTasks(deps, { dryRun, actor })
-      return review.listTasks(deps).map((task) => ({ id: task.id, product: task.product, proposalId: task.proposalId, status: task.status, attempts: task.attempts, lastError: task.lastError }))
+      return review.listTasks(deps, flagValue(flags, 'status')).map((task) => ({ id: task.id, product: task.product, proposalId: task.proposalId, status: task.status, attempts: task.attempts, lastError: task.lastError }))
     }
     case 'export': {
       const out = flagValue(flags, 'out') ?? path.join(SITE_ROOT, 'proposals')
@@ -124,8 +125,14 @@ async function runHuman() {
   }
   if (command === 'tasks') {
     const rows = await run()
-    if (!rows.length) console.log('（没有待处理发布任务）')
-    for (const task of rows) console.log(`${task.id ?? task.proposalId}  ${task.status}  ${task.product ?? ''}  attempts=${task.attempts ?? 0}${task.lastError ? `  ${task.lastError}` : ''}${task.detail ? `  ${task.detail}` : ''}${task.ok === false ? '  ❌' : ''}`)
+    if (!rows.length) console.log('（没有匹配的发布任务）')
+    if ('detail' in rows[0]) {
+      for (const task of rows) console.log(`${task.ok ? '✅' : task.blocked ? '⏸' : '❌'} ${task.product} ${task.id} ${task.detail}`)
+      const fatal = rows.filter((task) => !task.ok && !task.blocked)
+      if (fatal.length) process.exit(1)
+    } else {
+      for (const task of rows) console.log(`${task.id}  ${task.status}  ${task.product}  attempts=${task.attempts}${task.lastError ? `  备注：${task.lastError}` : ''}`)
+    }
     return
   }
   if (command === 'export') {
@@ -143,9 +150,12 @@ async function runHuman() {
   }
   if (command === 'apply') {
     const results = await run()
+    const explicit = Boolean(flagValue(flags, 'id') ?? positional[1])
     if (!results.length) console.log('（没有待落地提案）')
     for (const item of results) {
-      console.log(`${item.ok ? '✅' : '❌'} ${item.detail}`)
+      // 明确点名某条提案时，被规则挡住就是没做成；批量 drain 只是标成 ⏸ 交人工
+      const mark = item.ok ? '✅' : explicit ? '❌' : item.blocked ? '⏸' : '❌'
+      console.log(`${mark} ${item.detail}`)
     }
     if (dryRun) console.log('\ndry-run：未修改站点仓内容源。确认无误后加 --real。')
     else {
@@ -153,7 +163,10 @@ async function runHuman() {
       for (const item of broken) console.error(`❌ ${item.product}：${item.reason}`)
       if (broken.length) process.exit(1)
     }
-    if (results.some((item) => !item.ok)) process.exit(1)
+    const blocked = flagValue(flags, 'id') || positional[1] ? [] : results.filter((item) => item.blocked)
+    void blocked
+    // drain 时被规则挡住（如 facts 提案须人工）不算失败；显式点名一条提案则必须做到
+    if (results.some((item) => !item.ok && (explicit || !item.blocked))) process.exit(1)
   }
 }
 

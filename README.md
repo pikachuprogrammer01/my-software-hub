@@ -48,11 +48,30 @@ public/assets/           图标 + 收款/联系二维码（站点静态资源根
 .vitepress/release.json  线上 update.json 的本地快照（版本事实缓存）
 scripts/sync-release.mjs 版本事实同步（dev/build/手动三处共用）
 scripts/dev.mjs          dev 包装：md 增删自动重扫导航
-schema/                    数据面契约 v1 的机器可读定义（4 份 *.v1.json）
+schema/                    数据面契约 v1 的机器可读定义（content/products/facts/release-notes/proposal + 提案信封）
 scripts/validate-contract.mjs 契约自检（20 项），已前置进 pnpm build
+server/src/                Hono + TypeScript：静态面、/health、提案 API、SQLite/Drizzle 存储
+.server-dist/              API 编译产物（`pnpm api:build`，部署包只带这个）
+migrations/                Drizzle SQL 迁移与 meta/_journal.json
+api/openapi.v1.json        接口文档产物（`node scripts/export-openapi.mjs`，与实现同步校验）
+deploy/package.mjs         电脑侧出手机部署包（SHA-256 清单，不含库与密钥）
+deploy/hubctl              手机侧 install/start/stop/status/logs/backup/restore/rollback
+deploy/hub-db.mjs          SQLite 在线备份与"先校验再替换"的恢复
+deploy/sqlite-compat-check.mjs 设备侧驱动兼容性试验（装依赖前必须通过）
+conformance/fixtures/      客户端一致性夹具（期望表，跨语言共用）
 VISION.md / REQUIREMENTS.md 目标与目的 / 需求文档（PRD）· PRODUCTS.md 五仓实测审计 · SITE-DESIGN.md 站点设计 · CONTRACT.md 数据面契约 · RENAME.md 改名执行手册
-README.md / DOWNLOADS.md 仓库内部文档 · 以上均**不发布**（见 config 的 INTERNAL 名单）
+README.md / DOWNLOADS.md / ANDROID-DEPLOY.md / CLIENT-INTEGRATION.md 仓库内部文档 · 以上均**不发布**（见 config 的 INTERNAL 名单）
 UsageGuideContent.vue    开发仓面板内嵌指南原文（文案基准，不发布）
+```
+
+## 手机作为站点服务器（Android + Termux）
+
+站点计划由手机实际托管：Node.js + Hono 提供已构建页面、`/health` 与提案 API，SQLite 存提案与审计。
+完整命令、配置与未验证清单见 [ANDROID-DEPLOY.md](./ANDROID-DEPLOY.md)；客户端如何消费内容包与提提案见 [CLIENT-INTEGRATION.md](./CLIENT-INTEGRATION.md)。
+
+```bash
+pnpm verify          # 契约 → 内容 → API/SQLite → 夹具 → 站点，一条命令
+pnpm verify:full     # 再加部署包与"安装/备份/恢复/回滚"演练（耗时长，出手机包前必跑）
 ```
 
 ## 内容架构契约（已落地）
@@ -60,7 +79,7 @@ UsageGuideContent.vue    开发仓面板内嵌指南原文（文案基准，不�
 渲染层不硬编码任何文案或版本号：
 
 1. **一篇 md = 一个页面**。侧栏与路由由 `.vitepress/config.mts` 扫描 `content/`、`docs/`、根目录生成；`front-matter` 决定标题、`order` 排序、SEO 描述，`draft: true` 可临时下线一页。
-2. **版本与下载链接来自线上 `update.json`**（扩展同款清单）。页面里写 `<ReleaseInfo />` 就得到"免费下载 v1.6.1"按钮 + 官方更新说明，**不要手写版本号**。
+2. **版本与下载链接来自线上 `update.json`**（扩展同款清单）。页面里写 `<ReleaseInfo />` 就得到"免费下载 v<线上版本>"按钮 + 官方更新说明，**不要手写版本号**。
 3. **`docs/` 里的逐字副本不加 front-matter**，保持与开发仓 `cmp` 一致；标题取它的 H1，排序按文件名。
 4. **更新日志**首条应与 `update.json.version` 对得上，对不上时人工核对（见 `CHANGELOG.md` 顶部对照表）。
 5. **图片放 `public/assets/`**，md 里用 `/assets/...` 绝对路径；不在 `public/` 下 VitePress 不会对外服务。

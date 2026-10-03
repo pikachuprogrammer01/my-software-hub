@@ -8,7 +8,7 @@
 
 构建在电脑/CI 完成；手机运行 Node.js + Hono 提供静态产物、提案 API 和 SQLite/Drizzle 状态存储。手机部署不依赖 Docker、VitePress dev/preview 或常规启动时构建。SQLite 只保存提案/审计，产品内容仍经站点仓和发布仓流转。JSON 提案目录在新增后端后仅用于导入/导出。
 
-当前仓库尚未实现上述服务、迁移及手机部署脚本；不能将此说明当作完成记录。公共内容包继续由发布仓分发，手机不可用不应阻断已有客户端读取。6 小时检查目标仅适用于正常运行且联网的客户端。
+上述服务、迁移与手机部署脚本已落地（`server/`、`migrations/`、`deploy/`），命令与运维交接见 [ANDROID-DEPLOY.md](./ANDROID-DEPLOY.md)，客户端消费规则见 [CLIENT-INTEGRATION.md](./CLIENT-INTEGRATION.md)。Android 实机验收仍未做。公共内容包继续由发布仓分发，手机不可用不应阻断已有客户端读取。6 小时检查目标仅适用于正常运行且联网的客户端。
 
 ## 日常修改
 
@@ -48,10 +48,13 @@ node scripts/content-rollback.mjs \
 提案格式见 `schema/proposal.v1.json`。当前只实现文件校验：
 
 ```bash
-node scripts/proposal-validate.mjs path/to/proposal.json
+node scripts/proposal-validate.mjs path/to/proposal.json                 # 只校 proposal.v1 本体
+node scripts/proposal-review.mjs list --status pending                    # 运行期主存储是 SQLite
+node scripts/proposal-review.mjs apply --id <id>                          # 默认 dry-run
+node scripts/proposal-review.mjs apply --id <id> --real                   # 才写站点仓内容源
 ```
 
-软件端 API、身份认证和发布仓写入必须在独立服务/CI 适配器中实现。客户端不得携带 Git 写入凭证，也不得直接移动 `latest`。
+软件端提案 API 与身份边界已实现（`server/src/routes/proposals.ts`），发布仓写入仍由电脑侧适配器 `scripts/content-publish.mjs` 承担且默认 dry-run。客户端不得携带 Git 写入凭证，也不得直接移动 `latest`。
 
 ## 验证
 

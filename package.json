@@ -25,7 +25,11 @@
     "proposal:review": "node scripts/proposal-review.mjs",
     "deploy:package": "node deploy/package.mjs",
     "test:api": "node scripts/test-api.mjs",
-    "test:deploy": "node scripts/test-deploy.mjs"
+    "test:deploy": "node scripts/test-deploy.mjs",
+    "verify:full": "node scripts/verify.mjs --with-deploy",
+    "conformance:fixtures": "node scripts/conformance-fixtures.mjs",
+    "test:conformance": "node scripts/test-conformance.mjs",
+    "test:proposal": "node scripts/test-proposal-review.mjs"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",

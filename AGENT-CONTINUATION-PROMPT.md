@@ -1,5 +1,6 @@
 # 后续执行 Agent 提示词
 
+> 本轮执行结果（2026-10-04）：第 1–8 项已在 macOS 上实现并通过电脑验证，逐条证据见 [AGENT-CONTINUATION-CHECKLIST.md](./AGENT-CONTINUATION-CHECKLIST.md)；手机运行交接见 [ANDROID-DEPLOY.md](./ANDROID-DEPLOY.md)，客户端交接见 [CLIENT-INTEGRATION.md](./CLIENT-INTEGRATION.md)。**Android 实机、第二台设备局域网、锁屏/网络切换/重启恢复仍待验证**（本环境无手机）。下面"当前代码仍需修复"一段记录的是上一轮缺口，已随本轮关闭，保留原文仅作追溯。
 > v2：手机作为服务器，不是移动浏览器适配。先完整阅读 `PHONE-RUNTIME.md`；该文件是手机部署及后端实施依据。默认目标 Android + Termux，设备尚未确认。先核对设备系统；若没有设备，完成代码与电脑验证并明确实机未验证。不得自动转成 PWA、Capacitor、原生 App 或 Docker 部署。
 
 你是本项目的执行 agent。请在当前工作区 `/Users/pikachu/code/my-software-hub` 继续完成多产品内容一致性与软件内分发工作。

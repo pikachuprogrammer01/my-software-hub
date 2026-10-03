@@ -1,0 +1,61 @@
+{
+  "name": "wps-long-text-settings",
+  "note": "WPS 设置页允许较长文本（预算 300），仍不渲染 HTML。",
+  "input": {
+    "schema": 1,
+    "product": "wps-enhancer",
+    "facts": {
+      "version.current": {
+        "value": "1.1.0",
+        "effectiveFromVersion": "1.1.0",
+        "source": "release-repo"
+      },
+      "features.builtInUpdater": {
+        "status": "available",
+        "effectiveFromVersion": "1.1.0"
+      }
+    },
+    "copy": {
+      "overview.title": {
+        "default": "WPS Enhancer"
+      },
+      "overview.summary": {
+        "default": "为 WPS 工作流提供桌面端增强能力。"
+      },
+      "install.summary": {
+        "default": "首次安装使用对应平台安装包，后续由应用内更新器检查更新。"
+      },
+      "update.badge": {
+        "default": "应用内更新"
+      },
+      "update.summary": {
+        "default": "应用启动后自动检查可用更新。"
+      },
+      "update.text": {
+        "default": "更新说明会在应用内显示。"
+      },
+      "update.detail": {
+        "default": "WPS Enhancer 使用应用内更新器处理后续版本更新。"
+      }
+    },
+    "update": {
+      "badge": "应用内更新",
+      "summary": "应用启动后自动检查可用更新。",
+      "text": "更新说明会在应用内显示。",
+      "detail": "WPS Enhancer 使用应用内更新器处理后续版本更新。"
+    },
+    "contentRevision": "content-f0de750e6b43",
+    "sha256": "f0de750e6b43a7b3b80493128c4537d2171d9c2e1195a901492d11ec2282f071"
+  },
+  "context": {
+    "ownProduct": "wps-enhancer",
+    "budgetKey": "wps-enhancer",
+    "cachedRevision": "content-older11111"
+  },
+  "expect": {
+    "kind": "render",
+    "revision": "content-f0de750e6b43",
+    "summary": "应用启动后自动检查可用更新。"
+  },
+  "subject": "data/generated/<product>/content-latest.v1.json"
+}

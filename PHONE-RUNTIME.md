@@ -1,6 +1,6 @@
 # 手机作为站点服务器：运行与交接规范 v2
 
-> 状态：待实现的部署规范，不代表手机服务已经存在或通过实机测试。
+> 状态（2026-10-04）：按本规范已实现并通过**电脑侧**验证（HTTP/API/SQLite/部署/备份/恢复/回滚，见 `pnpm verify:full` 与 `ANDROID-DEPLOY.md`）；Android + Termux 实机、第二台设备局域网访问、锁屏与重启恢复**仍未验证**。执行命令与未验证清单见 [ANDROID-DEPLOY.md](./ANDROID-DEPLOY.md)。
 > 目标是手机实际运行 HTTP 服务、API 和数据库，不是仅用手机浏览页面，也不是把站点打包成原生 App。
 > 默认实施目标为 Android + Termux；设备系统尚未确认。执行 agent 必须先核对系统、架构、Android 版本及可用存储。若为 iPhone，不得照搬本规范，保留构建产物并报告运行环境阻塞。
 
@@ -87,4 +87,4 @@ Android 休眠、电池优化及厂商限制可能停止网络/进程。文档�
 - [Hono Node.js 适配与静态服务](https://hono.dev/docs/getting-started/nodejs)：HTTP 服务、静态文件、优雅关闭。
 - [Android Doze 与 App Standby](https://developer.android.com/training/monitoring-device-state/doze-standby)：后台运行与网络限制。
 
-本规范只更新运行/后端部署方向，不声称已实现这些组件；与旧文档冲突时，手机运行、SQLite 提案存储及部署边界以本文件为准，其余产品契约保持不变。
+本规范只更新运行/后端部署方向；与旧文档冲突时，手机运行、SQLite 提案存储及部署边界以本文件为准，其余产品契约保持不变。

@@ -24,8 +24,8 @@ export function listProposals(deps: Resolved, filter?: { status?: string; produc
   return deps.store.db.select().from(proposals).where(where).all()
 }
 
-export function listTasks(deps: Resolved, status = 'pending'): (typeof publishTasks.$inferSelect)[] {
-  return deps.store.db.select().from(publishTasks).where(eq(publishTasks.status, status)).all()
+export function listTasks(deps: Resolved, status?: string): (typeof publishTasks.$inferSelect)[] {
+  return deps.store.db.select().from(publishTasks).where(status ? eq(publishTasks.status, status) : undefined).all()
 }
 
 /** 批准/驳回：只登记状态与待办任务，不碰站点仓、不移动 latest。 */
@@ -61,24 +61,26 @@ export function decide(deps: Resolved, id: string, decision: 'accept' | 'reject'
  * 任一步失败都还原文件并把任务标为 failed，保留可恢复状态；facts 一律拒绝自动落地，
  * 事实的主源在发布仓/开发仓，不能由提案通道改写。
  */
-export function applyToSiteRepo(deps: Resolved, id: string, options: { dryRun: boolean; actor: string }): { ok: boolean; changed: boolean; detail: string } {
+export type ApplyResult = { ok: boolean; changed: boolean; detail: string; blocked?: boolean }
+
+export function applyToSiteRepo(deps: Resolved, id: string, options: { dryRun: boolean; actor: string }): ApplyResult {
   const row = deps.store.db.select().from(proposals).where(eq(proposals.id, id)).get()
   if (!row) throw new Error(`找不到提案：${id}`)
-  if (row.status !== 'accepted') return { ok: false, changed: false, detail: '提案未批准，拒绝进入站点仓' }
-  if (row.zone === 'facts') return { ok: false, changed: false, detail: 'facts 提案不允许自动落地：事实主源在发布仓，需人工按受控变更处理' }
+  if (row.status !== 'accepted') return { ok: false, changed: false, blocked: true, detail: '提案未批准，拒绝进入站点仓' }
+  if (row.zone === 'facts') return { ok: false, changed: false, blocked: true, detail: 'facts 提案不允许自动落地：事实主源在发布仓，需人工按受控变更处理' }
 
   const registryProduct = deps.content.product(row.product)
-  if (!registryProduct?.contentSource) return { ok: false, changed: false, detail: `${row.product} 没有内容源文件` }
+  if (!registryProduct?.contentSource) return { ok: false, changed: false, blocked: true, detail: `${row.product} 没有内容源文件` }
 
   const repoRoot = repoRootOf(deps.config)
   const target = path.join(repoRoot, registryProduct.contentSource)
-  if (!fs.existsSync(target)) return { ok: false, changed: false, detail: `内容源不存在：${registryProduct.contentSource}（部署包只读时请回电脑执行）` }
+  if (!fs.existsSync(target)) return { ok: false, changed: false, blocked: true, detail: `内容源不存在：${registryProduct.contentSource}（部署包只读时请回电脑执行）` }
 
   const key = row.fieldId.slice('copy.'.length)
   const value = JSON.parse(row.valueJson) as string
   const source = JSON.parse(fs.readFileSync(target, 'utf8')) as { copy?: Record<string, { default?: string; variants?: Record<string, string> }> }
   const field = source.copy?.[key]
-  if (!field) return { ok: false, changed: false, detail: `内容源没有 copy.${key}` }
+  if (!field) return { ok: false, changed: false, blocked: true, detail: `内容源没有 copy.${key}` }
   const before = row.channel ? field.variants?.[row.channel] : field.default
   const after = value
 
@@ -101,7 +103,11 @@ export function applyToSiteRepo(deps: Resolved, id: string, options: { dryRun: b
     if (run.status !== 0) {
       fs.writeFileSync(target, backup)
       markTaskFailed(deps, row.id, `${script} 失败，已还原内容源`)
-      return { ok: false, changed: false, detail: `${script} 失败：${(run.stderr || run.stdout).trim().split('\n').slice(0, 3).join(' / ')}`}
+      return {
+        ok: false,
+        changed: false,
+        detail: `${script} 失败，已还原内容源，任务保留为 failed 可继续处理：${(run.stderr || run.stdout).trim().split('\n').slice(0, 2).join(' / ')}`
+      }
     }
   }
   markTaskDone(deps, row.id, `copy.${key} 已更新并重建内容包`)
@@ -125,11 +131,15 @@ function markTaskFailed(deps: Resolved, proposalId: string, reason: string): voi
 }
 
 /** 重启后继续处理 pending 任务；同一 operationKey 不会被重复执行。 */
-export function drainTasks(deps: Resolved, options: { dryRun: boolean; actor: string }): { id: string; product: string; ok: boolean; detail: string }[] {
+export function drainTasks(deps: Resolved, options: { dryRun: boolean; actor: string }): { id: string; product: string; proposalId: string; ok: boolean; blocked: boolean; detail: string }[] {
   const tasks = listTasks(deps, 'pending')
   return tasks.map((task) => {
     const result = applyToSiteRepo(deps, task.proposalId, { dryRun: options.dryRun, actor: options.actor })
-    return { id: task.id, product: task.product, ok: result.ok, detail: result.detail }
+    // 被规则挡住的（facts、未批准）不算失败，是"本来就该由人工处理"的状态
+    if (result.blocked && task.status === 'pending') {
+      deps.store.db.update(publishTasks).set({ lastError: result.detail, updatedAt: new Date().toISOString() }).where(eq(publishTasks.id, task.id)).run()
+    }
+    return { id: task.id, product: task.product, proposalId: task.proposalId, ok: result.ok, blocked: result.blocked === true, detail: result.detail }
   })
 }
 
@@ -166,7 +176,7 @@ export function exportQueue(deps: Resolved, outRoot: string): string[] {
 
 export function importQueue(deps: Resolved, fileOrDir: string): { imported: number; skipped: number; errors: string[] } {
   const target = path.resolve(fileOrDir)
-  const files = fs.statSync(target).isDirectory() ? fs.readdirSync(target).filter((name) => name.endsWith('.json')).map((name) => path.join(target, name)) : [target]
+  const files = fs.statSync(target).isDirectory() ? collectJson(target) : [target]
   let imported = 0
   let skipped = 0
   const errors: string[] = []
@@ -224,6 +234,16 @@ export function importQueue(deps: Resolved, fileOrDir: string): { imported: numb
     }
   }
   return { imported, skipped, errors }
+}
+
+function collectJson(dir: string): string[] {
+  const out: string[] = []
+  for (const name of fs.readdirSync(dir).sort()) {
+    const abs = path.join(dir, name)
+    if (fs.statSync(abs).isDirectory()) out.push(...collectJson(abs))
+    else if (name.endsWith('.json')) out.push(abs)
+  }
+  return out
 }
 
 function repoRootOf(config: ServerConfig): string {

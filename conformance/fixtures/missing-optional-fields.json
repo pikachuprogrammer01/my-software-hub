@@ -1,0 +1,27 @@
+{
+  "name": "missing-optional-fields",
+  "note": "只有必需字段也可渲染：update.detail 等可选项缺失不影响其余层。",
+  "input": {
+    "schema": 1,
+    "product": "table-flow",
+    "contentRevision": "content-abcdef012345",
+    "sha256": null,
+    "facts": {},
+    "update": {
+      "badge": "小更新",
+      "summary": "修了几处"
+    }
+  },
+  "context": {
+    "ownProduct": "table-flow",
+    "skipSha": true
+  },
+  "expect": {
+    "kind": "render",
+    "badge": "小更新",
+    "summary": "修了几处",
+    "text": null,
+    "detail": null
+  },
+  "subject": "data/generated/<product>/content-latest.v1.json"
+}
