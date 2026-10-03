@@ -27,8 +27,8 @@ pnpm install                # 本机依赖
 pnpm api:build              # tsc 编译 server/ → .server-dist/
 node scripts/export-openapi.mjs
 pnpm build                  # 契约校验 + 内容生成 + vitepress build
-node deploy/package.mjs --version 1.0.0-rc1
-# 产物：deploy/out/hub-1.0.0-rc1.tar.gz 与 .sha256
+node deploy/package.mjs --version 1.0.0
+# 产物：deploy/out/hub-1.0.0.tar.gz 与 .sha256
 ```
 
 版本号属于本运行时自己，与 table-flow / WPS Enhancer 的产品版本无关；省略 `--version` 时取 `package.json` 的 `1.0.0` 拼上 commit 前缀（如 `1.0.0-g9e8a8860`）。
@@ -38,8 +38,8 @@ node deploy/package.mjs --version 1.0.0-rc1
 ## 三、传到手机并安装
 
 ```bash
-# 电脑 → 手机（同网，用 scp/adb push/下载均可；adb 属可选传输通道，不是运行依赖）
-scp deploy/out/hub-1.0.0-rc1.tar.gz* u0_a1:/data/data/com.termux/files/home/downloads/
+# 电脑 → 手机（Termux 侧需 pkg install openssh 并起一次 sshd；用你惯常的传输方式也行）
+scp deploy/out/hub-1.0.0.tar.gz* <手机用户>@<手机IP>:~/
 ```
 
 Termux 内：
@@ -49,15 +49,19 @@ pkg update
 pkg install nodejs make clang python3 binutils   # make/clang/python3 供原生模块现场编译
 node -v                                          # 需要 >= 22.5
 
+export HUB_VERSION=1.0.0
 export HUB_HOME=$HOME/hub
 export HUB_DATA_DIR=$HUB_HOME/data               # Termux 私有目录，禁止 /sdcard
 export HOST=127.0.0.1 PORT=8787
 
-bash hub-1.0.0-rc1/scripts/sqlite-compat-check.mjs   # 驱动兼容性试验，先跑这个
-bash hub-1.0.0-rc1/scripts/hubctl install ~/downloads/hub-1.0.0-rc1.tar.gz
-bash hub-1.0.0-rc1/scripts/hubctl start
-bash hub-1.0.0-rc1/scripts/hubctl status
+# hubctl 本身在包里，必须先解出来；install 仍按 .sha256 校验原始 tar
+tar -xzf ~/"hub-$HUB_VERSION.tar.gz" -C ~
+bash ~/hub-$HUB_VERSION/scripts/hubctl install ~/"hub-$HUB_VERSION.tar.gz"
+bash ~/hub-$HUB_VERSION/scripts/hubctl start
+bash ~/hub-$HUB_VERSION/scripts/hubctl status
 ```
+
+驱动兼容性试验**不单独前置**：它需要已安装的原生依赖，而依赖是 `install` 装的。`install` 会在校验清单与设备侧编译之后、切换版本之前跑它，不通过就停下并保持原版本（事后想复查用 `hubctl doctor`）。
 
 `install` 的固定节律：校验 tar 与逐文件 SHA-256 → 设备侧 `npm ci --omit=dev`（依赖在设备上编译）→ 驱动试验 → **迁移前先备份** → 临时端口预演迁移与健康检查 → 通过才切换 `current`。任一步失败都保留原版本并打印日志尾部；不会静默改用其它数据库。
 
