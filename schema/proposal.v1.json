@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitee.com/pikachuprogrammer01/my-software-releases/schema/proposal.v1.json",
+  "title": "content proposal v1",
+  "type": "object",
+  "required": ["schema", "product", "fieldId", "value", "source", "createdAt"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "type": "integer", "const": 1 },
+    "product": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
+    "fieldId": { "type": "string", "pattern": "^(copy|facts)\\.[a-zA-Z0-9._-]+$" },
+    "value": { "type": ["string", "number", "boolean", "object", "array", "null"] },
+    "channel": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
+    "clientVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "source": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

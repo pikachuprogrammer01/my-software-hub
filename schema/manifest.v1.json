@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitee.com/pikachuprogrammer01/my-software-releases/schema/manifest.v1.json",
+  "title": "update.json — 冻结兼容面 v1",
+  "description": "已分发客户端直接读取的更新清单。本 schema 刻意宽松：线上存量两份文件（table-flow 用 url 单串、wps-enhancer 用 urls 平台映射）都必须无条件通过，因此 schema 字段可缺省、url 与 urls 均非必填、两者可并存。收紧一律交给 lint。",
+  "type": "object",
+  "required": ["version"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "const": 1,
+      "description": "可缺省，缺省即 1。存量两份线上清单都没有此字段，强制要求会立刻让真值校验失败。"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "只允许三段纯数字。禁止预发布号与构建元数据：table-flow 客户端用手写比较（updateService.ts:23-32，parseInt 逐段），1.7.0-beta.1 会被判成等于 1.7.0，静默不提示更新。"
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https://",
+      "description": "单产物直链。永久合法，不是待废弃字段——它是已分发 table-flow 客户端唯一的读取形态。"
+    },
+    "urls": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "pattern": "^https://" },
+      "description": "多产物映射，键为 <platform>-<arch>（如 macos-arm64）。wps-enhancer 存量形态。新增键值属向后兼容；删除或改名属破坏性变更。"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "单行兼容摘要。新内容请写进 release-notes.v1.json 的分层字段；本字段只为老客户端保留。"
+    },
+    "published_at": { "type": "string", "description": "ISO 8601 或 YYYY-MM-DD" },
+    "channel": { "type": "string", "description": "stable | beta | nightly；缺省视为 stable" },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "产物哈希。渐进增强：已分发客户端不校验，缺失不影响其工作。"
+    },
+    "prerelease": { "type": "boolean", "description": "缺省 false" }
+  }
+}

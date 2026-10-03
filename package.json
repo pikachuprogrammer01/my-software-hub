@@ -1,0 +1,25 @@
+{
+  "name": "my-software-hub",
+  "version": "1.6.1",
+  "private": true,
+  "type": "module",
+  "description": "名下所有产品的对外门户与文档站（内容源为 markdown；数据面在 my-software-releases）",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && vitepress build",
+    "preview": "vitepress preview",
+    "validate": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-drift.mjs",
+    "validate:strict": "node scripts/validate-contract.mjs --strict",
+    "sync": "node scripts/sync-release.mjs",
+    "content:validate": "node scripts/content-validate.mjs",
+    "content:build": "node scripts/content-build.mjs",
+    "content:drift": "node scripts/content-drift.mjs",
+    "content:publish": "node scripts/content-build.mjs --dry-run",
+    "content:rollback": "node scripts/content-rollback.mjs",
+    "test:content": "node scripts/test-content.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "vitepress": "^1.6.0"
+  }
+}

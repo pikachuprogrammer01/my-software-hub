@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitee.com/pikachuprogrammer01/my-software-releases/schema/release-notes.v1.json",
+  "title": "release-notes.v1.json / release-notes-latest.v1.json — 更新说明 v1",
+  "description": "分层文案：每个字段对应一类容器，消费者各取自己那层，任何客户端都不做截断。kind 故意不用封闭 enum——封闭 enum 会让「新增一个 kind」变成破坏性变更，而客户端本就必须容忍未知值。拼写错误由 lint 拦。",
+  "type": "object",
+  "required": ["schema", "product", "releases"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "type": "integer", "const": 1 },
+    "product": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
+    "locale": { "type": "string", "description": "缺省 zh-CN；为将来多语预留" },
+    "revision": { "type": "string", "description": "同版本内文案修订标识，客户端缓存失效用" },
+    "generated_at": { "type": "string" },
+    "latest": { "type": "string", "description": "冗余的最新版本号，供 latest 切片快速核对" },
+    "releases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["version"],
+        "additionalProperties": true,
+        "properties": {
+          "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+          "published_at": { "type": "string" },
+          "channel": { "type": "string" },
+          "title": { "type": "string", "description": "站点小节标题，不限长" },
+          "badge": { "type": "string", "description": "层 1：toast / 原生菜单 / 通知标题。受产品 budget.badge 约束（lint 强制）" },
+          "summary": { "type": "string", "description": "层 2：面板横幅单行。table-flow 实测约 26 个中文字符（420px + nowrap + ellipsis）" },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "text"],
+              "additionalProperties": true,
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]{0,20}$",
+                  "description": "语义而非视觉。已知：feature fix perf security breaking docs misc。未知值客户端与站点必须回落 misc 样式，禁止抛异常。语义→颜色/图标映射归各客户端，本契约不提供视觉字段。"
+                },
+                "tier": { "type": "string", "description": "free|pro|all，缺省 all；无分级产品一律 all" },
+                "breaking": { "type": "boolean", "description": "缺省 false；true 时客户端应给确认交互" },
+                "text": { "type": "string", "description": "层 3：原生面板与更新器，受 budget.text 约束" },
+                "detail": { "type": "string", "description": "层 4：仅站点渲染，不限长" }
+              }
+            }
+          },
+          "assets": {
+            "type": "array",
+            "description": "数组而非单字段：桌面 app 要按平台/架构给多个产物，且各通道差异极大。未知 channel 客户端必须忽略而非报错。",
+            "items": {
+              "type": "object",
+              "required": ["channel"],
+              "additionalProperties": true,
+              "properties": {
+                "channel": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,20}$", "description": "已知：archive installer store updater hosted" },
+                "url": { "type": "string", "pattern": "^https://" },
+                "platform": { "type": "string" },
+                "arch": { "type": "string" },
+                "size": { "type": "integer", "minimum": 0 },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "min_os": { "type": "string", "description": "桌面 app 必填（lint 按 kind 强制）" },
+                "signed": { "type": "boolean" },
+                "notarized": { "type": "boolean", "description": "macOS 公证状态。auto-clicker 现为 false，站点文案必须如实反映" },
+                "store": { "type": "string" },
+                "auto_update": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

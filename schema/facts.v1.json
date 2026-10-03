@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitee.com/pikachuprogrammer01/my-software-releases/schema/facts.v1.json",
+  "title": "facts.json — 承重事实 v1",
+  "description": "新建文件，无存量负担，因此可以严格：schema 与 product 必填。设计原则是「冻结信封，放开载荷」——limits 是开放键值表，新增一条事实只需加键，不需要改 schema 或发新大版本。",
+  "type": "object",
+  "required": ["schema", "product", "limits"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "type": "integer", "const": 1 },
+    "product": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
+    "generated_at": { "type": "string", "description": "机器生成时间，ISO 8601" },
+    "provenance": {
+      "enum": ["release-repo", "manual"],
+      "description": "release-repo=发布脚本导出，可交叉校验；manual=站点人工填写，只能告警不能失败，且必须给 verified_at"
+    },
+    "verified_at": {
+      "type": "string",
+      "description": "人工核对于。provenance=manual 时必填（由 lint 强制），页面须展示"
+    },
+    "limits": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "开放键值表。键名稳定即契约（如 maxPages / freePaging / ruleCount / tableCandidateCap）；新增键向后兼容，改名或删除即破坏性变更。",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value"],
+        "additionalProperties": true,
+        "properties": {
+          "value": { "type": ["integer", "number", "boolean", "string", "array", "null"] },
+          "unit": { "type": "string" },
+          "since": { "type": "string", "description": "该值生效版本；有历史变更的值必须填，否则表达不出「涨价」" },
+          "until": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "pricing": {
+      "type": "array",
+      "description": "价格是有时间维度的数组而非单值常量。当前态取 since 最大且未过期的一条。",
+      "items": {
+        "type": "object",
+        "required": ["plan", "amount", "currency", "period", "since"],
+        "additionalProperties": true,
+        "properties": {
+          "plan": { "type": "string" },
+          "amount": { "type": "number", "minimum": 0 },
+          "currency": { "type": "string", "description": "如 CNY" },
+          "period": { "enum": ["month", "year", "once", "none"] },
+          "since": { "type": "string" },
+          "until": { "type": "string" }
+        }
+      }
+    },
+    "tiers": {
+      "type": "array",
+      "description": "可选。auto-clicker / qoder-proxy / Automation 无任何分级，缺省即视为单一 all 档。",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": { "id": { "type": "string" }, "label": { "type": "string" } }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "能力登记表。v1 把结构冻结但**不强制填写**——将来启用无需改 schema。",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "status"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "status": {
+            "type": "string",
+            "description": "已知集合 supported|limited|unsupported|experimental|planned；未知值客户端与站点必须回落为通用样式而非报错",
+            "pattern": "^[a-z][a-z0-9-]{0,20}$"
+          },
+          "tier": { "type": "string", "description": "缺省 all" },
+          "since": { "type": "string" },
+          "summary": { "type": "string" },
+          "limit": { "type": "string", "description": "引用 limits 的键名，不重复写字面值" },
+          "detail": { "type": "string", "description": "仅站点渲染" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "provenance": { "const": "manual" } }, "required": ["provenance"] },
+      "then": { "required": ["verified_at"] }
+    }
+  ]
+}

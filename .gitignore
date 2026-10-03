@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vitepress/cache/
+.DS_Store
+*.log
+proposals/pending/*
+proposals/rejected/*
+proposals/accepted/*
+!proposals/**/.gitkeep

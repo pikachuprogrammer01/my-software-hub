@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitee.com/pikachuprogrammer01/my-software-releases/schema/products.v1.json",
+  "title": "products.json — 产品注册表 v1",
+  "description": "站点骨架，也是将来交给各产品接入时它们要读的唯一索引。kind 与 visibility 决定渲染，不放任何对外文案。",
+  "type": "object",
+  "required": ["schema", "products"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "type": "integer", "const": 1 },
+    "generated_at": { "type": "string" },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "kind", "visibility", "updateMechanism", "sections"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$", "description": "同时是 URL 前缀，一经发布不得改名" },
+          "name": { "type": "string" },
+          "tagline": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,30}$",
+            "description": "已知：browser-extension desktop-app local-app-web-ui web-service cli internal。未知 kind 站点必须回落通用模板而非构建失败。"
+          },
+          "visibility": {
+            "enum": ["featured", "listed", "internal"],
+            "description": "featured=首页主推；listed=目录列出；internal=不进目录/导航/sitemap，仅直链"
+          },
+          "status": { "enum": ["released", "maintenance", "dormant", "unreleased"] },
+          "repo": { "type": "string", "pattern": "^https://" },
+          "releaseBranch": {
+            "type": ["string", "null"],
+            "description": "发布仓产品分支名；null 表示未接入发布基础设施"
+          },
+          "factsSource": { "enum": ["release-repo", "manual"], "description": "决定交叉校验是阻断还是告警" },
+          "updateMechanism": {
+            "enum": ["manual", "browser-auto", "built-in-updater", "continuous-deploy", "none"],
+            "description": "单一决定站点是否显示下载按钮，防止给用户两条互相矛盾的升级路径"
+          },
+          "sections": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,30}$" },
+            "description": "该产品启用的页面模板；kind 提供默认值，此处可覆盖"
+          },
+          "budget": {
+            "type": "object",
+            "description": "该产品客户端的实测字符预算（硬约束，lint 据此拦超长文案）",
+            "additionalProperties": { "type": "integer", "minimum": 1 }
+          },
+          "brand": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "logo": { "type": "string" },
+              "accent": { "type": "string", "description": "仅作站点 CSS 变量，不得下发给客户端当视觉指令" }
+            }
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type"],
+              "properties": {
+                "id": { "type": "string" },
+                "type": { "type": "string", "description": "archive installer store updater hosted source" },
+                "url": { "type": "string", "pattern": "^https://" },
+                "autoUpdate": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

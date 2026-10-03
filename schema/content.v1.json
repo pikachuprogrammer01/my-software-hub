@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitee.com/pikachuprogrammer01/my-software-releases/schema/content.v1.json",
+  "title": "product content source/package v1",
+  "type": "object",
+  "required": ["schema", "product", "facts", "copy"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "type": "integer", "const": 1 },
+    "product": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
+    "facts": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/fact" }
+    },
+    "copy": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/copy" }
+    },
+    "contentRevision": { "type": "string", "pattern": "^[a-zA-Z0-9._-]+$" },
+    "sourceRevision": { "type": "string" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "update": { "$ref": "#/$defs/update" }
+  },
+  "$defs": {
+    "fact": {
+      "type": "object",
+      "required": ["effectiveFromVersion"],
+      "additionalProperties": true,
+      "properties": { "effectiveFromVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" } }
+    },
+    "copy": {
+      "type": "object",
+      "required": ["default"],
+      "additionalProperties": false,
+      "properties": {
+        "default": { "type": "string", "not": { "pattern": "<[^>]+>" } },
+        "variants": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "not": { "pattern": "<[^>]+>" } }
+        }
+      }
+    },
+    "update": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "badge": { "type": "string" }, "summary": { "type": "string" },
+        "text": { "type": "string" }, "detail": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "product": "wps-enhancer",
+  "facts": {
+    "version.current": { "value": "1.1.0", "effectiveFromVersion": "1.1.0", "source": "release-repo" },
+    "features.builtInUpdater": { "status": "available", "effectiveFromVersion": "1.1.0" }
+  },
+  "copy": {
+    "overview.title": { "default": "WPS Enhancer" },
+    "overview.summary": { "default": "为 WPS 工作流提供桌面端增强能力。" },
+    "install.summary": { "default": "首次安装使用对应平台安装包，后续由应用内更新器检查更新。" },
+    "update.badge": { "default": "应用内更新" },
+    "update.summary": { "default": "应用启动后自动检查可用更新。" },
+    "update.text": { "default": "更新说明会在应用内显示。" },
+    "update.detail": { "default": "WPS Enhancer 使用应用内更新器处理后续版本更新。" }
+  }
+}
