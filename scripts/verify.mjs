@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { parseArgs, flagValue } from './lib/args.mjs'
@@ -35,8 +36,9 @@ for (const product of connectedProducts()) {
   step(`发布适配器 dry-run（${product.id}）`, ...node('content-publish.mjs', ['--product', product.id, '--revision', revision]))
 }
 step('VitePress 构建', path.join(SITE_ROOT, 'node_modules', '.bin', 'vitepress'), ['build'], { cwd: SITE_ROOT })
+const verifyOut = path.join(os.tmpdir(), `hub-verify-out-${process.pid}`)
 if (withDeploy) {
-  step('部署包打包', ...node('../deploy/package.mjs', ['--version', `verify-${Date.now()}`]))
+  step('部署包打包', ...node('../deploy/package.mjs', ['--version', `verify-${Date.now()}`, '--out', verifyOut]))
   step('部署/备份/恢复/回滚演练', ...node('test-deploy.mjs'))
 } else {
   steps.push({ name: '部署演练（打包 + 安装 + 备份恢复回滚）', skipped: '加 --with-deploy 才执行；出手机包前必须跑' })
@@ -80,6 +82,7 @@ if (!failed.length) {
   }
 }
 
+fs.rmSync(verifyOut, { recursive: true, force: true })
 console.log(`\n结果：${steps.filter((s) => !s.skipped).length - failed.length} 通过 / ${failed.length} 失败`)
 if (failed.length) {
   for (const item of failed) console.error(`   · ${item.name}`)

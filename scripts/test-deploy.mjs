@@ -13,6 +13,9 @@ import { readBoundPort } from './lib/runtime-port.mjs'
 const results = []
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-deploy-'))
 const hubHome = path.join(work, 'home')
+// 每次跑用独立的产物目录：写进共享的 deploy/out 时，收尾清扫会把并发跑的
+// 另一份产物按同名规则删掉，表现为对方 install 突然校验失败并连带崩一片。
+const outDir = path.join(work, 'deploy-out')
 fs.mkdirSync(hubHome, { recursive: true })
 
 function record(name, fn) {
@@ -57,15 +60,15 @@ async function refreshBaseA() {
 
 console.log('\n【1】部署打包')
 const version1 = `9.0.1-t${process.pid}`
-const packageRun = spawnSync(process.execPath, [path.join(SITE_ROOT, 'deploy', 'package.mjs'), '--version', version1], { cwd: SITE_ROOT, encoding: 'utf8', timeout: 300000 })
+const packageRun = spawnSync(process.execPath, [path.join(SITE_ROOT, 'deploy', 'package.mjs'), '--version', version1, '--out', outDir], { cwd: SITE_ROOT, encoding: 'utf8', timeout: 300000 })
 await record('打包脚本成功产出 tar 与校验和', () => {
   assert.equal(packageRun.status, 0, packageRun.stdout + packageRun.stderr)
-  const tar = path.join(SITE_ROOT, 'deploy', 'out', `hub-${version1}.tar.gz`)
+  const tar = path.join(outDir, `hub-${version1}.tar.gz`)
   assert.ok(fs.existsSync(tar), '缺少 tar')
   assert.ok(fs.existsSync(`${tar}.sha256`), '缺少 tar sha256')
 })
 
-const tarPath = path.join(SITE_ROOT, 'deploy', 'out', `hub-${version1}.tar.gz`)
+const tarPath = path.join(outDir, `hub-${version1}.tar.gz`)
 const listRun = spawnSync('tar', ['-tzf', tarPath], { encoding: 'utf8' })
 const tarEntries = listRun.stdout.split('\n').filter(Boolean)
 
@@ -230,9 +233,9 @@ await record('迁移不兼容时 restore 拒绝降级数据库', async () => {
 console.log('\n【4】部署回滚与局域网监听')
 await record('安装第二个版本后 rollback 回到旧版本且内容 revision 不变', async () => {
   const version2 = `9.0.2-t${process.pid}`
-  const build2 = spawnSync(process.execPath, [path.join(SITE_ROOT, 'deploy', 'package.mjs'), '--version', version2], { cwd: SITE_ROOT, encoding: 'utf8', timeout: 300000 })
+  const build2 = spawnSync(process.execPath, [path.join(SITE_ROOT, 'deploy', 'package.mjs'), '--version', version2, '--out', outDir], { cwd: SITE_ROOT, encoding: 'utf8', timeout: 300000 })
   assert.equal(build2.status, 0, build2.stdout + build2.stderr)
-  const tar2 = path.join(SITE_ROOT, 'deploy', 'out', `hub-${version2}.tar.gz`)
+  const tar2 = path.join(outDir, `hub-${version2}.tar.gz`)
   const installed = hubctl(['install', tar2])
   assert.equal(installed.code, 0, installed.output.slice(-3000))
   const started = hubctl(['start'])
@@ -249,7 +252,7 @@ await record('安装第二个版本后 rollback 回到旧版本且内容 revisio
   assert.deepEqual(healthOld.contentProducts.map((item) => item.revision), healthNew.contentProducts.map((item) => item.revision), '回滚改变了内容副本 revision')
   const proposals = await (await fetch(`${baseA}/v1/products/table-flow/proposals/count`)).json()
   assert.ok(proposals.total >= 1, '回滚丢失了提案数据')
-  fs.rmSync(tar2, { force: true })
+  void tar2
 })
 
 await record('HOST=0.0.0.0 时可从本机第二地址访问（局域网绑定）', async () => {
@@ -327,10 +330,6 @@ await record('服务停止后浏览器不应还能打开站点（不假装离线
 
 hubctl(['stop'])
 fs.rmSync(work, { recursive: true, force: true })
-for (const stale of fs.readdirSync(path.join(SITE_ROOT, 'deploy', 'out'))) {
-  if (/^hub-9\.0\.\d+-t/.test(stale)) fs.rmSync(path.join(SITE_ROOT, 'deploy', 'out', stale), { recursive: true, force: true })
-}
-
 const failed = results.filter((item) => !item.ok)
 console.log(`\n部署与运维测试：${results.length - failed.length}/${results.length} 通过`)
 if (failed.length) {
