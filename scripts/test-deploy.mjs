@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
-import net from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
 import { SITE_ROOT, connectedProducts, generatedPaths, readJson } from './content-lib.mjs'
+import { readBoundPort } from './lib/runtime-port.mjs'
 
 /**
  * 电脑侧端到端演练部署脚本：打包 → 安装 → 启停 → 提案落库 → 备份 → 恢复 → 回滚。
@@ -28,18 +28,7 @@ function record(name, fn) {
   })()
 }
 
-async function freePort() {
-  return new Promise((resolve, reject) => {
-    const srv = net.createServer()
-    srv.once('error', reject)
-    srv.listen(0, '127.0.0.1', () => {
-      const address = srv.address()
-      srv.close(() => resolve(typeof address === 'object' && address ? address.port : 0))
-    })
-  })
-}
-
-function hubctl(args, { port = portA, env = {} } = {}) {
+function hubctl(args, { env = {} } = {}) {
   const res = spawnSync('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), ...args], {
     cwd: SITE_ROOT,
     encoding: 'utf8',
@@ -48,7 +37,9 @@ function hubctl(args, { port = portA, env = {} } = {}) {
       HUB_HOME: hubHome,
       HUB_DATA_DIR: path.join(hubHome, 'data'),
       HOST: '127.0.0.1',
-      PORT: String(port),
+      // 端口交给内核分配，跑起来后从 run/hubd.port 读实际值；
+      // 预占端口再让服务去绑，会在两步之间被并发进程抢走（曾让整段演练连崩 12 项）
+      PORT: '0',
       HUB_REVIEWER_TOKEN_FILE: path.join(work, 'reviewer.token'),
       ...env
     },
@@ -58,9 +49,11 @@ function hubctl(args, { port = portA, env = {} } = {}) {
 }
 
 fs.writeFileSync(path.join(work, 'reviewer.token'), 'deploy-test-reviewer-token\n')
-const portA = await freePort()
-const portB = await freePort()
-const baseA = `http://127.0.0.1:${portA}`
+let baseA = ''
+async function refreshBaseA() {
+  baseA = (await readBoundPort(path.join(hubHome, 'data'))).baseUrl
+  return baseA
+}
 
 console.log('\n【1】部署打包')
 const version1 = `9.0.1-t${process.pid}`
@@ -124,6 +117,7 @@ await record('hubctl install 校验清单、装依赖、备份并切换当前版
 await record('hubctl start 后健康检查通过', async () => {
   const res = hubctl(['start'])
   assert.equal(res.code, 0, res.output)
+  await refreshBaseA()
   const health = await (await fetch(`${baseA}/health`)).json()
   assert.equal(health.status, 'ok')
   assert.equal(health.version, version1)
@@ -185,6 +179,7 @@ await record('SIGKILL 后重启：提案仍在且幂等键不会重复写入', a
   assert.equal(hubctl(['status']).code, 0)
   const start = hubctl(['start'])
   assert.equal(start.code, 0, start.output)
+  await refreshBaseA()
   const count = await (await fetch(`${baseA}/v1/products/table-flow/proposals/count`)).json()
   const again = await fetch(`${baseA}/v1/products/table-flow/proposals`, {
     method: 'POST',
@@ -208,6 +203,7 @@ await record('破坏数据后 restore：业务键与提案 ID 完整恢复', asy
   assert.equal(restored.code, 0, restored.output.slice(-3000))
   assert.match(restored.output, /已恢复到/)
   assert.match(restored.output, /恢复统计/)
+  await refreshBaseA()
   const after = await (await fetch(`${baseA}/v1/products/table-flow/proposals/count`)).json()
   assert.equal(after.total, before.total, `恢复后提案数不符：${before.total} → ${after.total}`)
   const replaced = fs.readdirSync(path.join(hubHome, 'data', 'db')).filter((name) => name.startsWith('replaced-'))
@@ -226,6 +222,7 @@ await record('迁移不兼容时 restore 拒绝降级数据库', async () => {
   assert.match(res.output, /拒绝降级数据库/)
   assert.match(res.output, /hubctl rollback/)
   assert.match(res.output, /恢复未完成，重新拉起原服务/)
+  await refreshBaseA()
   const alive = await (await fetch(`${baseA}/health`)).json()
   assert.equal(alive.status, 'ok', '被拒绝的恢复把服务留下了停机状态')
 })
@@ -240,11 +237,13 @@ await record('安装第二个版本后 rollback 回到旧版本且内容 revisio
   assert.equal(installed.code, 0, installed.output.slice(-3000))
   const started = hubctl(['start'])
   assert.equal(started.code, 0, started.output)
+  await refreshBaseA()
   const healthNew = await (await fetch(`${baseA}/health`)).json()
   assert.equal(healthNew.version, version2)
   const rolled = hubctl(['rollback'])
   assert.equal(rolled.code, 0, rolled.output.slice(-3000))
   assert.match(rolled.output, /已回退/)
+  await refreshBaseA()
   const healthOld = await (await fetch(`${baseA}/health`)).json()
   assert.equal(healthOld.version, version1, '回滚后仍在跑新版本')
   assert.deepEqual(healthOld.contentProducts.map((item) => item.revision), healthNew.contentProducts.map((item) => item.revision), '回滚改变了内容副本 revision')
@@ -259,24 +258,26 @@ await record('HOST=0.0.0.0 时可从本机第二地址访问（局域网绑定�
   hubctl(['stop'])
   const res = spawn('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'start'], {
     cwd: SITE_ROOT,
-    env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: String(portB), HUB_REVIEWER_TOKEN_FILE: path.join(work, 'reviewer.token') },
+    env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: '0', HUB_REVIEWER_TOKEN_FILE: path.join(work, 'reviewer.token') },
     stdio: 'ignore'
   })
   res.unref()
+  const { port: lanPort, baseUrl } = await readBoundPort(path.join(hubHome, 'data'))
+  void baseUrl
   const deadline = Date.now() + 20000
   let ok = false
   while (Date.now() < deadline && !ok) {
     try {
-      const health = await fetch(`http://${lanIp}:${portB}/health`, { signal: AbortSignal.timeout(2000) })
+      const health = await fetch(`http://${lanIp}:${lanPort}/health`, { signal: AbortSignal.timeout(2000) })
       ok = health.ok
     } catch {
       await new Promise((r) => setTimeout(r, 400))
     }
   }
-  assert.ok(ok, `无法从 ${lanIp}:${portB} 访问 /health`)
-  const page = await fetch(`http://${lanIp}:${portB}/table-flow/`)
+  assert.ok(ok, `无法从 ${lanIp}:${lanPort} 访问 /health`)
+  const page = await fetch(`http://${lanIp}:${lanPort}/table-flow/`)
   assert.equal(page.status, 200)
-  spawnSync('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'stop'], { cwd: SITE_ROOT, env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: String(portB) } })
+  spawnSync('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'stop'], { cwd: SITE_ROOT, env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: '0' } })
 })
 
 await record('静态页资源全部同源，断外网不依赖发布仓', () => {

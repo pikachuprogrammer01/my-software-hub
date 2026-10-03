@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
-import net from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
 import { SITE_ROOT } from './content-lib.mjs'
+import { readBoundPort } from './lib/runtime-port.mjs'
 
 const results = []
 const startedProcesses = []
@@ -29,17 +29,6 @@ function check(name, fn) {
       console.error(`  ❌ ${name}\n     ${String(error.message ?? error).split('\n').join('\n     ')}`)
     }
   })()
-}
-
-async function freePort() {
-  return new Promise((resolve, reject) => {
-    const srv = net.createServer()
-    srv.once('error', reject)
-    srv.listen(0, '127.0.0.1', () => {
-      const address = srv.address()
-      srv.close(() => resolve(typeof address === 'object' && address ? address.port : 0))
-    })
-  })
 }
 
 function hashTree(dir) {
@@ -102,15 +91,13 @@ const reviewerTokenFile = path.join(workDir, 'reviewer.token')
 fs.writeFileSync(reviewerTokenFile, 'test-reviewer-token\n')
 const siteHashBefore = { products: hashTree(path.join(SITE_ROOT, 'products')), generated: hashTree(path.join(SITE_ROOT, 'data', 'generated')) }
 
-const port = await freePort()
-const baseUrl = `http://127.0.0.1:${port}`
 const baselinePkg = JSON.parse(fs.readFileSync(path.join(SITE_ROOT, 'data', 'generated', 'table-flow', 'content-latest.v1.json'), 'utf8'))
 const wpsBaselinePkg = JSON.parse(fs.readFileSync(path.join(SITE_ROOT, 'data', 'generated', 'wps-enhancer', 'content-latest.v1.json'), 'utf8'))
 
 const serverA = startServer(
   {
     HOST: '127.0.0.1',
-    PORT: String(port),
+    PORT: '0',
     HUB_DATA_DIR: dataDir,
     HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist'),
     HUB_REVIEWER_TOKEN_FILE: reviewerTokenFile,
@@ -123,11 +110,17 @@ const serverA = startServer(
 )
 
 console.log('\n【1】启动与静态面')
+// 端口由内核分配，从服务的端口文件里读，不预先抢端口
+const bound = await readBoundPort(dataDir).catch((error) => {
+  console.error(`❌ 服务未能启动：${error.message}\n${serverA.output}`)
+  process.exit(1)
+})
+const baseUrl = bound.baseUrl
 let health = null
 try {
   health = await waitForHealth(baseUrl)
 } catch (error) {
-  console.error(`❌ 服务未能启动：${error.message}\n${serverA.output}`)
+  console.error(`❌ 健康检查未通过：${error.message}\n${serverA.output}`)
   process.exit(1)
 }
 
@@ -320,10 +313,15 @@ await check('跨站写来源被拒（403 forbidden_origin）', async () => {
 })
 
 await check('限流生效（429 + Retry-After）', async () => {
-  const env = { ...process.env, HOST: '127.0.0.1', PORT: String(await freePort()), HUB_DATA_DIR: path.join(workDir, 'rate-data'), HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist'), HUB_RATE_LIMIT_PER_MIN: '3' }
-  const rlPort = env.PORT
-  const handle = startServer({ ...env, PORT: rlPort }, 'rate')
-  const base = `http://127.0.0.1:${rlPort}`
+  const rateData = path.join(workDir, 'rate-data')
+  const handle = startServer({
+    HOST: '127.0.0.1',
+    PORT: '0',
+    HUB_DATA_DIR: rateData,
+    HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist'),
+    HUB_RATE_LIMIT_PER_MIN: '3'
+  }, 'rate')
+  const base = (await readBoundPort(rateData)).baseUrl
   await waitForHealth(base)
   const codes = []
   for (let i = 0; i < 5; i += 1) {
@@ -489,16 +487,15 @@ await check('优雅停止后 pid 文件被清理', () => {
   assert.ok(!fs.existsSync(pidFile), `pid 文件残留：${pidFile}`)
 })
 
-const port2 = await freePort()
-const base2 = `http://127.0.0.1:${port2}`
 const serverB = startServer({
   HOST: '127.0.0.1',
-  PORT: String(port2),
+  PORT: '0',
   HUB_DATA_DIR: dataDir,
   HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist'),
   HUB_SUBMITTER_TOKEN: 'test-submitter-token',
   HUB_VERSION: 'test-2'
 }, 'B')
+const base2 = (await readBoundPort(dataDir)).baseUrl
 await waitForHealth(base2)
 
 await check('重启后提案与裁决状态保留', async () => {
@@ -565,11 +562,10 @@ await check('数据库关闭后 WAL 已 checkpoint（备份面不会只拿到半
 })
 
 await check('重复启动被拒绝（防止双进程争抢同一库）', async () => {
-  const port3 = await freePort()
-  const handle = startServer({ HOST: '127.0.0.1', PORT: String(port3), HUB_DATA_DIR: dataDir, HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist') }, 'C')
+  const handle = startServer({ HOST: '127.0.0.1', PORT: '0', HUB_DATA_DIR: dataDir, HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist') }, 'C')
   // 先起一个持有 pid 文件的实例
-  await waitForHealth(`http://127.0.0.1:${port3}`)
-  const dup = startServer({ HOST: '127.0.0.1', PORT: String(port3 + 1), HUB_DATA_DIR: dataDir, HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist') }, 'D')
+  await waitForHealth((await readBoundPort(dataDir)).baseUrl)
+  const dup = startServer({ HOST: '127.0.0.1', PORT: '0', HUB_DATA_DIR: dataDir, HUB_STATIC_DIR: path.join(SITE_ROOT, '.vitepress', 'dist') }, 'D')
   const exited = await new Promise((resolve) => {
     const timer = setTimeout(() => resolve('timeout'), 5000)
     dup.child.once('exit', (code, signal) => { clearTimeout(timer); resolve({ code, signal }) })

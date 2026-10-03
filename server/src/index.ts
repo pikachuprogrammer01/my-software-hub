@@ -46,21 +46,36 @@ const server: ServerType = serve({
 ;(server as unknown as { requestTimeout: number; keepAliveTimeout: number }).requestTimeout = config.requestTimeoutMs
 ;(server as unknown as { requestTimeout: number; keepAliveTimeout: number }).keepAliveTimeout = Math.max(5000, config.requestTimeoutMs)
 
-const banner = {
-  level: 'info',
-  event: 'start',
-  version: config.version,
-  env: config.env,
-  listen: `${config.host}:${config.port}`,
-  lanReachable: config.host === '0.0.0.0',
-  dataDir: config.dataDir,
-  staticDir: config.staticDir,
-  dbFile: config.dbFile,
-  migrationsApplied: store.appliedMigrations().length,
-  reviewerIdentityConfigured: config.reviewerToken !== null,
-  submitterTokensConfigured: config.submitterTokens.length > 0
+function boundPort(): number {
+  const address = server.address()
+  // PORT=0 时 config.port 仍是 0，运维与测试要的是内核实际分配的那个
+  return typeof address === 'object' && address ? address.port : config.port
 }
-console.log(JSON.stringify(banner))
+
+function announce(): void {
+  const port = boundPort()
+  fs.writeFileSync(path.join(runDir, 'hubd.port'), `${port}\n`)
+  console.log(JSON.stringify({
+    level: 'info',
+    event: 'start',
+    version: config.version,
+    env: config.env,
+    node: process.version,
+    host: config.host,
+    port,
+    listen: `${config.host}:${port}`,
+    lanReachable: config.host === '0.0.0.0',
+    dataDir: config.dataDir,
+    staticDir: config.staticDir,
+    dbFile: config.dbFile,
+    migrationsApplied: store.appliedMigrations().length,
+    reviewerIdentityConfigured: config.reviewerToken !== null,
+    submitterTokensConfigured: config.submitterTokens.length > 0
+  }))
+}
+
+if (server.listening) announce()
+else server.once('listening', announce)
 if (config.env === 'production' && !config.reviewerToken) {
   console.warn(JSON.stringify({ level: 'warn', message: '未配置审核身份：提案接口仍可接收，但裁决端点会返回 503，需要在电脑侧经站点仓受控变更处理' }))
 }
@@ -82,7 +97,10 @@ function shutdown(signal: string): void {
       console.error(JSON.stringify({ level: 'error', message: `关闭数据库失败：${error instanceof Error ? error.message : String(error)}` }))
     }
     try {
-      if (fs.readFileSync(pidFile, 'utf8').trim() === String(process.pid)) fs.rmSync(pidFile, { force: true })
+      if (fs.readFileSync(pidFile, 'utf8').trim() === String(process.pid)) {
+        fs.rmSync(pidFile, { force: true })
+        fs.rmSync(path.join(runDir, 'hubd.port'), { force: true })
+      }
     } catch {
       // pid 文件已被新实例覆盖时不删除别人的文件
     }

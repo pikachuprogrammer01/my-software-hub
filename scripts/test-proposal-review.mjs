@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
-import net from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { spawn, spawnSync } from 'node:child_process'
 import { SITE_ROOT, generatedPaths, readJson } from './content-lib.mjs'
+import { readBoundPort } from './lib/runtime-port.mjs'
 
 /**
  * 提案处理器的端到端验证：HTTP 接收 → 审核登记 → 电脑侧受控变更进站点仓（默认 dry-run）
@@ -24,17 +24,6 @@ async function check(name, fn) {
     results.push({ name, ok: false })
     console.error(`  ❌ ${name}\n     ${String(error.message ?? error).split('\n').join('\n     ')}`)
   }
-}
-
-async function freePort() {
-  return new Promise((resolve, reject) => {
-    const srv = net.createServer()
-    srv.once('error', reject)
-    srv.listen(0, '127.0.0.1', () => {
-      const address = srv.address()
-      srv.close(() => resolve(typeof address === 'object' && address ? address.port : 0))
-    })
-  })
 }
 
 function sandbox() {
@@ -73,8 +62,6 @@ const dataDir = path.join(work, 'data')
 const tokenFile = path.join(work, 'reviewer.token')
 fs.writeFileSync(tokenFile, 'review-test-token\n')
 const repo = sandbox()
-const port = await freePort()
-const base = `http://127.0.0.1:${port}`
 
 const cliEnv = {
   HUB_DATA_DIR: dataDir,
@@ -87,7 +74,7 @@ const cliEnv = {
 
 const server = spawn(process.execPath, [path.join(SITE_ROOT, '.server-dist', 'index.js')], {
   cwd: SITE_ROOT,
-  env: { ...process.env, ...cliEnv, HOST: '127.0.0.1', PORT: String(port) },
+  env: { ...process.env, ...cliEnv, HOST: '127.0.0.1', PORT: '0' },
   stdio: ['ignore', 'pipe', 'pipe']
 })
 children.push(server)
@@ -95,6 +82,7 @@ let serverOutput = ''
 server.stdout.on('data', (chunk) => { serverOutput += chunk })
 server.stderr.on('data', (chunk) => { serverOutput += chunk })
 
+const base = (await readBoundPort(dataDir)).baseUrl
 const deadline = Date.now() + 20000
 let up = false
 while (Date.now() < deadline && !up) {

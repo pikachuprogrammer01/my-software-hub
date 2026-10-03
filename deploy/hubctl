@@ -80,8 +80,22 @@ current_version() {
   basename "$dir" | sed 's/^hub-//'
 }
 
+# PORT=0 时内核随机分配端口，实际值由服务写进 run/hubd.port；只在进程活着时采信
+effective_port() {
+  local file="$HUB_DATA_DIR/run/hubd.port" pid
+  if [ -f "$file" ] && pid="$(running_pid)"; then
+    local bound
+    bound="$(tr -d '[:space:]' < "$file")"
+    if [ -n "$bound" ]; then
+      printf '%s' "$bound"
+      return 0
+    fi
+  fi
+  printf '%s' "$PORT"
+}
+
 health_ok() {
-  local port="${1:-$PORT}"
+  local port="${1:-$(effective_port)}"
   node -e '
 const [, port] = process.argv
 fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(3000) })
@@ -128,7 +142,9 @@ do_start() {
     return 0
   fi
   rotate_logs
-  log "启动 $release（HOST=$HOST PORT=$PORT）"
+  # 上一次实例被强杀时端口文件会留在盘上，拿它当"实际端口"就一直健康检查失败
+  rm -f "$HUB_DATA_DIR/run/hubd.port"
+  log "启动 $release（HOST=$HOST PORT=$PORT，0 表示随机端口）"
   (
     cd "$release"
     HUB_DATA_DIR="$HUB_DATA_DIR" HUB_STATIC_DIR="$release/site" HUB_CONTENT_DIR="$release/runtime/data/generated" \
@@ -136,10 +152,11 @@ do_start() {
     HUB_VERSION="$(basename "$release" | sed 's/^hub-//')" HOST="$HOST" PORT="$PORT" \
     nohup node "$release/api/index.js" >> "$LOG_FILE" 2>&1 &
   )
-  local waited=0
-  while [ "$waited" -lt 20 ]; do
-    if health_ok; then
-      log "✅ 启动成功：http://${HOST}:${PORT}/health（pid=$(running_pid || echo '?')）"
+  local waited=0 bound=""
+  while [ "$waited" -lt 25 ]; do
+    if [ -s "$HUB_DATA_DIR/run/hubd.port" ]; then bound="$(tr -d '[:space:]' < "$HUB_DATA_DIR/run/hubd.port")"; fi
+    if [ -n "$bound" ] && health_ok "$bound"; then
+      log "✅ 启动成功：http://${HOST}:${bound}/health（pid=$(running_pid || echo '?')）"
       [ "$HOST" = "0.0.0.0" ] && warn "监听 0.0.0.0：同一局域网内的设备可访问，请确认这是你想要的暴露范围"
       return 0
     fi
@@ -295,20 +312,30 @@ EOF
   fi
 
   # 在临时端口上跑一次"迁移 + 健康检查"，通过才切换 current
-  local probe_port
-  probe_port="$(node -e 'const s=require("net").createServer();s.listen(0,"127.0.0.1",()=>{console.log(s.address().port);s.close()})')"
-  log "以探测端口 ${probe_port} 预演迁移与健康检查"
+  # 预演用 PORT=0 让内核挑端口：预先"探一个空闲端口再关掉"会在两步之间被别的进程抢走
+  log "以随机端口预演迁移与健康检查"
+  rm -f "$HUB_DATA_DIR/run/hubd.port"
   (
     cd "$release"
     HUB_DATA_DIR="$HUB_DATA_DIR" HUB_STATIC_DIR="$release/site" HUB_CONTENT_DIR="$release/runtime/data/generated" \
     HUB_SCHEMA_DIR="$release/schema" HUB_MIGRATIONS_DIR="$release/migrations" HUB_VERSION="$version" \
-    HOST=127.0.0.1 PORT="$probe_port" nohup node "$release/api/index.js" >> "$HUB_DATA_DIR/logs/install-probe.log" 2>&1 &
+    HOST=127.0.0.1 PORT=0 nohup node "$release/api/index.js" >> "$HUB_DATA_DIR/logs/install-probe.log" 2>&1 &
     echo $! > "$HUB_DATA_DIR/run/probe.pid"
   )
-  local probe_pid waited=0 ok=""
+  local probe_pid waited=0 ok="" probe_port=""
   probe_pid="$(cat "$HUB_DATA_DIR/run/probe.pid")"
+  if [ -s "$HUB_DATA_DIR/run/hubd.port" ]; then probe_port="$(tr -d '[:space:]' < "$HUB_DATA_DIR/run/hubd.port")"; fi
   while [ "$waited" -lt 25 ]; do
-    if health_ok "$probe_port"; then ok=1; break; fi
+    if [ -z "$probe_port" ] && [ -s "$HUB_DATA_DIR/run/hubd.port" ]; then
+      probe_port="$(tr -d '[:space:]' < "$HUB_DATA_DIR/run/hubd.port")"
+    fi
+    if [ -n "$probe_port" ] && node -e '
+const [, port] = process.argv
+fetch(`http://127.0.0.1:${port}/health`, { signal: AbortSignal.timeout(2000) })
+  .then((r) => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+  .then((b) => process.exit(b.status === "ok" ? 0 : 1))
+  .catch(() => process.exit(1))
+' "$probe_port"; then ok=1; break; fi
     sleep 1
     waited=$((waited + 1))
   done
@@ -423,7 +450,7 @@ do_status() {
   local version pid
   version="$(current_version 2>/dev/null || echo '未安装')"
   printf '版本    : %s\n' "$version"
-  printf '监听    : %s:%s（局域网访问需显式设 HOST=0.0.0.0）\n' "$HOST" "$PORT"
+  printf '监听    : %s:%s（局域网访问需显式设 HOST=0.0.0.0）\n' "$HOST" "$(effective_port)"
   printf '数据目录: %s\n' "$HUB_DATA_DIR"
   printf '日志    : %s\n' "$LOG_FILE"
   if pid="$(running_pid)"; then

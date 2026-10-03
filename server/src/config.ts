@@ -48,6 +48,14 @@ function readToken(env: NodeJS.ProcessEnv, tokenKey: string, fileKey: string): s
   return null
 }
 
+/** PORT 允许 0：交给内核挑端口，避免并发实例互相抢固定端口。 */
+function portNumber(raw: string | undefined, fallback: number): number {
+  if (raw === undefined || raw === '') return fallback
+  const value = Number(raw)
+  if (!Number.isInteger(value) || value < 0 || value > 65535) throw new Error(`PORT 必须是 0-65535 的整数（当前：${raw}；0 表示随机端口）`)
+  return value
+}
+
 function positiveInt(raw: string | undefined, fallback: number, label: string): number {
   if (raw === undefined || raw === '') return fallback
   const value = Number(raw)
@@ -68,7 +76,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
   return {
     env: envName,
     host,
-    port: positiveInt(env.PORT, 8787, 'PORT'),
+    port: portNumber(env.PORT, 8787),
     dataDir,
     staticDir,
     contentDir: absPath(env.HUB_CONTENT_DIR, path.join(PROJECT_ROOT, 'data', 'generated'), 'HUB_CONTENT_DIR'),

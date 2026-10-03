@@ -81,7 +81,7 @@ bash ~/hub-$HUB_VERSION/scripts/hubctl status
 
 | 变量 | 默认 | 说明 |
 |---|---|---|
-| `HOST` / `PORT` | `127.0.0.1` / `8787` | 局域网访问需显式 `HOST=0.0.0.0` |
+| `HOST` / `PORT` | `127.0.0.1` / `8787` | 局域网访问需显式 `HOST=0.0.0.0`；`PORT=0` 让内核挑随机端口，实际值写进 `data/run/hubd.port` 并由 `hubctl status` 显示 |
 | `HUB_DATA_DIR` | `$HUB_HOME/data` | 绝对路径，必须在 Termux 私有文件系统 |
 | `HUB_ALLOWED_ORIGINS` | 空（同源） | 跨源写操作白名单 |
 | `HUB_RATE_LIMIT_PER_MIN` | `30` | 按 IP+方法+路径的固定窗口 |
