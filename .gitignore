@@ -13,3 +13,5 @@ proposals/accepted/*
 .hub-static/
 data/publish/
 deploy/out/
+deploy/out/
+/.playwright-mcp/

@@ -1,3 +1,5 @@
+# 电脑侧不需要跑 better-sqlite3 的安装脚本：它随包提供预编译产物，
+# 真要在设备上编译是手机侧 `npm ci` 的事（见 deploy/hubctl 与 ANDROID-DEPLOY.md）。
 allowBuilds:
-  better-sqlite3: set this to true or false
+  better-sqlite3: false
   esbuild: true

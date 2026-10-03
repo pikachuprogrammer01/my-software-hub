@@ -48,7 +48,7 @@ function readFrontMatter(abs) {
 
 /** 扫目录生成页面清单：新增一篇 md 就自动多一个页面，不改本文件。 */
 function scanPages() {
-  const pages = []
+  const byRel = new Map<string, { rel: string; route: string; order: number; title: string; draft: boolean }>()
   for (const dir of ['content', 'docs', 'products', '.']) {
     const absDir = path.join(SITE_ROOT, dir)
     if (!fs.existsSync(absDir)) continue
@@ -63,21 +63,24 @@ function scanPages() {
     }
     walk(absDir)
     for (const rel of files) {
-      const name = path.basename(rel)
       if (INTERNAL.has(rel) || rel === 'index.md') continue
       const route = routeOf(rel)
       if (!route) continue
-      pages.push({ rel, route, ...readFrontMatter(path.join(SITE_ROOT, rel)) })
+      // 根目录那一轮会再走一遍 content/、docs/、products/，同一篇 md 会进来两次，
+      // 侧栏就会出现成对重复条目；按 rel 去重，后到的不覆盖先到的。
+      if (byRel.has(rel)) continue
+      byRel.set(rel, { rel, route, ...readFrontMatter(path.join(SITE_ROOT, rel)) })
     }
   }
-  return pages
+  return [...byRel.values()]
     .filter((p) => !p.draft)
     .sort((a, b) => a.order - b.order || a.rel.localeCompare(b.rel))
 }
 
 const pages = scanPages()
 const guide = pages.filter((p) => p.rel.startsWith('content/'))
-const reference = pages.filter((p) => !p.rel.startsWith('content/'))
+// 产品页已经在「产品目录」组里，别再进「完整参考」，否则侧栏同一页出现两次
+const reference = pages.filter((p) => !p.rel.startsWith('content/') && !p.rel.startsWith('products/'))
 const link = (rel) => {
   const p = pages.find((x) => x.rel === rel)
   return p ? `/${p.route.replace(/\.md$/, '')}` : '/'

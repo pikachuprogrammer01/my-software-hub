@@ -27,7 +27,6 @@ const version = computed(() => content.value?.facts?.['version.current']?.value)
         新版本由应用内更新器检查并提示，本站不再提供第二条下载路径，避免用户覆盖回旧安装包。
       </p>
       <p v-if="content?.update?.summary" class="notes">{{ content.update.summary }}</p>
-      <p v-if="content?.contentRevision" class="fetched">内容 revision：{{ content.contentRevision }}</p>
       <p v-else class="warn">该产品内容包暂不可用，更新说明无法显示。</p>
     </template>
 
@@ -41,7 +40,6 @@ const version = computed(() => content.value?.facts?.['version.current']?.value)
       <p v-if="directLink.fetchedAt" class="fetched">
         版本信息取自扩展同款更新清单（同步于 {{ directLink.fetchedAt.slice(0, 10) }}）
       </p>
-      <p v-if="content?.contentRevision" class="fetched">内容 revision：{{ content.contentRevision }}</p>
     </template>
 
     <template v-else>
