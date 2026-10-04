@@ -1,6 +1,6 @@
 # 数据面契约 v1（已冻结）
 
-> 后续实施说明（2026-10-03）：冻结的存量 update.json/字段与 URL 契约保持不变。新内容包的站点作者端到发布仓导出、提案 API、运行期 SQLite 和手机部署按 `CONTENT-PIPELINE.md`、`PHONE-RUNTIME.md` 执行；提案控制面不回写产品开发仓、不将数据库作为内容主源。旧文档“不建后台/数据库”约束不覆盖新增提案服务。
+> 后续实施说明（2026-10-04 更新）：冻结的存量 update.json/字段与 URL 契约保持不变。站点为纯静态、**无常驻后端与数据库**；内容包导出与发布由电脑侧适配器承担（默认 dry-run），提案走离线 JSON 交接。曾实现过的提案 API 与手机部署已撤回，见 `PHONE-RUNTIME.md`。“不建后台/数据库”这条约束重新成立。
 
 > 冻结日期：2026-10-01。机器可读定义：`schema/*.v1.json`。可执行验证：`node scripts/validate-contract.mjs`（20 项，含两份**线上** `update.json` 实拉校验）。
 > 本文件的最终归属是发布仓 `my-software-releases` 的 `main:docs/CONTRACT.md`（提供方持有契约）。现暂存站点仓，交接时整体迁走。
