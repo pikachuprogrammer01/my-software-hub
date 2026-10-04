@@ -48,43 +48,11 @@
 
 `updateMechanism: built-in-updater` 的产品**不得再显示第二条升级路径**：即使 `update.json` 或内容包里有 `url`/`urls`，设置页也不给下载按钮，只提示"新版本由应用内更新器检查"。给用户两条路径会让其覆盖回旧安装包。
 
-## 五、提案通道（可选，同一局域网内）
+## 五、提案怎么交
 
-契约见 `api/openapi.v1.json`，JSON Schema 在 `schema/proposal-envelope.v1.json`（包住冻结的 `proposal.v1`，不改它）。
-
-```http
-POST /v1/products/table-flow/proposals
-Content-Type: application/json
-Idempotency-Key: tf-1.7.1-2026-10-04-a1b2        # 8-64 位 [A-Za-z0-9._:-]
-X-Hub-Submitter-Token: <部署侧配置，可缺省>
-{
-  "proposal": {
-    "schema": 1,
-    "product": "table-flow",
-    "fieldId": "copy.update.summary",
-    "value": "翻页更稳，导出前预览更快",
-    "channel": "table-flow-panel",               // 只允许 copy.*；facts.* 带 channel 直接 422
-    "clientVersion": "1.7.1",
-    "source": "table-flow-panel",
-    "createdAt": "2026-10-04T09:00:00.000Z"
-  },
-  "base": {
-    "contentRevision": "content-ce7d96ea14df",   // 客户端提交时所见
-    "currentValue": "激活码粘贴不再被 trim 吃掉"  // 该字段旧值
-  }
-}
-```
-
-| 情况 | 状态码 | 客户端处理 |
-|---|---|---|
-| 有提交凭证、已入待处理区 | `201` | 记录 `proposal.id` |
-| 无提交凭证（仅本机/未配置） | `202` | 同上，UI 标注"待人工核对" |
-| 断线重试同一幂等键 | `200/201/202` + `idempotentReplay: true` | 视为成功，**不得**重复提交 |
-| 基础 revision 或字段旧值已过期 | `409` + `proposal.status = conflict` | 重新拉内容包后再提交；不要盲目重放 |
-| 未知产品 / 未知字段 / facts 渠道变体 / 超预算 / HTML | `404` `422` `400` | 不重试，转人工或本地提示 |
-| 频率超限 / 请求体过大 | `429`（带 `Retry-After`）/ `413` | 退避 |
-
-客户端**不得**内置 Git 凭证或永久发布 token；提案不会移动 `latest`，也不会自动改文案。
+没有后端了：提案是**离线 JSON 文件**。客户端或你自己按 `schema/proposal.v1.json` 写一份，跑
+`node scripts/proposal-validate.mjs <文件>` 校验（会拒未知产品、未知字段形态与 `facts.*` 带渠道变体），
+再人工按受控变更进入站点仓。客户端仍然不得携带 Git 写入凭证，也不得直接移动 `latest`。
 
 ## 六、一致性夹具
 

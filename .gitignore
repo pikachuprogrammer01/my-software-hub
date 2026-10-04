@@ -8,10 +8,5 @@ proposals/rejected/*
 proposals/accepted/*
 !proposals/**/.gitkeep
 
-.server-dist/
-.hub-data/
-.hub-static/
 data/publish/
-deploy/out/
-deploy/out/
 /.playwright-mcp/

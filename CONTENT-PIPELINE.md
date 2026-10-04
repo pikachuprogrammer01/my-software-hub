@@ -2,13 +2,11 @@
 
 这是本仓库的执行说明。内容主源在 `products/<id>/content.v1.source.json`，生成包在 `data/generated/<id>/`。当前仓库只负责生成、校验和站点消费；真实发布仓写入仍需由发布 CI 适配器执行。
 
-## 后续运行环境（v2）
+## 站点形态（2026-10-04 定）
 
-站点计划由 Android 手机上的 Termux 实际托管 HTTP 服务，而非仅供手机浏览。完整规范见 [PHONE-RUNTIME.md](./PHONE-RUNTIME.md)，执行提示词与验收清单同步采用该规范。设备系统尚未确认；不能将 Android 方案当作 iPhone 已可运行。
-
-构建在电脑/CI 完成；手机运行 Node.js + Hono 提供静态产物、提案 API 和 SQLite/Drizzle 状态存储。手机部署不依赖 Docker、VitePress dev/preview 或常规启动时构建。SQLite 只保存提案/审计，产品内容仍经站点仓和发布仓流转。JSON 提案目录在新增后端后仅用于导入/导出。
-
-上述服务、迁移与手机部署脚本已落地（`server/`、`migrations/`、`deploy/`），命令与运维交接见 [ANDROID-DEPLOY.md](./ANDROID-DEPLOY.md)，客户端消费规则见 [CLIENT-INTEGRATION.md](./CLIENT-INTEGRATION.md)。Android 实机验收仍未做。公共内容包继续由发布仓分发，手机不可用不应阻断已有客户端读取。6 小时检查目标仅适用于正常运行且联网的客户端。
+纯静态站点，无常驻后端。公开页面由构建产物对外托管；客户端读发布仓的内容包；提案与审核走文件队列
+（`node scripts/proposal-validate.mjs <文件>`）或 Issue。曾实现过的手机服务（Hono + SQLite + Termux
+部署链）已整体撤回，决策与恢复方式见 [PHONE-RUNTIME.md](./PHONE-RUNTIME.md)。
 
 ## 日常修改
 
@@ -45,16 +43,14 @@ node scripts/content-rollback.mjs \
 
 ## 软件端提案
 
-提案格式见 `schema/proposal.v1.json`。当前只实现文件校验：
+提案格式见 `schema/proposal.v1.json`。没有后端之后，提案就是**离线文件交接**：客户端或你自己写一个 JSON，先校验，再人工按受控变更进入站点仓。
 
 ```bash
-node scripts/proposal-validate.mjs path/to/proposal.json                 # 只校 proposal.v1 本体
-node scripts/proposal-review.mjs list --status pending                    # 运行期主存储是 SQLite
-node scripts/proposal-review.mjs apply --id <id>                          # 默认 dry-run
-node scripts/proposal-review.mjs apply --id <id> --real                   # 才写站点仓内容源
+node scripts/proposal-validate.mjs path/to/proposal.json   # 校 schema、产品已知、facts 禁渠道变体
 ```
 
-软件端提案 API 与身份边界已实现（`server/src/routes/proposals.ts`），发布仓写入仍由电脑侧适配器 `scripts/content-publish.mjs` 承担且默认 dry-run。客户端不得携带 Git 写入凭证，也不得直接移动 `latest`。
+批准后改 `products/<id>/content.v1.source.json`，再依次跑 `content:validate` → `content:build` → `content:drift`。
+发布仓写入由电脑侧适配器 `scripts/content-publish.mjs` 承担，**默认 dry-run**。客户端不得携带 Git 写入凭证，也不得直接移动 `latest`。
 
 ## 验证
 

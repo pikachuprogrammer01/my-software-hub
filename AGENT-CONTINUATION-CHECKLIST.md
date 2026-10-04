@@ -4,7 +4,7 @@
 
 > 本轮（2026-10-04）执行环境是 macOS 26.5.1 / arm64 / Node v24.18.0，**没有 Android 设备也没有 adb**。
 > 因此凡是"必须在手机上才能证明"的项目一律留在未勾选状态，并在末尾列出待跑命令。
-> 复跑入口：`pnpm verify`（15 步）；出手机包前 `pnpm verify:full`（再加打包与安装/备份/恢复/回滚演练）。
+> 复跑入口：`pnpm verify`（契约 → 内容 → 夹具 → 发布 dry-run → 站点构建）。
 
 ## 基线
 
@@ -57,25 +57,11 @@
 - [x] 已明确哪些客户端源码尚未修改 —— `CLIENT-INTEGRATION.md` 第七节逐条列出，且未改动任何开发仓
 - [x] 已明确内容包 URL、缓存、fallback 和回滚规则 —— 第二节 MUST 1–12
 
-## Android / Termux 运行与后端
+## Android / Termux 运行与后端（已作废，勿重建）
 
-- [x] 已确认设备系统/架构/Node 版本 —— 本机 macOS/arm64/Node 24.18.0；**目标手机未提供**
-- [x] Hono 提供预构建静态文件、API 与 /health —— `scripts/test-api.mjs` 第【1】节
-- [x] 默认监听 127.0.0.1:8787，局域网绑定需显式配置 —— `config.ts` 默认值 + `HOST=0.0.0.0` 实测
-- [ ] SQLite 驱动在目标环境验证 —— 需要真机：`node .../scripts/sqlite-compat-check.mjs`（电脑侧 10/10 通过，Android 未知）
-- [x] 提案数据库为运行期主存储，JSON 仅导入/导出 —— `proposal-review.mjs export/import` 有测试
-- [x] 认证、限流、幂等、基础 revision 冲突检测和审计通过测试 —— test-api 第【2】【3】节共 12 项
-- [x] 部署包不含数据库、密钥及电脑原生依赖 —— 清单禁止项断言 + tar 条目实测（`.sqlite/.env/node_modules/*.node/proposals/Automation` 零命中）
-- [x] start/stop/status/logs 命令已验证 —— `scripts/test-deploy.mjs`（含 SIGKILL 后重启、日志轮转、pid 防重）
-- [x] 无 Docker/systemd/dev server 生产依赖 —— 生产入口是 `node api/index.js`；仓库里没有手机侧构建步骤
-- [x] clean URL 直接访问与 404 行为正确 —— `/features` 200、`/table-flow` 301→`/table-flow/` 200、未知路径 404
-- [x] 外网断开时本地服务仍提供已有静态页面 —— 电脑侧仅证明"运行期零出站 + 静态资源全同源"；**手机真断网未验证**
-- [x] 进程重启后提案保留，重复请求不重复写入 —— SIGKILL 后重启测试
-- [x] SQLite 一致性备份、恢复及部署回滚实际验证 —— 在线备份 → 破坏主库 → 恢复比对业务键与提案 ID → 版本回滚
-- [ ] 目标手机与第二设备的局域网访问已验证 —— 本机只验证了 `0.0.0.0` 绑定后可从本机第二地址（192.168.x.x）访问，这不等于第二台设备可达
-- [ ] 锁屏、网络切换、重启后的恢复行为有证据 —— 无设备，未做
-- [x] 设备睡眠期间不承诺 6 小时/全天在线 SLA —— `ANDROID-DEPLOY.md` 第五节写明边界
-- [x] 已区分电脑测试、Android 实机和公网部署状态 —— `ANDROID-DEPLOY.md` 第六节验证矩阵
+- [x] 曾实现并电脑验证过：Hono 静态面 + `/health` + 提案 API、SQLite/Drizzle 迁移与在线备份、`hubctl` 全套运维（API 28 项 / 部署演练 19 项 / 提案处理器 8 项）
+- [x] 2026-10-04 按你的决定整体撤回：公众可用性不该绑在手机电池上，内容分发由发布仓与静态托管覆盖
+- [ ] 如要恢复：`git checkout pre-static-only -- server migrations deploy api ...`（见 `PHONE-RUNTIME.md`）
 
 ## 当前实现缺口复核
 
