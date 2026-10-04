@@ -52,7 +52,7 @@ schema/                    数据面契约 v1 的机器可读定义（content/pr
 scripts/validate-contract.mjs 契约自检（20 项），已前置进 pnpm build
 conformance/fixtures/      客户端一致性夹具（期望表，跨语言共用）
 VISION.md / REQUIREMENTS.md 目标与目的 / 需求文档（PRD）· PRODUCTS.md 五仓实测审计 · SITE-DESIGN.md 站点设计 · CONTRACT.md 数据面契约 · RENAME.md 改名执行手册
-README.md / DOWNLOADS.md / CLIENT-INTEGRATION.md / PHONE-RUNTIME.md 仓库内部文档 · 以上均**不发布**（见 config 的 INTERNAL 名单）
+README.md / DOWNLOADS.md / CLIENT-INTEGRATION.md / PHONE-RUNTIME.md / DEPLOY.md 仓库内部文档 · 以上均**不发布**（见 config 的 INTERNAL 名单）
 UsageGuideContent.vue    开发仓面板内嵌指南原文（文案基准，不发布）
 ```
 

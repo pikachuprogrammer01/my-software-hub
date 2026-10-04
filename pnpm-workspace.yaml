@@ -1,5 +1,9 @@
-# 电脑侧不需要跑 better-sqlite3 的安装脚本：它随包提供预编译产物，
-# 真要在设备上编译是手机侧 `npm ci` 的事（见 deploy/hubctl 与 ANDROID-DEPLOY.md）。
+# 这个文件必须保留 `packages:`：pnpm 9 见到没有 packages 字段的 pnpm-workspace.yaml
+# 会直接 `packages field missing or empty` 退出（Cloudflare Pages 构建机就是这个行为），
+# pnpm 10/11 才容忍。单包仓写死 `['.']` 即可，删掉这行等于弄坏 CI。
+# `allowBuilds` 是 pnpm 11 的构建脚本策略：esbuild 需要放行，未列出的依赖会被拦成 ERR_PNPM_IGNORED_BUILDS。
+packages:
+  - '.'
+
 allowBuilds:
-  better-sqlite3: false
   esbuild: true

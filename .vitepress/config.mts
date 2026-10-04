@@ -9,7 +9,7 @@ const INTERNAL = new Set([
   'VISION.md', 'REQUIREMENTS.md', 'RENAME.md',
   'CONTENT-PIPELINE.md', 'PHONE-RUNTIME.md',
   'AGENT-CONTINUATION-PROMPT.md', 'AGENT-CONTINUATION-CHECKLIST.md',
-  'CLIENT-INTEGRATION.md',
+  'CLIENT-INTEGRATION.md', 'DEPLOY.md',
   'docs/README.md', 'docs/EDGE_ADDONS_LISTING.md'
 ])
 
@@ -103,6 +103,7 @@ export default defineConfig(async () => {
     ],
     cleanUrls: true,
     lastUpdated: true,
+    sitemap: { hostname: 'https://hub.pikachu01.me' },
     srcExclude: [...INTERNAL],
     rewrites: Object.fromEntries(pages.map((p) => [p.rel, p.route])),
     markdown: { theme: { light: 'github-light', dark: 'github-dark' } },
