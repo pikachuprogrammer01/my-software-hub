@@ -18,9 +18,16 @@
 
 1. 【我】把本轮改动提交并 push 到 `main`（`DEPLOY.md`、`public/robots.txt`、config 的 `sitemap` 与不发布名单、
    README 一行、`pnpm-workspace.yaml` 的 `packages:`）。没 push 之前 Pages 构建不到这些内容。
-2. 【你】Cloudflare 控制台 → Workers & Pages（新版可能写作 Compute）→ Create application → 选 **Pages** → **Connect to Git**，
+2. 【你】Cloudflare 控制台 → Create application → **Pages**（不是 Workers）→ **Connect to Git**，
    首次会要求安装 Cloudflare 的 GitHub App，仓库范围选 **Only select repositories** 里的 `my-software-hub`。
    项目名会决定 `<项目名>.pages.dev`，建议就叫 `my-software-hub`。
+
+   **必须是 Pages 项目**，两个原因：① Workers 的 Custom Domain 要求域名先是 Cloudflare 的 active zone，
+   那等于把整个 `pikachu01.me`（含根域那个 profile 站）的解析搬进 Cloudflare；Pages 挂子域不需要建 zone，
+   加一条 CNAME 就行。② Workers 项目带 `npx wrangler deploy` 这一步，没有配置文件时 wrangler 会自己猜
+   输出目录（实测猜成 `docs/.vitepress/dist`，构建产物在但上传找不到目录）；Pages 由后台的 Output directory
+   直接指定，仓库里也不用多出 `wrangler.jsonc`。
+   若已存在同名 Workers 项目，先删掉它（只有失败的构建、没绑域名没流量），或者换个项目名。
 3. 【你】构建参数照抄：
 
    | 项 | 值 |
@@ -33,6 +40,8 @@
    | Output directory | `.vitepress/dist` |
    | Environment variables | 不需要。首跑日志实测构建机给的是 `nodejs@24.18.0`，与本机一致 |
 
+   Pages 没有 Deploy command 这一栏；如果你在设置里看到它，说明项目建成了 Workers。
+
    构建机解析工作区配置用的是 pnpm 9 那一套语义，`pnpm-workspace.yaml` 少了 `packages:` 就会
    `packages field missing or empty` 退出（首跑即死在这）；字段为什么不能删，写在那个文件的注释里。
    已实测 pnpm 9.15.9 / 10.11.1 / 11.25.0 三个大版本 install + build 全绿。
@@ -40,17 +49,19 @@
    本仓依赖（vitepress + ajv）不需要原生编译，不要为此加东西。`packageManager` 字段同样不必钉。
 4. 【你】Save and Deploy，等构建结束。**构建红了就不要去改命令绕过**，把日志给我，那是契约自检或死链校验在拦。
 5. 【我】先验 `https://my-software-hub.pages.dev`：按文末「验证清单」逐条跑一遍，把域名换成 pages.dev。
-6. 【你】项目 → Custom domains → 加 `hub.pikachu01.me`。因为解析不在 Cloudflare，CF 会给出一条**域名归属验证 TXT**，
-   形如主机记录 `_cf-custom-hostname.hub`（有的面板写成 `_cf-custom-hostname.hub.pikachu01.me`）、值为 CF 给的串。
-   若面板同时提供"把域名加入 Cloudflare / 迁移 nameserver"，**不要选**，我们要把解析留在阿里云。
-7. 【你】阿里云控制台 → 域名 → 云解析 `pikachu01.me` → 添加记录，两条，都不动根域：
+6. 【你】项目 → Custom domains → 输入 `hub.pikachu01.me` → **先在 CF 面板走完添加流程**（它会告诉你目标地址）。
+   若面板同时提议"把域名加入 Cloudflare / 迁移 nameserver"，**不要选**，我们要把解析留在阿里云；
+   Pages 挂子域不需要建 zone。
+7. 【你】再回阿里云控制台 → 域名 → 云解析 `pikachu01.me` → 加**一条**记录，不动根域：
 
    | 记录类型 | 主机记录 | 记录值 | TTL |
    |---|---|---|---|
-   | TXT | `_cf-custom-hostname.hub` | CF 给的校验串 | 默认 |
-   | CNAME | `hub` | `my-software-hub.pages.dev` | 10 分钟 |
+   | CNAME | `hub` | `<你的项目名>.pages.dev` | 10 分钟 |
 
+   **顺序不能反**：官方文档明确写了先加 CNAME 而没在 Pages 后台关联域名会直接 522。
+   Pages 子域也不存在 TXT 归属验证这一条（那是 Cloudflare for SaaS 的做法），只有这一条 CNAME。
    根域那条指向 Vercel 的 A 记录**一个字都不要碰**，那是你的 profile 站。
+   已实测：`hub.pikachu01.me` 当前无记录、域名上没有 CAA 记录，所以既不会冲突也不会挡住 CF 签证书。
 8. 【我】用 DoH 确认解析真的生效（本机 `dig` 走 fake-IP 代理，结果不可信）：
    `curl -s -H 'accept: application/dns-json' "https://cloudflare-dns.com/dns-query?name=hub.pikachu01.me&type=CNAME"`。
 9. 【你+我】回到 CF 的 Custom domains 等状态从 Pending 变 Active（CF 自动签发 Universal SSL 证书），
