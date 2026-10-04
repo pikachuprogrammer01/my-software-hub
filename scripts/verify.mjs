@@ -80,7 +80,7 @@ for (const item of steps) {
 // 构建产物里不能出现内部交接文档
 if (!failed.length) {
   const dist = path.join(SITE_ROOT, '.vitepress', 'dist')
-  const forbidden = ['android-deploy.html', 'client-integration.html', 'phone-runtime.html', 'agent-continuation-prompt.html', 'contract.html', 'products.html']
+  const forbidden = ['membership-plan.html', 'android-deploy.html', 'client-integration.html', 'phone-runtime.html', 'agent-continuation-prompt.html', 'contract.html', 'products.html']
   const leaked = forbidden.filter((name) => fs.existsSync(path.join(dist, name)))
   if (leaked.length) {
     console.error(`  ❌ 内部交接文档出现在站点产物：${leaked.join(', ')}`)
