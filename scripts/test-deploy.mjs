@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { spawn, spawnSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import { SITE_ROOT, connectedProducts, generatedPaths, readJson } from './content-lib.mjs'
 import { readBoundPort } from './lib/runtime-port.mjs'
 
@@ -259,27 +259,30 @@ await record('HOST=0.0.0.0 时可从本机第二地址访问（局域网绑定�
   const lanIp = Object.values(os.networkInterfaces()).flat().find((item) => item && item.family === 'IPv4' && !item.internal)?.address
   assert.ok(lanIp, '本机没有可用的非回环 IPv4 地址')
   hubctl(['stop'])
-  const res = spawn('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'start'], {
+  // hubctl start 本身会等到健康才返回，所以同步跑就能拿到它的告警
+  const started = spawnSync('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'start'], {
     cwd: SITE_ROOT,
-    env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: '0', HUB_REVIEWER_TOKEN_FILE: path.join(work, 'reviewer.token') },
-    stdio: 'ignore'
+    encoding: 'utf8',
+    // 故意不配审核身份：绑非回环地址时必须把暴露面告警打出来
+    env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: '0' },
+    timeout: 120000
   })
-  res.unref()
-  const { port: lanPort, baseUrl } = await readBoundPort(path.join(hubHome, 'data'))
-  void baseUrl
-  const deadline = Date.now() + 20000
-  let ok = false
-  while (Date.now() < deadline && !ok) {
-    try {
-      const health = await fetch(`http://${lanIp}:${lanPort}/health`, { signal: AbortSignal.timeout(2000) })
-      ok = health.ok
-    } catch {
-      await new Promise((r) => setTimeout(r, 400))
-    }
-  }
-  assert.ok(ok, `无法从 ${lanIp}:${lanPort} 访问 /health`)
+  assert.equal(started.status, 0, `${started.stdout}${started.stderr}`)
+  const startOutput = `${started.stdout}${started.stderr}`
+  assert.match(startOutput, /非回环地址，同一网络内的其他设备可访问/)
+  assert.match(startOutput, /未配置审核身份：任何人都能提交提案/)
+  assert.match(startOutput, /只想给 tailnet 用就把 HOST 设成手机的 Tailscale 地址/)
+  const { port: lanPort } = await readBoundPort(path.join(hubHome, 'data'))
+  const health = await fetch(`http://${lanIp}:${lanPort}/health`, { signal: AbortSignal.timeout(5000) })
+  assert.ok(health.ok, `无法从 ${lanIp}:${lanPort} 访问 /health`)
   const page = await fetch(`http://${lanIp}:${lanPort}/table-flow/`)
   assert.equal(page.status, 200)
+  const warnings = spawnSync('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'status'], {
+    cwd: SITE_ROOT,
+    encoding: 'utf8',
+    env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: '0' }
+  }).stdout
+  assert.match(warnings, /回环=仅本机/, 'status 没说明监听范围的含义')
   spawnSync('bash', [path.join(SITE_ROOT, 'deploy', 'hubctl'), 'stop'], { cwd: SITE_ROOT, env: { ...process.env, HUB_HOME: hubHome, HUB_DATA_DIR: path.join(hubHome, 'data'), HOST: '0.0.0.0', PORT: '0' } })
 })
 

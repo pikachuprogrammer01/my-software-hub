@@ -157,7 +157,7 @@ do_start() {
     if [ -s "$HUB_DATA_DIR/run/hubd.port" ]; then bound="$(tr -d '[:space:]' < "$HUB_DATA_DIR/run/hubd.port")"; fi
     if [ -n "$bound" ] && health_ok "$bound"; then
       log "✅ 启动成功：http://${HOST}:${bound}/health（pid=$(running_pid || echo '?')）"
-      [ "$HOST" = "0.0.0.0" ] && warn "监听 0.0.0.0：同一局域网内的设备可访问，请确认这是你想要的暴露范围"
+      exposure_warning "$HOST" "$bound"
       return 0
     fi
     sleep 1
@@ -216,6 +216,21 @@ verify_manifest() {
     if(bad){console.error("共 "+bad+" 个文件与部署清单不一致");process.exit(1)}
     console.log("清单内 "+manifest.files.length+" 个文件全部匹配")
   ' ) || die "部署包文件校验失败"
+}
+
+# 暴露面告警：绑到非回环地址就等于让同网/同 tailnet 的机器也能写提案
+exposure_warning() {
+  local host="$1" bound="${2:-}"
+  case "$host" in
+    127.0.0.1 | localhost | ::1) return 0 ;;
+  esac
+  warn "监听 ${host}${bound:+:${bound}}：非回环地址，同一网络内的其他设备可访问"
+  if [ -z "${HUB_REVIEWER_TOKEN_FILE:-}" ] && [ -z "${HUB_REVIEWER_TOKEN:-}" ]; then
+    warn "  且未配置审核身份：任何人都能提交提案，而裁决端点会返回 503。要么配 HUB_REVIEWER_TOKEN_FILE，要么把 HOST 收回 127.0.0.1"
+  fi
+  if [ "$host" = "0.0.0.0" ]; then
+    warn "  只想给 tailnet 用就把 HOST 设成手机的 Tailscale 地址（100.x.y.z），比 0.0.0.0 少暴露其它网卡"
+  fi
 }
 
 install_dependencies() {
@@ -457,7 +472,7 @@ do_status() {
   local version pid
   version="$(current_version 2>/dev/null || echo '未安装')"
   printf '版本    : %s\n' "$version"
-  printf '监听    : %s:%s（局域网访问需显式设 HOST=0.0.0.0）\n' "$HOST" "$(effective_port)"
+  printf '监听    : %s:%s（回环=仅本机；0.0.0.0=同网可达；100.x=只给 tailnet）\n' "$HOST" "$(effective_port)"
   printf '数据目录: %s\n' "$HUB_DATA_DIR"
   printf '日志    : %s\n' "$LOG_FILE"
   if pid="$(running_pid)"; then

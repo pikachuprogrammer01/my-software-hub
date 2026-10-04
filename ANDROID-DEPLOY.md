@@ -94,6 +94,30 @@ bash ~/hub-$HUB_VERSION/scripts/hubctl status
 - IP 会变，访问入口用主机名或DHCP 固定地址；本文档不写死某个 IP。
 - 认证：`X-Hub-Reviewer-Token`（裁决与提案列表）与 `X-Hub-Submitter-Token`（提交信任级别）都是部署侧配置的共享口令。客户端内置的 token 不算安全凭证；未配置审核身份时裁决端点返回 503，提案只进不可信待处理区。
 - 只有 `127.0.0.1` 调试可用明文 HTTP；跨设备带凭证的请求要经 HTTPS 或受信任加密通道（本仓不含公网域名、TLS 或隧道配置）。
+### 通过 Tailscale 访问（推荐路径）
+
+```bash
+# 手机：Android 版 Tailscale 是 VPN 服务模式，不需要在 Termux 里跑 daemon
+#   连上后在 Tailscale App 看本机地址；装了 CLI 也可以：
+tailscale ip -4                                  # 形如 100.x.y.z
+
+# 只暴露给 tailnet：绑到这个地址，而不是 0.0.0.0
+sed -i '' "s/^HOST=.*/HOST=100.x.y.z/" ~/hub/hub.env
+bash ~/hub/current/scripts/hubctl restart
+bash ~/hub/current/scripts/hubctl status         # 打印实际端口与暴露面
+
+# 电脑（同一 tailnet）：
+curl -I http://100.x.y.z:8787/health
+```
+
+三条容易踩的点：
+
+1. **绑 `127.0.0.1` 时 tailnet 也进不来**。要外部可达就必须绑 tailnet 网卡地址或 `0.0.0.0`；`hubctl start` 在绑非回环地址时会打告警，未配审核身份时再补一条。
+2. 优先 `HOST=<100.x.y.z>` 而不是 `0.0.0.0`：前者只暴露这一张网卡，后者连 Wi-Fi 局域网一起开放。
+3. tailnet 内部由 WireGuard 加密，跑明文 HTTP + 共享 token 可接受。**一旦用 `tailscale funnel` 暴露公网就不行**：那要先有 TLS 和真正的审核身份，别拿共享 token 上公网。
+
+Tailscale 掉线 = 外面访问不到。把 Tailscale 与 Termux 都排除在电池优化之外并保持供电，仍然不构成全天在线承诺。
+
 - Android 休眠/电池优化会冻结进程。可行做法：保持供电、关闭该应用电池优化、`termux-wake-lock`，或按需配 Termux 开机启动脚本。这些都只改善在线率，**不构成全天在线保证**；"6 小时检查"是客户端在正常运行且联网时的目标，不是手机在线 SLA。
 
 ## 六、验证矩阵（已做 / 待做）
@@ -108,6 +132,7 @@ bash ~/hub-$HUB_VERSION/scripts/hubctl status
 | `HOST=0.0.0.0` 本机第二地址可达 | 电脑已验证 |
 | Android/Termux 实机运行 | **未验证**（无设备） |
 | 第二台设备局域网访问 | **未验证** |
+| 经 Tailscale 从另一设备访问手机服务 | **未验证**（手机侧步骤待实跑回传） |
 | 锁屏、Wi-Fi 切换、重启后恢复行为 | **未验证** |
 | 真实断外网下手机仍服务 | **未验证**（电脑侧仅证明运行期零出站请求 + 静态资源全同源） |
 
