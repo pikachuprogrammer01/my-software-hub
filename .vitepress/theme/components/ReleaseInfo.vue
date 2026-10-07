@@ -46,7 +46,7 @@ const download = computed(() => {
         {{ content?.update?.summary || directLink.notes }}
       </p>
       <p v-if="directLink.fetchedAt" class="fetched">
-        版本信息取自扩展同款更新清单（同步于 {{ directLink.fetchedAt.slice(0, 10) }}）
+        版本信息取自扩展同款更新清单（该版本自 {{ directLink.fetchedAt.slice(0, 10) }} 起未变化）
       </p>
     </template>
 

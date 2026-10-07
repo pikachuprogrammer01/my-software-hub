@@ -549,6 +549,121 @@ test('回环地址不被当成版本号（127.0.0.1 是 IP，不是 x.y.z 事实
   assert.match(lintIn(dir).stdout, /任意 x\.y\.z 版本号/, '真版本号仍须被抓住')
 })
 
+/**
+ * 以下三组守卫测试：版本快照不脏树、站点不托管二进制、改了站点必须记日志。
+ * 都跑在临时副本 / 临时 git 仓里，不碰真实产物。
+ */
+function runWithEnv(dir, script, args = [], env = {}) {
+  const res = spawnSync(process.execPath, [path.join(dir, 'scripts', script), ...args], {
+    cwd: dir,
+    encoding: 'utf8',
+    env: { ...process.env, ...env }
+  })
+  return { code: res.status, stdout: `${res.stdout ?? ''}${res.stderr ?? ''}` }
+}
+
+const manifest = (o) => `data:application/json,${encodeURIComponent(JSON.stringify(o))}`
+const RELEASE_FILE = (dir) => path.join(dir, '.vitepress/release.json')
+
+test('线上版本没变时不重写 release.json（构建不该天天弄脏工作树）', () => {
+  const dir = sandbox()
+  const env = { HUB_UPDATE_MANIFEST_URL: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
+  assert.equal(runWithEnv(dir, 'sync-release.mjs', [], env).code, 0)
+  const first = fs.readFileSync(RELEASE_FILE(dir), 'utf8')
+  assert.match(first, /"version": "9\.9\.9"/)
+  assert.equal(runWithEnv(dir, 'sync-release.mjs', [], env).code, 0)
+  assert.equal(fs.readFileSync(RELEASE_FILE(dir), 'utf8'), first, '同样的版本事实不该改动文件一个字节')
+})
+
+test('线上版本变了才重写快照并前进 fetchedAt', () => {
+  const dir = sandbox()
+  const a = { HUB_UPDATE_MANIFEST_URL: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
+  const b = { HUB_UPDATE_MANIFEST_URL: manifest({ version: '9.9.10', url: 'https://example.invalid/b.zip', notes: 'y' }) }
+  assert.equal(runWithEnv(dir, 'sync-release.mjs', [], a).code, 0)
+  const before = readJson(RELEASE_FILE(dir))
+  const out = runWithEnv(dir, 'sync-release.mjs', [], b)
+  assert.equal(out.code, 0, out.stdout)
+  const after = readJson(RELEASE_FILE(dir))
+  assert.equal(after.version, '9.9.10')
+  assert.notEqual(after.url, before.url, '版本变了却没重写文件，下载直链就会停在旧版')
+  assert.match(out.stdout, /v9\.9\.9 → v9\.9\.10/)
+})
+
+test('把安装包塞进 public/ 会被 lint 挡住', () => {
+  const dir = sandbox()
+  const file = path.join(dir, 'public/assets/demo/v9.9.9/Demo-v9.9.9.zip')
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  fs.writeFileSync(file, 'not a real zip')
+  const out = lintIn(dir)
+  assert.notEqual(out.code, 0, `${out.stdout}\n站点仓里放安装包必须红`)
+  assert.match(out.stdout, /本站只挂直链，二进制归发布仓/)
+  fs.rmSync(file, { recursive: true, force: true })
+  assert.equal(lintIn(dir).code, 0, '删掉后应恢复绿')
+})
+
+function gitIn(dir, ...args) {
+  return spawnSync('git', ['-C', dir, ...args], {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      GIT_AUTHOR_NAME: 'hub-test',
+      GIT_AUTHOR_EMAIL: 'hub-test@example.invalid',
+      GIT_COMMITTER_NAME: 'hub-test',
+      GIT_COMMITTER_EMAIL: 'hub-test@example.invalid'
+    }
+  })
+}
+
+function guardIn(dir) {
+  const res = spawnSync(process.execPath, [path.join(SITE_ROOT, 'scripts/changelog-guard.mjs'), '--repo', dir], { encoding: 'utf8' })
+  return { code: res.status, stdout: `${res.stdout ?? ''}${res.stderr ?? ''}` }
+}
+
+test('改了发布面却没记 CHANGELOG 会被守卫挡住，补上日志恢复绿', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-changelog-test-'))
+  try {
+    assert.equal(gitIn(dir, 'init', '-q', '-b', 'main').status, 0)
+    fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), '# 站点更新日志\n\n## 2026-10-07\n\n- feat: 起点\n')
+    fs.mkdirSync(path.join(dir, 'products/demo'), { recursive: true })
+    fs.writeFileSync(path.join(dir, 'products/demo/index.md'), '# demo\n')
+    gitIn(dir, 'add', '-A')
+    assert.equal(gitIn(dir, 'commit', '-q', '-m', 'feat: 起点').status, 0)
+    assert.equal(guardIn(dir).code, 0, guardIn(dir).stdout)
+
+    fs.writeFileSync(path.join(dir, 'products/demo/index.md'), '# demo\n\n改了页面。\n')
+    gitIn(dir, 'add', '-A')
+    assert.equal(gitIn(dir, 'commit', '-q', '-m', 'feat: 忘了记日志').status, 0)
+    const red = guardIn(dir)
+    assert.notEqual(red.code, 0, '改了发布面却没记日志必须红')
+    assert.match(red.stdout, /没记 CHANGELOG/)
+    assert.match(red.stdout, /products\/demo\/index\.md/)
+
+    fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), '# 站点更新日志\n\n## 2026-10-07\n\n- feat: 起点\n- feat: 忘了记日志\n')
+    gitIn(dir, 'add', '-A')
+    assert.equal(gitIn(dir, 'commit', '-q', '-m', 'docs: 补日志').status, 0)
+    assert.equal(guardIn(dir).code, 0, guardIn(dir).stdout)
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('只改内部文档不要求记日志，守卫也不该误红', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-changelog-test-'))
+  try {
+    assert.equal(gitIn(dir, 'init', '-q', '-b', 'main').status, 0)
+    fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), '# 站点更新日志\n\n## 2026-10-07\n\n- feat: 起点\n')
+    fs.writeFileSync(path.join(dir, 'README.md'), '# 仓库说明\n')
+    gitIn(dir, 'add', '-A')
+    assert.equal(gitIn(dir, 'commit', '-q', '-m', 'feat: 起点').status, 0)
+    fs.writeFileSync(path.join(dir, 'README.md'), '# 仓库说明\n\n补一段。\n')
+    gitIn(dir, 'add', '-A')
+    assert.equal(gitIn(dir, 'commit', '-q', '-m', 'docs: 只改 README').status, 0)
+    assert.equal(guardIn(dir).code, 0, guardIn(dir).stdout)
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
+})
+
 const failed = results.filter((item) => !item.ok)
 console.log(`\n内容流水线测试：${results.length - failed.length}/${results.length} 通过`)
 if (failed.length) {

@@ -173,6 +173,26 @@ for (const product of readRegistry().products.filter((p) => p.visibility !== 'in
   }
 }
 
+/**
+ * 站点不托管安装包：产物只在发布仓与 GitHub 的 release 上，页面只给直链。
+ * 一旦有人把 zip 塞进 public/，下载就静默从"发布仓那份"变成"站内这份"，
+ * 两边迟早分叉，而 update.json 里的 URL 已经不再对应真实可下的文件。
+ */
+const INSTALLER = /\.(zip|dmg|pkg|exe|msi|appimage|deb|rpm|7z|tar\.gz)$/i
+const hosted = []
+const walkPublic = (dir) => {
+  for (const name of fs.readdirSync(dir)) {
+    const abs = path.join(dir, name)
+    if (fs.statSync(abs).isDirectory()) walkPublic(abs)
+    else if (INSTALLER.test(name)) hosted.push(path.relative(SITE_ROOT, abs))
+  }
+}
+const publicDir = path.join(SITE_ROOT, 'public')
+if (fs.existsSync(publicDir)) walkPublic(publicDir)
+if (hosted.length) {
+  structure.push(`public/ 里放了安装包（${hosted.join('、')}）：本站只挂直链，二进制归发布仓`)
+}
+
 if (historyHits.length) {
   console.log(`ℹ️ 历史态（更新日志）与未发布笔记保留原文事实字面量，按契约豁免：${historyHits.length} 处`)
   for (const hit of historyHits.slice(0, 6)) console.log(`   · ${hit}`)

@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "auto-clicker-mac",
-  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
-  "generatedAt": "2026-10-05T12:51:00.685Z",
+  "sourceRevision": "5cc758ac611826d06c41e66fe31be88ae76a067f",
+  "generatedAt": "2026-10-07T10:05:01.090Z",
   "facts": {
     "version.current": {
       "value": "1.1.0",
@@ -41,6 +41,16 @@
       "effectiveFromVersion": "1.0.0",
       "source": "manual"
     },
+    "download.giteeZipBase": {
+      "value": "https://raw.giteeusercontent.com/pikachuprogrammer01/my-software-releases/raw/auto-clicker-mac-v1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "release-repo:auto-clicker-mac/update.json"
+    },
+    "download.githubZipBase": {
+      "value": "https://github.com/pikachuprogrammer01/auto-clicker-mac/releases/download/v1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "github-release:v1.1.0"
+    },
     "form.factor": {
       "value": "macOS 菜单栏应用（原生 SwiftUI）",
       "effectiveFromVersion": "1.1.0",
@@ -60,7 +70,7 @@
       "default": "在鼠标当前位置按设定间隔重复点击：左键或右键、单击或长按、无限或指定次数，全局快捷键启停。不需要坐标输入、脚本、账号，也不联网。"
     },
     "install.summary": {
-      "default": "从 GitHub Releases 下载对应芯片的压缩包；未做公证，首次打开需要在系统设置里允许一次。"
+      "default": "从 Gitee 或 GitHub 的发布产物下载对应芯片的压缩包；未做公证，首次打开需要在系统设置里允许一次。"
     },
     "download.label": {
       "default": "到 Releases 获取安装包"
@@ -83,6 +93,6 @@
     "summary": "应用不检查更新，新版本需手动下载。",
     "text": "Auto Clicker 没有任何网络层，不会提示新版本。要升级就重新下载对应芯片的压缩包并替换旧版本。"
   },
-  "contentRevision": "content-f923c68a0681",
-  "sha256": "f923c68a0681ada378b06d9539b617ae8eaea7594876cdaa6c9e1a410e6bfb53"
+  "contentRevision": "content-d4342c00f37f",
+  "sha256": "d4342c00f37f11b64c5e9d21147179bc90b8c268f5c2537d6925ba1c957217be"
 }

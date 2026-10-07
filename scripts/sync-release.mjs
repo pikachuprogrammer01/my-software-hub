@@ -6,8 +6,12 @@ const here = path.dirname(fileURLToPath(import.meta.url))
 export const SITE_ROOT = path.dirname(here)
 export const RELEASE_FILE = path.join(SITE_ROOT, '.vitepress', 'release.json')
 
-/** 扩展与站点共用同一份更新清单，站点不自行拼版本号与下载直链。 */
+/**
+ * 扩展与站点共用同一份更新清单，站点不自行拼版本号与下载直链。
+ * HUB_UPDATE_MANIFEST_URL 只给测试与离线镜像用，默认值就是线上真值。
+ */
 export const UPDATE_MANIFEST_URL =
+  process.env.HUB_UPDATE_MANIFEST_URL ??
   'https://gitee.com/pikachuprogrammer01/my-software-releases/raw/table-flow/update.json'
 
 /**
@@ -44,13 +48,18 @@ export async function syncRelease({ timeoutMs = 8000 } = {}) {
     const json = await res.json()
     if (!isValid(json.version)) throw new Error(`版本号形态异常：${json.version}`)
     if (!String(json.url ?? '').startsWith('https://')) throw new Error('下载地址不是 https')
-    const next = {
+    const facts = {
       product: RELEASE_SNAPSHOT_PRODUCT,
       version: json.version,
       url: json.url,
-      notes: typeof json.notes === 'string' ? json.notes.trim() : '',
-      fetchedAt: new Date().toISOString()
+      notes: typeof json.notes === 'string' ? json.notes.trim() : ''
     }
+    // fetchedAt 只在版本事实真的变化时前进：每次构建都刷时间戳会让工作树永远脏，
+    // 而这个文件是"版本事实缓存"，不是"上次运行时间"。
+    if (current.fetchedAt && JSON.stringify({ ...current, fetchedAt: null }) === JSON.stringify({ ...facts, fetchedAt: null })) {
+      return current
+    }
+    const next = { ...facts, fetchedAt: new Date().toISOString() }
     fs.mkdirSync(path.dirname(RELEASE_FILE), { recursive: true })
     fs.writeFileSync(RELEASE_FILE, `${JSON.stringify(next, null, 2)}\n`)
     if (next.version !== current.version) {
@@ -70,7 +79,23 @@ export async function syncRelease({ timeoutMs = 8000 } = {}) {
   }
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+/**
+ * 直接跑本文件时才打印快照。判定要过 realpath：macOS 上 /var 与 /tmp 都是软链，
+ * 只比字符串会让 `pnpm sync` 在临时目录里静默变成空操作（退出码 0、什么都没写）。
+ */
+function isCliEntry() {
+  if (!process.argv[1]) return false
+  const self = fileURLToPath(import.meta.url)
+  const target = path.resolve(process.argv[1])
+  if (target === self) return true
+  try {
+    return fs.realpathSync(target) === fs.realpathSync(self)
+  } catch {
+    return false
+  }
+}
+
+if (isCliEntry()) {
   const release = await syncRelease()
   console.log(JSON.stringify(release, null, 2))
 }

@@ -10,23 +10,22 @@ const assets = [
   { id: 'intel', title: 'Intel', file: 'Auto-Clicker-v{version}-intel.zip' }
 ]
 
-const sources = computed(() => {
-  if (!version.value) return []
-  return [
+const sources = computed(() =>
+  [
     {
       id: 'gitee',
       name: 'Gitee 镜像',
       benefit: '使用已同步到 Gitee 产品分支与版本 tag 的同一 ZIP，直接下载不需要登录。',
-      base: `/assets/auto-clicker-mac/v${version.value}`
+      base: content.value?.facts?.['download.giteeZipBase']?.value ?? null
     },
     {
       id: 'github',
       name: 'GitHub',
       benefit: '海外网络通常更稳定，作为备用下载来源。',
-      base: `https://github.com/pikachuprogrammer01/auto-clicker-mac/releases/download/v${version.value}`
+      base: content.value?.facts?.['download.githubZipBase']?.value ?? null
     }
-  ]
-})
+  ].filter((source) => source.base)
+)
 
 function fileName(asset) {
   return asset.file.replace('{version}', version.value)
@@ -56,7 +55,7 @@ function url(source, asset) {
             referrerpolicy="no-referrer"
             download
           >
-            从 {{ source.name }} 下载 ZIP
+            从 {{ source.name }}下载 ZIP
           </a>
           <p>{{ source.benefit }}</p>
         </div>

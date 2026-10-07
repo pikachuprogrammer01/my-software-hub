@@ -54,6 +54,7 @@ scripts/dev.mjs          dev 包装：md 增删自动重扫导航
 schema/                  数据面契约 v1 的机器可读定义（content/products/facts/release-notes/proposal + 提案信封）
 scripts/validate-contract.mjs 契约自检（20 项），已前置进 pnpm build
 scripts/content-lint.mjs 当前态裸事实 + 注册表与页面一致性 + 逐字副本哈希 三重守卫
+scripts/changelog-guard.mjs 发布面改了却没记 CHANGELOG.md 即红（已前置进 pnpm validate）
 conformance/fixtures/    客户端一致性夹具（期望表，跨语言共用）
 docs/                    仓库内部笔记（发布仓 README 副本、Edge 商店文案）——不发布
 VISION.md / REQUIREMENTS.md / PRODUCTS.md / SITE-DESIGN.md / CONTRACT.md / RENAME.md 目标·需求·审计·设计·契约

@@ -1,0 +1,13 @@
+# 2026-10-07 路由改造：一产品一目录，旧地址永久跳转。
+# Cloudflare Pages 读取本文件（构建产物根目录），VitePress 会把 public/ 原样拷进去。
+/overview /table-flow/overview 301
+/features /table-flow/features 301
+/scope /table-flow/scope 301
+/install /table-flow/install 301
+/update /table-flow/update 301
+/quickstart /table-flow/quickstart 301
+/pricing /table-flow/pricing 301
+/faq /table-flow/faq 301
+/changelog /table-flow/changelog 301
+/reference/usage-guide /table-flow/usage-guide 301
+/reference/privacy-policy /table-flow/privacy 301

@@ -8,7 +8,7 @@
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && node scripts/content-lint.mjs && vitepress build",
     "preview": "vitepress preview",
-    "validate": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && node scripts/content-drift.mjs && node scripts/content-lint.mjs && node scripts/conformance-fixtures.mjs --check && node scripts/test-conformance.mjs && node scripts/test-content.mjs",
+    "validate": "node scripts/validate-contract.mjs && node scripts/content-validate.mjs && node scripts/content-build.mjs && node scripts/content-drift.mjs && node scripts/content-lint.mjs && node scripts/changelog-guard.mjs && node scripts/conformance-fixtures.mjs --check && node scripts/test-conformance.mjs && node scripts/test-content.mjs",
     "validate:strict": "node scripts/validate-contract.mjs --strict",
     "verify": "node scripts/verify.mjs",
     "sync": "node scripts/sync-release.mjs",

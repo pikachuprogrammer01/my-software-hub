@@ -9,6 +9,12 @@
 
 ## 2026-10-07
 
+- fix(auto-clicker): 下载直链改指发布仓的 Gitee 版本 tag 与 GitHub release，本站不再托管安装包（删掉 `public/assets/auto-clicker-mac/v1.1.0/` 两个 zip）
+- feat(lint): `public/` 里出现安装包即 lint 红——站点只挂直链，二进制归发布仓
+- feat(guard): 新增 `scripts/changelog-guard.mjs`，动了发布面却没记本日志就让 `pnpm validate` 红
+- fix(sync): 版本事实没变时不重写 `.vitepress/release.json`（每次构建刷 `fetchedAt` 会让工作树永远脏），页面文案随之改为"该版本自 X 起未变化"
+- fix(scripts): `sync-release.mjs` 的 CLI 入口判定要过 realpath——macOS 上 `/var`、`/tmp` 是软链，只比字符串会让 `pnpm sync` 静默空转
+- feat(deploy): 旧地址 301 到新路由（`public/_redirects`，11 条），`/overview` 这类历史链接不再 404
 - feat(site): 每一页底部挂出联系邮箱与用途说明，文案与邮箱只在 `data/site.json` 的 `contact` 键存一份
 - refactor(theme): 底部区块走 `layout-bottom` 插槽——VitePress 自带页脚在带侧栏的产品页会被隐藏，塞进 `themeConfig.footer` 等于只在首页出现
 - feat(products): 路由改为一产品一目录 `products/<id>/`，`/` 从 TableFlow 首页变成产品目录页，侧栏按产品分组
