@@ -18,5 +18,10 @@
   "footer": {
     "message": "所有产品均在本地处理你的数据 · 各产品页标注了人工核对日期",
     "copyright": "GitHub · pikachuprogrammer01"
+  },
+  "contact": {
+    "label": "联系开发者",
+    "email": "2764574625@qq.com",
+    "note": "问题反馈、功能建议、隐私与授权相关事项都可以发到这个邮箱，一个人开发，邮件由本人阅读。"
   }
 }

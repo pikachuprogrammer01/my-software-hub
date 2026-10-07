@@ -37,7 +37,7 @@ pnpm sync       # 只手动同步线上版本号到 .vitepress/release.json
 
 ```
 index.md                 首页 = 产品目录（<SiteHero/> + <ProductDirectory/>，文案零硬编码）
-data/site.json           站点品牌唯一真源：名称/标语/描述/图标/页脚。改名只动这一个文件
+data/site.json           站点品牌唯一真源：名称/标语/描述/图标/页脚/底部联系方式。改名只动这一个文件
 data/products.json       L1 注册表：有哪些产品、什么形态、启用哪些页面、图标路径、客户端文案预算
 data/mirrors.json        逐字副本登记表（站点路径 ↔ 开发仓源路径 + 两侧哈希 + 同步日期与落后原因）
 data/generated/<id>/     由内容源生成的不可变 revision 与 latest 指针
