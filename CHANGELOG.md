@@ -17,6 +17,7 @@
 - feat(deploy): 旧地址 301 到新路由（`public/_redirects`，11 条），`/overview` 这类历史链接不再 404
 - feat(site): 每一页底部挂出联系邮箱与用途说明，文案与邮箱只在 `data/site.json` 的 `contact` 键存一份
 - refactor(theme): 底部区块走 `layout-bottom` 插槽——VitePress 自带页脚在带侧栏的产品页会被隐藏，塞进 `themeConfig.footer` 等于只在首页出现
+- fix(site): 底部联系邮箱换号，说明文案收窄为一句（地址只在 `data/site.json` 存一处，改一处即全站生效）
 - feat(products): 路由改为一产品一目录 `products/<id>/`，`/` 从 TableFlow 首页变成产品目录页，侧栏按产品分组
 - feat(data): `data/site.json` 立为站点品牌唯一真源，`data/products.json` 的 `visibility` 决定谁进目录
 - feat(theme): 新增 `<SiteHero/>` `<ProductDirectory/>` 与各产品下载按钮组件；`<Fact/>` `<ReleaseInfo/>` `<ProductOverview/>` 改为按产品取内容源
