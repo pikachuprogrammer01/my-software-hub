@@ -7,7 +7,7 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
-## 未发布 · 2026-10-07
+## 2026-10-07
 
 - feat(site): 每一页底部挂出联系邮箱与用途说明，文案与邮箱只在 `data/site.json` 的 `contact` 键存一份
 - refactor(theme): 底部区块走 `layout-bottom` 插槽——VitePress 自带页脚在带侧栏的产品页会被隐藏，塞进 `themeConfig.footer` 等于只在首页出现
