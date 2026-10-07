@@ -98,12 +98,22 @@ Pages 构建机在境外，拉 gitee raw 正常；万一拉不到，既有逻辑
 
 ## 验证清单（上线后逐条实跑）
 
-- `curl -I https://hub.pikachu01.me/features` → 200，证明无扩展名路由成立
-- `curl -I https://hub.pikachu01.me/assets/icon.png` → 200，证明资源根与 `base` 对得上
+- `curl -I https://hub.pikachu01.me/table-flow/features` → 200，证明无扩展名路由与产品前缀成立
+- `curl -I https://hub.pikachu01.me/assets/hub/icon.svg` → 200，证明资源根与 `base` 对得上
+- `curl -I https://hub.pikachu01.me/auto-clicker-mac/install` → 200，证明非首页产品页同样成立
 - `curl -s https://hub.pikachu01.me/sitemap.xml` → 存在且每条 loc 都是 `https://hub.pikachu01.me/...`
 - 首页版本号 == 发布仓线上 `update.json` 的版本
 - 遍历 sitemap 全部链接，无 404
-- 内部文档不外泄：`/DEPLOY.html`、`/README.html` 必须 404
+- 内部文档不外泄：`/DEPLOY.html`、`/README.html`、`/PRODUCTS.html` 必须 404（发布面是白名单：只有 `index.md` 与 `products/**` 成页）
+
+## 图标资产放哪里
+
+| 用途 | 路径 | 说明 |
+|---|---|---|
+| 站点品牌（favicon / 导航 / og） | `public/assets/hub/icon.svg` + `icon-32.png` `icon-180.png` `icon-512.png` | 路径写在 `data/site.json`，换图不用改代码 |
+| 各产品图标（目录卡片 + 产品页 favicon） | `public/assets/<id>/icon.png` | 路径由 `data/products.json` 的 `brand.logo` 按同名约定登记；**文件放进去即生效**，缺图时卡片回落字母标记 |
+
+生成图落地时的规格：**纯图形、不含文字**（字标另出一张），1024×1024 源图导出上表各尺寸；产品图标用**透明底**（深色主题下白底方块的观感实测很差）；favicon 缩到 16×16 仍要认得出，判据是"16px 灰度下不与别的产品撞"。当前 `hub/` 下那颗 P 是**临时占位标记**，等正式品牌图替换。
 - 国内可达性：**本机测不准**。这台 Mac 出口在美国（fake-IP 代理，`dig` 拿到的地址是假的），
   必须从国内蜂窝网络实测，或用多省多运营商拨测平台过一遍。
 

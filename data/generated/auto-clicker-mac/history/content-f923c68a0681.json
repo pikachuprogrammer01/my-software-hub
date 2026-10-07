@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "product": "auto-clicker-mac",
+  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
+  "generatedAt": "2026-10-05T12:51:00.685Z",
+  "facts": {
+    "version.current": {
+      "value": "1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "github-release:v1.1.0"
+    },
+    "verifiedAt": {
+      "value": "2026-10-05",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual"
+    },
+    "platform.minOs": {
+      "value": "13",
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:Package.swift platforms / Info.plist LSMinimumSystemVersion"
+    },
+    "platform.arch": {
+      "value": "Apple Silicon 与 Intel 分别出包（非 universal）",
+      "effectiveFromVersion": "1.1.0",
+      "source": "release:v1.1.0 assets"
+    },
+    "limits.intervalMin": {
+      "value": 10,
+      "unit": "毫秒",
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:SettingsValidator"
+    },
+    "limits.intervalMax": {
+      "value": 60000,
+      "unit": "毫秒",
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:SettingsValidator"
+    },
+    "download.releasesUrl": {
+      "value": "https://github.com/pikachuprogrammer01/auto-clicker-mac/releases",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual"
+    },
+    "form.factor": {
+      "value": "macOS 菜单栏应用（原生 SwiftUI）",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "仅 macOS，没有 Windows / Linux / 移动端版本。需要授予辅助功能权限才能发出点击。",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual:站点核定的可用范围口径"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "macOS 菜单栏连点工具"
+    },
+    "overview.summary": {
+      "default": "在鼠标当前位置按设定间隔重复点击：左键或右键、单击或长按、无限或指定次数，全局快捷键启停。不需要坐标输入、脚本、账号，也不联网。"
+    },
+    "install.summary": {
+      "default": "从 GitHub Releases 下载对应芯片的压缩包；未做公证，首次打开需要在系统设置里允许一次。"
+    },
+    "download.label": {
+      "default": "到 Releases 获取安装包"
+    },
+    "download.note": {
+      "default": "免费开源（MIT），无激活、无账号。应用本身不检查更新，下载时请自行确认是最新发布的压缩包。"
+    },
+    "update.badge": {
+      "default": "手动获取新版"
+    },
+    "update.summary": {
+      "default": "应用不检查更新，新版本需手动下载。"
+    },
+    "update.text": {
+      "default": "Auto Clicker 没有任何网络层，不会提示新版本。要升级就重新下载对应芯片的压缩包并替换旧版本。"
+    }
+  },
+  "update": {
+    "badge": "手动获取新版",
+    "summary": "应用不检查更新，新版本需手动下载。",
+    "text": "Auto Clicker 没有任何网络层，不会提示新版本。要升级就重新下载对应芯片的压缩包并替换旧版本。"
+  },
+  "contentRevision": "content-f923c68a0681",
+  "sha256": "f923c68a0681ada378b06d9539b617ae8eaea7594876cdaa6c9e1a410e6bfb53"
+}

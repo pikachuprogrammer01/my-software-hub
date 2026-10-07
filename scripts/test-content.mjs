@@ -72,6 +72,12 @@ function hashTree(dir) {
   return crypto.createHash('sha256').update(walk(dir).join('|')).digest('hex')
 }
 
+/**
+ * Automation 已是对外列出的产品，"不许出现 Automation 这个词"早就不是它的本意。
+ * 真正不能漏的是它机器上的东西：站点适配层、登记表、登录态、Profile、取证目录，以及任何凭证形态。
+ */
+const PRIVATE_LEAK = /private\/|browser-data|credential_vault|auth\.json|registry\.json|\/Users\/pikachu\/code\/Automation|token|secret|password|BEGIN [A-Z ]*PRIVATE KEY/i
+
 const registry = readJson(path.join(SITE_ROOT, 'data', 'products.json'))
 
 console.log('\n【1】schema 与内容源规则')
@@ -396,17 +402,17 @@ test('发布产物不含 HTML/视觉字段/凭证占位', () => {
   const raw = JSON.stringify(staged)
   assert.ok(!/<[a-z/][^>]*>/i.test(raw), '发布包出现 HTML')
   assert.ok(!/"(icon|color|accent|layout)/i.test(raw), '发布包出现视觉字段')
-  assert.ok(!/token|password|secret|BEGIN [A-Z ]*PRIVATE KEY/i.test(raw), '发布包出现凭证')
-  assert.ok(!raw.includes('Automation'), '发布包出现 Automation 内容')
+  const leak = raw.match(PRIVATE_LEAK)
+  assert.ok(!leak, `发布包出现本机数据/凭证形态：${leak?.[0]}`)
 })
 
 console.log('\n【5】生成包与站点消费一致性')
 
-test('内容包不含 Automation 目录内容与凭证', () => {
+test('内容包不含 Automation 的本机数据与凭证', () => {
   for (const product of connectedProducts()) {
     const raw = fs.readFileSync(generatedPaths(product.id).latest, 'utf8')
-    assert.ok(!raw.includes('Automation'), `${product.id} 内容包含 Automation`)
-    assert.ok(!/token|secret|password/i.test(raw), `${product.id} 内容包含凭证形态`)
+    const hit = raw.match(PRIVATE_LEAK)
+    assert.ok(!hit, `${product.id} 内容包出现本机数据/凭证形态：${hit?.[0]}`)
   }
 })
 
@@ -415,6 +421,132 @@ test('所有已接入产品都有不可变 revision 落盘', () => {
     const pkg = readJson(generatedPaths(product.id).latest)
     assert.ok(fs.existsSync(generatedPaths(product.id, pkg.contentRevision).revision), `${product.id} 缺少 history/${pkg.contentRevision}.json`)
   }
+})
+
+console.log('\n【6】产品目录守卫（注册表是唯一索引，漏页面必须挡住）')
+
+function lintIn(dir) {
+  return run(dir, 'content-lint.mjs')
+}
+
+function registryIn(dir) {
+  return path.join(dir, 'data', 'products.json')
+}
+
+test('当前仓库通过目录守卫', () => {
+  const out = lintIn(sandbox())
+  assert.equal(out.code, 0, out.stdout)
+  assert.match(out.stdout, /注册表与页面一一对应/)
+})
+
+test('登记了产品却没写页面 → 挡住', () => {
+  const dir = sandbox()
+  const reg = readJson(registryIn(dir))
+  reg.products.push({
+    id: 'zephyr',
+    name: 'Zephyr',
+    kind: 'desktop-app',
+    visibility: 'listed',
+    status: 'released',
+    factsSource: 'manual',
+    releaseBranch: null,
+    updateMechanism: 'none',
+    contentSource: 'products/zephyr/content.v1.source.json',
+    sections: ['overview'],
+    brand: { logo: '/assets/zephyr/icon.png' },
+    budget: { badge: 12, summary: 40, text: 200 }
+  })
+  fs.writeFileSync(registryIn(dir), `${JSON.stringify(reg, null, 2)}\n`)
+  const out = lintIn(dir)
+  assert.equal(out.code, 1, '新登记的产品没有页面时必须失败')
+  assert.match(out.stdout, /zephyr\/index\.md 不存在/)
+  assert.match(out.stdout, /登记了页面「overview」/)
+})
+
+test('写了页面却没登记进 sections → 挡住', () => {
+  const dir = sandbox()
+  fs.writeFileSync(path.join(dir, 'products', 'qoder-proxy', 'secrets.md'), '# 没人登记的页\n')
+  const out = lintIn(dir)
+  assert.equal(out.code, 1, '未登记的页面不会出现在侧栏，必须失败')
+  assert.match(out.stdout, /secrets\.md 存在，却没登记进 sections/)
+})
+
+test('图标没按约定路径登记 → 挡住', () => {
+  const dir = sandbox()
+  const reg = readJson(registryIn(dir))
+  reg.products.find((p) => p.id === 'wps-enhancer').brand.logo = '/assets/wps.png'
+  fs.writeFileSync(registryIn(dir), `${JSON.stringify(reg, null, 2)}\n`)
+  const out = lintIn(dir)
+  assert.equal(out.code, 1)
+  assert.match(out.stdout, /wps-enhancer: 图标未登记为约定路径/)
+})
+
+test('产品没声明形态与可用范围 → 挡住', () => {
+  const dir = sandbox()
+  const file = path.join(dir, 'products', 'wps-enhancer', 'content.v1.source.json')
+  const src = JSON.parse(fs.readFileSync(file, 'utf8'))
+  delete src.facts['form.factor']
+  delete src.facts['form.scope']
+  fs.writeFileSync(file, `${JSON.stringify(src, null, 2)}\n`)
+  assert.equal(run(dir, 'content-build.mjs').code, 0)
+  const out = lintIn(dir)
+  assert.equal(out.code, 1, '缺形态声明必须失败，否则用户看不到"这能在什么上跑"')
+  assert.match(out.stdout, /wps-enhancer: 内容源缺事实 form\.factor/)
+  assert.match(out.stdout, /wps-enhancer: 内容源缺事实 form\.scope/)
+})
+
+test('updateMechanism 为 none 却没登记获取地址 → 挡住', () => {
+  // 用 qoder-proxy 测：它的页面没有 <Fact> 引用这个键，所以挡住它的必须是结构守卫本身，
+  // 而不是"占位符指向未知事实"那条更早的检查（automation 的 faq 页有引用，走的是后者）。
+  const dir = sandbox()
+  const file = path.join(dir, 'products', 'qoder-proxy', 'content.v1.source.json')
+  const src = JSON.parse(fs.readFileSync(file, 'utf8'))
+  delete src.facts['download.releasesUrl']
+  delete src.facts['download.repoUrl']
+  fs.writeFileSync(file, `${JSON.stringify(src, null, 2)}\n`)
+  assert.equal(run(dir, 'content-build.mjs').code, 0)
+  const out = lintIn(dir)
+  assert.equal(out.code, 1, '键名写错或漏写时，页面只会静默显示一条告警')
+  assert.match(out.stdout, /qoder-proxy: updateMechanism 为 none 却没登记/)
+})
+
+test('页面引用了不存在的事实 → 挡住', () => {
+  const dir = sandbox()
+  const file = path.join(dir, 'products', 'automation', 'content.v1.source.json')
+  const src = JSON.parse(fs.readFileSync(file, 'utf8'))
+  delete src.facts['download.repoUrl']
+  fs.writeFileSync(file, `${JSON.stringify(src, null, 2)}\n`)
+  assert.equal(run(dir, 'content-build.mjs').code, 0)
+  const out = lintIn(dir)
+  assert.equal(out.code, 1)
+  assert.match(out.stdout, /占位符指向未知事实 automation\/download\.repoUrl/)
+})
+
+test('逐字副本在站点侧被手改 → 挡住', () => {
+  const dir = sandbox()
+  const file = path.join(dir, 'products', 'table-flow', 'privacy.md')
+  fs.appendFileSync(file, '\n站点侧偷偷加一句\n')
+  const out = lintIn(dir)
+  assert.equal(out.code, 1, '镜像文件必须在源仓改')
+  assert.match(out.stdout, /逐字副本在站点侧被改动/)
+})
+
+test('登记表指向不存在的副本 → 挡住', () => {
+  const dir = sandbox()
+  fs.rmSync(path.join(dir, 'products', 'table-flow', 'usage-guide.md'))
+  const out = lintIn(dir)
+  assert.equal(out.code, 1)
+  assert.match(out.stdout, /登记的逐字副本不存在/)
+})
+
+test('回环地址不被当成版本号（127.0.0.1 是 IP，不是 x.y.z 事实）', () => {
+  const dir = sandbox()
+  const file = path.join(dir, 'products', 'qoder-proxy', 'overview.md')
+  const before = fs.readFileSync(file, 'utf8')
+  fs.writeFileSync(file, `${before}\n默认监听 127.0.0.1:3100，另有 0.0.0.0 的写法。\n`)
+  assert.equal(lintIn(dir).code, 0, 'IP 地址被误判成裸版本号会让整条 lint 失去可信度')
+  fs.writeFileSync(file, `${before}\n当前版本 v1.6.1 已发布。\n`)
+  assert.match(lintIn(dir).stdout, /任意 x\.y\.z 版本号/, '真版本号仍须被抓住')
 })
 
 const failed = results.filter((item) => !item.ok)

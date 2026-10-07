@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "note": "站点里的逐字副本：不加 front-matter、不写 <Fact> 占位符，因此豁免当前态 lint。要改这些内容必须回到开发仓改，再同步过来并更新 siteSha256 与 syncedAt。sourceSha256 是同步那一刻源仓文件的哈希，content-drift 用它判断源仓是否已经跑到前面。",
+  "mirrors": [
+    {
+      "site": "products/table-flow/usage-guide.md",
+      "source": "table-flow/docs/USAGE_GUIDE.md",
+      "syncedAt": "2026-10-04",
+      "siteSha256": "98aeb280badd46866bc2743a69eb7e6f43314a1c257395808b42f8db0f9b4bb8",
+      "sourceSha256": "e9d0f87c8a4761a8b0cae9859bb970a19035dc09c1f233fd19a2064db1719aab",
+      "pendingRelease": "1.6.1",
+      "whyBehind": "源仓副本已新增「批量当前页采集导出」等说明，那些功能在未发布的版本里，站点只讲已发布的最新版，因此副本刻意停在同步点。"
+    },
+    {
+      "site": "products/table-flow/privacy.md",
+      "source": "table-flow/docs/PRIVACY_POLICY.md",
+      "syncedAt": "2026-10-07",
+      "siteSha256": "60ea6c8267178628177c6ab5c5ecea03d419651946253c213949c6cbb98abdce",
+      "sourceSha256": "60ea6c8267178628177c6ab5c5ecea03d419651946253c213949c6cbb98abdce",
+      "whyBehind": ""
+    }
+  ]
+}

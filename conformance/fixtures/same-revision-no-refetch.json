@@ -37,6 +37,16 @@
         "value": "1.6.1",
         "effectiveFromVersion": "1.6.1",
         "source": "release-repo"
+      },
+      "form.factor": {
+        "value": "Chromium 浏览器扩展（Manifest V3）",
+        "effectiveFromVersion": "1.0.0",
+        "source": "manual:站点核定的对外形态口径"
+      },
+      "form.scope": {
+        "value": "桌面版 Chromium 内核浏览器：Chrome / Edge / 360 极速等。没有 Firefox、Safari 与手机端版本。",
+        "effectiveFromVersion": "1.0.2",
+        "source": "manual:站点核定的可用范围口径"
       }
     },
     "copy": {
@@ -77,11 +87,11 @@
       "text": "修复在线激活码被误报为未登记的问题。",
       "detail": "本版本修复了特定情况下在线激活码验证提示错误的问题。"
     },
-    "contentRevision": "content-ce7d96ea14df",
-    "sha256": "ce7d96ea14dff1df466d477274a8cb9e98354560f4c7b590868d123dd4cb966e"
+    "contentRevision": "content-54dd79e36ee8",
+    "sha256": "54dd79e36ee845a8d9f9e3143359c8511aeddd67a8387cced160884dd952e6a8"
   },
   "context": {
-    "cachedRevision": "content-ce7d96ea14df"
+    "cachedRevision": "content-54dd79e36ee8"
   },
   "expect": {
     "kind": "unchanged",

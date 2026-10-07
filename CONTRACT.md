@@ -78,7 +78,7 @@ main:docs/CONTRACT.md · schema/*.v1.json            本契约
 | table-flow | 12 | **26** | 120 | 面板横幅 `white-space:nowrap`+`ellipsis`（`UpdateBanner.vue:83-89`），默认宽 420px（`settingsStore.ts:75`）；实测 v1.4.4 的 100 字 notes 已被切掉 |
 | wps-enhancer | 12 | 60 | 300 | 设置页内容区约 852px（`style.css:75`）；启动通知单行 |
 | auto-clicker | 10 | 20 | 60 | 360pt 固定宽窗口（`ContentView.swift:38`）+ 单行菜单；**当前无关于窗口、UI 不显示版本号** |
-| qoder-proxy | 12 | 80 | 2000 | 本地 Web 控制台，可渲染长 Markdown |
+| qoder-proxy | 12 | 80 | 2000 | ⚠️ 2026-10-05 实测更正：控制台把 JSON 渲染成 antd 组件，**没有 Markdown 渲染器**，长文在应用内无处可放；2000 是"尚未有消费容器"的占位值，等它真接内容时按实测重定 |
 
 ## 五、客户端接入 MUST
 

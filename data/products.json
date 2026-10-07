@@ -7,13 +7,34 @@
       "kind": "browser-extension",
       "visibility": "featured",
       "status": "released",
+      "repo": "https://github.com/pikachuprogrammer01/table-flow",
       "factsSource": "release-repo",
       "releaseBranch": "table-flow",
       "updateMechanism": "manual",
       "contentSource": "products/table-flow/content.v1.source.json",
       "contentEndpoint": "table-flow/content-latest.v1.json",
-      "sections": ["overview", "features", "scope", "install", "update", "pricing", "faq", "privacy"],
-      "budget": { "badge": 12, "summary": 26, "text": 120 }
+      "sections": [
+        "overview",
+        "quickstart",
+        "install",
+        "update",
+        "features",
+        "scope",
+        "pricing",
+        "faq",
+        "changelog",
+        "privacy",
+        "usage-guide"
+      ],
+      "brand": {
+        "logo": "/assets/table-flow/icon.png",
+        "accent": "#2563eb"
+      },
+      "budget": {
+        "badge": 12,
+        "summary": 26,
+        "text": 120
+      }
     },
     {
       "id": "wps-enhancer",
@@ -21,13 +42,29 @@
       "kind": "desktop-app",
       "visibility": "listed",
       "status": "released",
+      "repo": "https://github.com/pikachuprogrammer01/wps-enhancer-go",
       "factsSource": "release-repo",
       "releaseBranch": "wps-enhancer",
       "updateMechanism": "built-in-updater",
       "contentSource": "products/wps-enhancer/content.v1.source.json",
       "contentEndpoint": "wps-enhancer/content-latest.v1.json",
-      "sections": ["overview", "features", "install", "update", "faq"],
-      "budget": { "badge": 12, "summary": 60, "text": 300 }
+      "sections": [
+        "overview",
+        "features",
+        "install",
+        "update",
+        "faq",
+        "privacy"
+      ],
+      "brand": {
+        "logo": "/assets/wps-enhancer/icon.png",
+        "accent": "#2b7fd4"
+      },
+      "budget": {
+        "badge": 12,
+        "summary": 60,
+        "text": 300
+      }
     },
     {
       "id": "auto-clicker-mac",
@@ -35,13 +72,27 @@
       "kind": "desktop-app",
       "visibility": "listed",
       "status": "dormant",
+      "repo": "https://github.com/pikachuprogrammer01/auto-clicker-mac",
       "factsSource": "manual",
       "releaseBranch": null,
       "updateMechanism": "none",
-      "contentSource": null,
+      "contentSource": "products/auto-clicker-mac/content.v1.source.json",
       "contentEndpoint": null,
-      "sections": ["overview", "install", "changelog"],
-      "budget": { "badge": 10, "summary": 20, "text": 60 }
+      "sections": [
+        "overview",
+        "features",
+        "install",
+        "faq"
+      ],
+      "brand": {
+        "logo": "/assets/auto-clicker-mac/icon.png",
+        "accent": "#f97316"
+      },
+      "budget": {
+        "badge": 10,
+        "summary": 20,
+        "text": 60
+      }
     },
     {
       "id": "qoder-proxy",
@@ -49,27 +100,55 @@
       "kind": "local-app-web-ui",
       "visibility": "listed",
       "status": "released",
+      "repo": "https://github.com/pikachuprogrammer01/qoder-proxy",
       "factsSource": "manual",
       "releaseBranch": null,
       "updateMechanism": "none",
-      "contentSource": null,
+      "contentSource": "products/qoder-proxy/content.v1.source.json",
       "contentEndpoint": null,
-      "sections": ["overview", "quickstart", "config", "changelog"],
-      "budget": { "badge": 12, "summary": 80, "text": 2000 }
+      "sections": [
+        "overview",
+        "quickstart",
+        "config",
+        "faq"
+      ],
+      "brand": {
+        "logo": "/assets/qoder-proxy/icon.png",
+        "accent": "#10b981"
+      },
+      "budget": {
+        "badge": 12,
+        "summary": 80,
+        "text": 2000
+      }
     },
     {
       "id": "automation",
       "name": "Automation",
-      "kind": "internal",
-      "visibility": "internal",
-      "status": "maintenance",
+      "kind": "local-app-web-ui",
+      "visibility": "listed",
+      "status": "released",
+      "repo": "https://github.com/pikachuprogrammer01/Automation",
       "factsSource": "manual",
       "releaseBranch": null,
       "updateMechanism": "none",
-      "contentSource": null,
+      "contentSource": "products/automation/content.v1.source.json",
       "contentEndpoint": null,
-      "sections": ["overview"],
-      "budget": { "badge": 12, "summary": 40, "text": 200 }
+      "sections": [
+        "overview",
+        "quickstart",
+        "config",
+        "faq"
+      ],
+      "brand": {
+        "logo": "/assets/automation/icon.png",
+        "accent": "#7fd13b"
+      },
+      "budget": {
+        "badge": 12,
+        "summary": 40,
+        "text": 200
+      }
     }
   ]
 }

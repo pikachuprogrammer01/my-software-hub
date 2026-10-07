@@ -1,48 +1,70 @@
 {
   "schema": 1,
   "product": "wps-enhancer",
-  "sourceRevision": "working-tree",
-  "generatedAt": "2026-10-03T15:53:12.390Z",
+  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
+  "generatedAt": "2026-10-05T12:51:00.674Z",
   "facts": {
     "version.current": {
       "value": "1.1.0",
       "effectiveFromVersion": "1.1.0",
       "source": "release-repo"
     },
+    "platform.macosMin": {
+      "value": "12.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "client-constant:build/darwin/Info.plist:LSMinimumSystemVersion"
+    },
+    "platform.macosArch": {
+      "value": "仅 Apple Silicon（arm64）",
+      "effectiveFromVersion": "1.1.0",
+      "source": "ci:release.yml 按 runner 架构出包，无 macos-x86_64"
+    },
+    "limits.previewRows": {
+      "value": 480,
+      "unit": "行",
+      "effectiveFromVersion": "1.1.0",
+      "source": "client-constant:PreviewPanel 预览上限"
+    },
     "features.builtInUpdater": {
       "status": "available",
       "effectiveFromVersion": "1.1.0"
+    },
+    "form.factor": {
+      "value": "macOS 与 Windows 桌面应用",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "仅桌面系统，不含 Linux。它是独立程序，不是 WPS Office 的插件，也不嵌入 WPS 进程。",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual:站点核定的可用范围口径"
     }
   },
   "copy": {
     "overview.title": {
-      "default": "WPS Enhancer"
+      "default": "把客户表格整理成手机通讯录"
     },
     "overview.summary": {
-      "default": "为 WPS 工作流提供桌面端增强能力。"
+      "default": "读取 Excel 或 CSV 客户表，清洗手机号、拆分多号、套用列映射模板，导出 vCard（.vcf）与 Excel / CSV / TXT。所有文件都在本机处理，不上传。"
     },
     "install.summary": {
-      "default": "首次安装使用对应平台安装包，后续由应用内更新器检查更新。"
+      "default": "首次安装下载对应平台的安装包；之后的新版本由应用内更新器提示。"
     },
     "update.badge": {
       "default": "应用内更新"
     },
     "update.summary": {
-      "default": "应用启动后自动检查可用更新。"
+      "default": "启动后自动检查一次更新，发现新版本在通知里提示。"
     },
     "update.text": {
-      "default": "更新说明会在应用内显示。"
-    },
-    "update.detail": {
-      "default": "WPS Enhancer 使用应用内更新器处理后续版本更新。"
+      "default": "应用启动 3 秒后向更新清单发一次请求；也可在「设置 → 更新」手动检查。下载完成后按提示退出旧版本并替换应用包，本站不再提供第二条下载路径。"
     }
   },
   "update": {
     "badge": "应用内更新",
-    "summary": "应用启动后自动检查可用更新。",
-    "text": "更新说明会在应用内显示。",
-    "detail": "WPS Enhancer 使用应用内更新器处理后续版本更新。"
+    "summary": "启动后自动检查一次更新，发现新版本在通知里提示。",
+    "text": "应用启动 3 秒后向更新清单发一次请求；也可在「设置 → 更新」手动检查。下载完成后按提示退出旧版本并替换应用包，本站不再提供第二条下载路径。"
   },
-  "contentRevision": "content-f0de750e6b43",
-  "sha256": "f0de750e6b43a7b3b80493128c4537d2171d9c2e1195a901492d11ec2282f071"
+  "contentRevision": "content-d71c7cdcf6a7",
+  "sha256": "d71c7cdcf6a789473d2934b61735d9fb897039730e14addd6ab1e20cf260f52d"
 }

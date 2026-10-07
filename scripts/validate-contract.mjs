@@ -109,7 +109,7 @@ const registry = {
     { id: 'wps-enhancer', name: 'WPS Enhancer', kind: 'desktop-app', visibility: 'listed', status: 'released', factsSource: 'release-repo', releaseBranch: 'wps-enhancer', updateMechanism: 'built-in-updater', sections: ['overview', 'features', 'system-requirements', 'install', 'update', 'changelog', 'faq', 'privacy'], budget: { badge: 12, summary: 60, text: 300 } },
     { id: 'auto-clicker-mac', name: 'Auto Clicker', kind: 'desktop-app', visibility: 'listed', status: 'dormant', factsSource: 'manual', releaseBranch: null, updateMechanism: 'none', sections: ['overview', 'install', 'changelog'], budget: { badge: 10, summary: 20, text: 60 } },
     { id: 'qoder-proxy', name: 'Qoder Proxy', kind: 'local-app-web-ui', visibility: 'listed', status: 'released', factsSource: 'manual', releaseBranch: null, updateMechanism: 'none', sections: ['overview', 'quickstart', 'config', 'changelog'], budget: { badge: 12, summary: 80, text: 2000 } },
-    { id: 'automation', name: 'Automation', kind: 'internal', visibility: 'internal', status: 'maintenance', factsSource: 'manual', releaseBranch: null, updateMechanism: 'none', sections: ['overview'], budget: { badge: 12, summary: 40, text: 200 } }
+    { id: 'automation', name: 'Automation', kind: 'local-app-web-ui', visibility: 'listed', status: 'released', factsSource: 'manual', releaseBranch: null, updateMechanism: 'none', sections: ['overview', 'quickstart', 'config', 'faq'], budget: { badge: 12, summary: 40, text: 200 } }
   ]
 }
 expect('五产品注册表通过', checkProducts(registry), errs())

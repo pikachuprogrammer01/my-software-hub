@@ -24,7 +24,9 @@ step('当前态裸事实 lint', ...node('content-lint.mjs'))
 step('夹具与内容包同步', ...node('conformance-fixtures.mjs', ['--check']))
 step('客户端一致性夹具', ...node('test-conformance.mjs'))
 step('内容流水线测试', ...node('test-content.mjs'))
-for (const product of connectedProducts()) {
+// 只对已接发布仓分支的产品跑发布 dry-run；未接分支的产品被拒绝这件事，
+// 由 test-content.mjs 的「未接入发布分支的产品不允许发布」用例守住，不在这里重复一遍失败。
+for (const product of connectedProducts().filter((item) => item.releaseBranch)) {
   const revision = readJson(generatedPaths(product.id).latest).contentRevision
   step(`发布适配器 dry-run（${product.id}）`, ...node('content-publish.mjs', ['--product', product.id, '--revision', revision]))
 }

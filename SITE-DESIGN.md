@@ -4,7 +4,7 @@
 
 > 输入：`PRODUCTS.md` 的产品清单与实测风险。
 > 范围：**只设计本站点**。其他项目的接入物在第八节，等站点自洽后再交付。
-> 状态：待你批准，未实施。
+> 状态：**已实施到阶段 4**（2026-10-05）。`/` 已是产品目录页、TableFlow 全部页面迁入 `/table-flow/`、wps-enhancer / auto-clicker / qoder-proxy 三个产品的页面与内容源已落地、Automation 按 `internal` 不渲染。品牌落 `data/site.json`（工作室名），逐字副本落 `data/mirrors.json`。阶段 5（changelog 接 `release-notes.json`）未做。
 
 ## 一、定位与三条不变原则
 
@@ -58,10 +58,12 @@ public/assets/<id>/                   各产品图标与截图
 | 值 | 首页目录 | 导航 | 站点地图 | 适用 |
 |---|---|---|---|---|
 | `featured` | 主推卡片 | 顶栏 | ✅ | table-flow |
-| `listed` | 列出 | 目录内 | ✅ | wps-enhancer / auto-clicker / qoder-proxy |
-| `internal` | ❌ | ❌ | ❌ 仅直链 | **Automation** |
+| `listed` | 列出 | 顶栏 + 目录 | ✅ | wps-enhancer / auto-clicker / qoder-proxy / automation |
+| `internal` | ❌ | ❌ | ❌ 仅直链 | （2026-10-05 起无产品使用，机制保留） |
 
-Automation 走 `internal` 是它进清单的**前提条件**：它无版本、无用户、非 git 仓库，且装着真实登录态与密钥。`internal` 意味着站点只放一页存在性说明，内容全部 L3 手写，**任何同步/导出脚本的路径遍历不得进入它的目录**。
+> **2026-10-05 更正**：原文写「Automation 走 `internal` 是它进清单的前提条件」，理由是它无版本、非 git 仓库、装着真实登录态与密钥。三条前提里两条现在已不成立：它是 git 仓库且已在 GitHub 公开（MIT），有 `package.json` 版本与 PRD。用户明确要求它进目录并补文档，因此改为 `listed`。
+>
+> **仍然有效的两条**：① 站点对它的描述**全部 L3 手写**，`private/` 与 `var/`（站点适配层、登记表、登录态、Chrome Profile、取证截图）**不得被任何同步/导出脚本路径遍历**；② 它是 `updateMechanism: none` 的源码分发工具，站点不放下载按钮、不承诺更新提示，也不得写出任何目标站点、账号别名或本机绝对路径。
 
 ### URL 迁移：已核实**不需要做 301**
 
@@ -104,7 +106,9 @@ wps-enhancer 是 `built-in-updater`（`settings.go:57` 默认开启、`main.go:8
 "budget": { "badge": 12, "summary": 26 }   // table-flow：面板横幅单行、420px、nowrap+ellipsis
 ```
 
-依据：`UpdateBanner.vue:83-89` 的 `white-space:nowrap` + `text-overflow:ellipsis`，实测 v1.4.4 的 100 字 notes 已被切掉。wps 设置页可用 852px、auto-clicker 只有 360pt 单行且**无关于窗口**、qoder-proxy 无上限。
+依据：`UpdateBanner.vue:83-89` 的 `white-space:nowrap` + `text-overflow:ellipsis`，实测 v1.4.4 的 100 字 notes 已被切掉。wps 设置页可用 852px、auto-clicker 只有 360pt 单行且**无关于窗口**。
+
+> **2026-10-05 更正（实测推翻原判断）**：原文写"qoder-proxy 有本地 Web 控制台且能就地渲染长 Markdown"，不成立。它的 Usage 页是把 `usage.json` 的字段渲染成 antd 的 `Statistic / Descriptions / Table` 组件，`client/` 与产物 bundle 里**没有任何 Markdown 渲染器**（`markdown|marked|remark|dangerouslySetInnerHTML` 零命中），`usage.json` 还是 gitignore 的本机状态文件，不是内容通道。所以 qoder-proxy 的 `detail` 长文**只有站点能承载**，注册表里给它 2000 的 `text` 预算属于"没有容器却给了额度"，等它真的接入内容消费时再按实测重定。
 
 发布说明的 `summary` 超过该产品 `budget` → **lint 失败**，不是警告。约束写内容的人，比让 N 个客户端各自截断便宜得多。
 

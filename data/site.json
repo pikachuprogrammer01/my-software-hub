@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "name": "pikachuprogrammer01",
+  "handle": "pikachuprogrammer01",
+  "tagline": "一个人做的实用软件",
+  "description": "GitHub 用户 pikachuprogrammer01 的个人软件项目门户：产品目录、安装与更新说明、适用范围与隐私政策。",
+  "siteUrl": "https://hub.pikachu01.me",
+  "logo": "/assets/hub/icon.svg",
+  "favicon": "/assets/hub/icon.svg",
+  "appleTouchIcon": "/assets/hub/icon-180.png",
+  "ogImage": "/assets/hub/icon-512.png",
+  "actions": [
+  ],
+  "directory": {
+    "title": "产品目录",
+    "note": "每个产品的功能边界、安装与更新方式都写在各自的产品页里；未接入发布基础设施的产品，页面会标注人工核对日期。"
+  },
+  "footer": {
+    "message": "所有产品均在本地处理你的数据 · 各产品页标注了人工核对日期",
+    "copyright": "GitHub · pikachuprogrammer01"
+  }
+}

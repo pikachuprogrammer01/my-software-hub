@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "product": "automation",
+  "facts": {
+    "verifiedAt": {
+      "value": "2026-10-05",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual"
+    },
+    "platform.os": {
+      "value": "macOS",
+      "effectiveFromVersion": "1.0.0",
+      "source": "docs:README 环境要求（定时、凭据、进程托管都建立在 launchd + macOS Keychain 上）"
+    },
+    "platform.node": {
+      "value": "20.11",
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:package.json engines.node"
+    },
+    "config.port": {
+      "value": 4765,
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:manager/server.mjs AUTOMATION_MANAGER_PORT 默认值"
+    },
+    "download.repoUrl": {
+      "value": "https://github.com/pikachuprogrammer01/Automation",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual"
+    },
+    "form.factor": {
+      "value": "本机 HTTP 服务 + 网页控制台（Node.js）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "仅 macOS——定时、凭据与进程托管分别依赖 launchd、macOS Keychain 和系统 Chrome。只监听 127.0.0.1。",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的可用范围口径"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "本机定时网页任务管理器"
+    },
+    "overview.summary": {
+      "default": "把浏览器操作录成 Playwright 脚本，交给 macOS 的 launchd 每天准点执行，并在网页界面看清每一次到底成了没成、没成是为什么。只监听本机回环地址。"
+    },
+    "quickstart.summary": {
+      "default": "零依赖起服务：复制空登记表、npm start、打开本机界面。"
+    },
+    "download.label": {
+      "default": "到仓库取源码"
+    },
+    "download.note": {
+      "default": "源码分发（MIT）。没有安装包、没有更新器；克隆仓库后按快速上手页在本机运行。"
+    },
+    "update.badge": {
+      "default": "源码分发"
+    },
+    "update.summary": {
+      "default": "跟随仓库 main 分支更新。"
+    },
+    "update.text": {
+      "default": "管理器自身没有更新检查。升级就是 git pull 后重新 npm start；改了前端源码必须重新构建，否则界面与后端会静默失同步。"
+    }
+  }
+}

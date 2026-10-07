@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "product": "qoder-proxy",
+  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
+  "generatedAt": "2026-10-07T08:20:19.188Z",
+  "facts": {
+    "verifiedAt": {
+      "value": "2026-10-05",
+      "effectiveFromVersion": "1.6.0",
+      "source": "manual"
+    },
+    "platform.node": {
+      "value": "18",
+      "effectiveFromVersion": "1.4.0",
+      "source": "client-constant:package.json engines.node"
+    },
+    "config.port": {
+      "value": 3100,
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:clean/core/config default PORT"
+    },
+    "config.host": {
+      "value": "127.0.0.1",
+      "effectiveFromVersion": "1.0.0",
+      "source": "client-constant:clean/core/config default HOST"
+    },
+    "download.repoUrl": {
+      "value": "https://github.com/pikachuprogrammer01/qoder-proxy",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual"
+    },
+    "form.factor": {
+      "value": "本机 HTTP 服务 + 网页控制台（Node.js）",
+      "effectiveFromVersion": "1.6.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "跨平台本机自用：只监听 127.0.0.1，不做公网或多人共享部署，需要你自己的 Qoder 账号或令牌。",
+      "effectiveFromVersion": "1.6.0",
+      "source": "manual:站点核定的可用范围口径"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "把 Qoder CLI 变成本机兼容接口"
+    },
+    "overview.summary": {
+      "default": "在本机 127.0.0.1 起一个 OpenAI / Anthropic / Responses 兼容的 HTTP 接口，请求交给 Qoder CLI 执行，附带一个只监听本机的控制台：看模型清单、试发消息、改配置。"
+    },
+    "quickstart.summary": {
+      "default": "装好 Qoder CLI 并登录，复制 .env，起服务后打开本机控制台。"
+    },
+    "download.label": {
+      "default": "到仓库取源码包"
+    },
+    "download.note": {
+      "default": "源码分发：clone 仓库或下载 Source code 压缩包，按快速上手页在本机运行。没有安装包，也不内置更新检查。"
+    },
+    "update.badge": {
+      "default": "源码分发"
+    },
+    "update.summary": {
+      "default": "跟随仓库 main 或自己选定的 tag 更新。"
+    },
+    "update.text": {
+      "default": "本仓库按 tag 发布，但站点不替某个 tag 背书：文档描述的是当前源码的行为，升级前先看 CHANGELOG。"
+    }
+  },
+  "update": {
+    "badge": "源码分发",
+    "summary": "跟随仓库 main 或自己选定的 tag 更新。",
+    "text": "本仓库按 tag 发布，但站点不替某个 tag 背书：文档描述的是当前源码的行为，升级前先看 CHANGELOG。"
+  },
+  "contentRevision": "content-8a2893107406",
+  "sha256": "8a28931074067981db3201020cda71d09b5da4eb126ca22f1466cc5b6274c5bf"
+}

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { parseArgs, flagValue } from './lib/args.mjs'
@@ -17,6 +18,10 @@ import {
 
 const { flags } = parseArgs()
 const only = flagValue(flags, 'product')
+
+function sha256File(file) {
+  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')
+}
 
 function diffFacts(expected, actual) {
   const rows = []
@@ -87,8 +92,41 @@ function sameFileSemantics(file, pkg) {
   }
 }
 
+/**
+ * 逐字副本的源仓在构建机上未必存在：在就比哈希，不在就只声明"未核对"。
+ * 源仓跑到前面只告警不阻断——副本里可能刻意不含未发布功能（见登记表的 whyBehind）。
+ */
+const mirrorsFile = path.join(SITE_ROOT, 'data/mirrors.json')
+if (fs.existsSync(mirrorsFile)) {
+  console.log('\n逐字副本（镜像）核对')
+  for (const mirror of readJson(mirrorsFile).mirrors ?? []) {
+    const siteFile = path.join(SITE_ROOT, mirror.site)
+    if (!fs.existsSync(siteFile)) {
+      console.error(`❌ ${mirror.site}: 登记表指向的文件不存在`)
+      failures += 1
+      continue
+    }
+    const siteSha = sha256File(siteFile)
+    if (siteSha !== mirror.siteSha256) {
+      console.error(`❌ ${mirror.site}: 与登记哈希不一致，站点侧被改过（应回开发仓改再同步）`)
+      failures += 1
+      continue
+    }
+    const sourceFile = path.join(SITE_ROOT, '..', mirror.source)
+    if (!fs.existsSync(sourceFile)) {
+      console.log(`ℹ️ ${mirror.site}: 源仓不在本机，未核对（登记同步于 ${mirror.syncedAt}）`)
+      continue
+    }
+    if (sha256File(sourceFile) === siteSha) {
+      console.log(`✅ ${mirror.site}: 与 ${mirror.source} 逐字节一致`)
+    } else {
+      console.log(`⚠️  ${mirror.site}: 源仓 ${mirror.source} 已跑到前面（同步于 ${mirror.syncedAt}）${mirror.whyBehind ? `——${mirror.whyBehind}` : ''}`)
+    }
+  }
+}
+
 if (failures) {
-  console.error(`\n漂移检查：${failures} 个产品失败`)
+  console.error(`\n漂移检查：${failures} 项失败`)
   process.exit(1)
 }
 console.log(`\n漂移检查：${products.length} 个产品通过`)
