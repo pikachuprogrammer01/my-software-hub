@@ -1,0 +1,87 @@
+:root {
+  --vp-c-brand-1: #3157cf;
+  --vp-c-brand-2: #2548b5;
+  --vp-c-brand-3: #20419f;
+  --vp-c-brand-soft: rgba(49, 87, 207, .10);
+  --vp-c-bg: #fff;
+  --vp-c-bg-soft: #f8f9fc;
+  --vp-c-bg-alt: #f7f8fa;
+  --vp-c-divider: #e5e9f0;
+  --vp-c-text-1: #142039;
+  --vp-c-text-2: #54627a;
+  --vp-c-text-3: #7c899b;
+  --vp-font-family-base: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.dark {
+  --vp-c-brand-1: #8ca8ff;
+  --vp-c-brand-2: #a5baff;
+  --vp-c-brand-3: #c4d1ff;
+  --vp-c-brand-soft: rgba(133, 161, 255, .14);
+  --vp-c-bg: #151b29;
+  --vp-c-bg-soft: #1b2433;
+  --vp-c-bg-alt: #111725;
+  --vp-c-divider: #303a4b;
+  --vp-c-text-1: #edf2fd;
+  --vp-c-text-2: #b0bdd0;
+  --vp-c-text-3: #8b9aaf;
+}
+html { scroll-behavior: smooth; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 3px; }
+.VPNavBar { border-bottom: 1px solid var(--vp-c-divider); }
+.VPNavBar .title { font-weight: 740; letter-spacing: -.02em; }
+.VPNavBarMenuLink, .VPNavBarMenuGroup .text { font-size: 13px; }
+.VPHome { padding-bottom: 0 !important; }
+.VPHome .container { max-width: none; }
+.vp-doc { font-size: 15px; line-height: 1.8; }
+.vp-doc h1 { font-weight: 760; letter-spacing: -.035em; }
+.vp-doc h2 { font-weight: 710; letter-spacing: -.025em; }
+.vp-doc a { text-underline-offset: 3px; }
+.VPDoc .content-container, .VPDoc .main { min-width: 0; }
+.VPSidebar .group { padding-top: 10px; }
+.VPFooter { border-top: 1px solid var(--vp-c-divider); }
+.product-landing-page .VPDoc { padding-top: 35px; }
+.product-landing-page .VPDoc .container,
+.product-landing-page .VPDoc:not(.has-sidebar) .container,
+.product-landing-page .VPDoc .content,
+.product-landing-page .VPDoc:not(.has-sidebar) .content,
+.product-landing-page .VPDoc .content-container { width: 100%; max-width: 1152px; }
+.product-landing-page .VPDoc .content { padding: 0 24px 70px; }
+.product-landing-page .VPDoc .content-container { margin: 0; }
+.product-landing-page .VPDocFooter { display: none; }
+.product-landing-page .vp-doc > h1 { display: none; }
+.product-landing-page .product-landing-extras { max-width: 760px; margin-top: 22px; margin-bottom: 40px; }
+.product-landing-page .vp-doc > h2 { max-width: 760px; font-size: 22px; }
+.product-landing-page .vp-doc > p:not(.landing-summary),
+.product-landing-page .vp-doc > ul { max-width: 760px; }
+@media (max-width: 767px) {
+  .product-landing-page .VPDoc { padding: 20px 0 44px; }
+  .product-landing-page .VPDoc .content { padding: 0 20px; }
+  .VPNavBar { background: var(--vp-c-bg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* The default VitePress document max-width (752px) is appropriate for articles,
+   but product landing pages need a genuine wide canvas. */
+@media (min-width: 960px) {
+  .product-landing-page .VPDoc:not(.has-sidebar) .container {
+    width: 100% !important;
+    max-width: 1220px !important;
+  }
+  .product-landing-page .VPDoc:not(.has-sidebar) .content {
+    width: 100% !important;
+    max-width: 1220px !important;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .product-landing-page .VPDoc .content-container {
+    width: 100% !important;
+    max-width: 1152px !important;
+  }
+}
+
+/* Product landing pages expose their own document navigation, so the
+   default narrow-screen VitePress outline bar would be redundant. */
+.product-landing-page .VPLocalNav { display: none !important; }

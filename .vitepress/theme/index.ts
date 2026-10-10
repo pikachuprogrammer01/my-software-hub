@@ -1,3 +1,4 @@
+import './custom.css'
 import DefaultTheme from 'vitepress/theme'
 import Layout from './Layout.vue'
 import AutoClickerDownloadButtons from './components/AutoClickerDownloadButtons.vue'

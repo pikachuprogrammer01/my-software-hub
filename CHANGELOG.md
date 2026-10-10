@@ -7,6 +7,10 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-10
+
+- feat(theme): 新增全局样式层 `custom.css`，统一品牌色、正文字号、焦点态与产品落地页的宽画布版式
+
 ## 2026-10-07
 
 - fix(auto-clicker): 下载直链改指发布仓的 Gitee 版本 tag 与 GitHub release，本站不再托管安装包（删掉 `public/assets/auto-clicker-mac/v1.1.0/` 两个 zip）
