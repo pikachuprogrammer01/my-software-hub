@@ -10,3 +10,4 @@ proposals/accepted/*
 
 data/publish/
 /.playwright-mcp/
+.workbuddy-ai/
