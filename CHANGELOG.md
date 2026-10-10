@@ -14,6 +14,7 @@
 - feat(theme): 首页 Hero 与作品目录重构为作品集布局，沿用产品真实图标与内容包，补移动端断点
 - feat(products): 产品首页改为独立落地页（`pageClass: product-landing-page`），去掉手写目录链接，改由 `<ProductOverview/>` 承载
 - chore(sync): 同步 TableFlow 发布说明为「发布两步化验证」
+- fix(theme): 自定义样式层改为在默认主题之后引入——两者变量同权重，排在前面会被 VitePress 的 `:root`/`.dark` 覆盖，整层配色从未生效
 
 ## 2026-10-07
 
