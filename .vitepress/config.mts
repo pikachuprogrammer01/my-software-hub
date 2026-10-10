@@ -156,8 +156,10 @@ export default defineConfig(async () => {
       logo: site.logo,
       siteTitle: site.name,
       nav: [
-        { text: '全部产品', link: '/' },
-        ...products.map((p) => ({ text: p.name, link: `/${p.id}/` }))
+        { text: '所有作品', link: '/' },
+        { text: '精选项目', link: '/#featured' },
+        { text: '其他产品', items: products.filter((p) => p.visibility !== 'featured').map((p) => ({ text: p.name, link: '/' + p.id + '/' })) },
+        { text: 'GitHub ↗', link: 'https://github.com/pikachuprogrammer01' }
       ],
       sidebar: Object.fromEntries(
         products.map((p) => [
