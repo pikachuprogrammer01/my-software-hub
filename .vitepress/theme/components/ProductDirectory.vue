@@ -1,241 +1,195 @@
 <script setup>
-// 产品目录：清单来自 data/products.json，摘要与版本来自各产品内容包，标题来自 data/site.json。
-// 组件不携带任何对外文案；图标文件缺失时回落字母标记，不显示破图。
 import { onMounted, ref } from 'vue'
 import registry from '../../../data/products.json'
 import site from '../../../data/site.json'
 import { useProductContent } from '../composables/useContent.js'
 
-const STATUS_LABEL = { dormant: '低频更新', maintenance: '维护中', unreleased: '未发布' }
-const ACTION_LABEL = {
-  manual: '下载',
-  'browser-auto': '安装',
-  'built-in-updater': '安装',
-  'continuous-deploy': '访问',
-  none: '获取'
-}
-
-function monogram(name) {
-  return [...name].find((ch) => /[A-Za-z]/.test(ch))?.toUpperCase() ?? name.slice(0, 1)
-}
-
-function links(product) {
-  const base = `/${product.id}/`
-  const sections = product.sections ?? []
-  const out = [{ text: '概览', link: base }]
-  const entry = ['install', 'quickstart', 'config'].find((s) => sections.includes(s))
-  if (entry) out.push({ text: ACTION_LABEL[product.updateMechanism] ?? '开始使用', link: `${base}${entry}` })
-  if (sections.includes('features')) out.push({ text: '功能', link: `${base}features` })
-  if (sections.includes('changelog')) out.push({ text: '更新说明', link: `${base}changelog` })
-  return out
-}
-
-const cards = registry.products
-  .filter((p) => p.visibility !== 'internal')
-  .map((p) => {
-    const content = useProductContent(p.id).value
+const STATUS_LABEL = { dormant: '低频更新', maintenance: '维护中', unreleased: '尚未发布' }
+const products = registry.products
+  .filter((product) => product.visibility !== 'internal')
+  .map((product) => {
+    const content = useProductContent(product.id).value
     return {
-      ...p,
-      tagline: content?.copy?.['overview.title']?.default ?? null,
-      summary: content?.copy?.['overview.summary']?.default ?? null,
-      factor: content?.facts?.['form.factor']?.value ?? null,
-      scope: content?.facts?.['form.scope']?.value ?? null,
-      version: content?.facts?.['version.current']?.value ?? null,
-      statusLabel: STATUS_LABEL[p.status] ?? null,
-      links: links(p)
+      ...product,
+      tagline: content?.copy?.['overview.title']?.default ?? '',
+      summary: content?.copy?.['overview.summary']?.default ?? '',
+      factor: content?.facts?.['form.factor']?.value ?? '',
+      scope: content?.facts?.['form.scope']?.value ?? '',
+      version: content?.facts?.['version.current']?.value ?? '',
+      statusLabel: STATUS_LABEL[product.status] ?? ''
     }
   })
+const featured = products.find((product) => product.visibility === 'featured')
+const others = products.filter((product) => product.id !== featured?.id)
 
-// 图标文件还没到位是常态（各产品标记另行生成）：加载失败就切字母标记，不留破图。
-// 404 往往在水合之前就发生了，@error 会漏掉，所以挂载时再按 naturalWidth 补判一次。
 const brokenLogo = ref({})
 const logoEls = {}
-function trackLogo(id, el) {
-  if (el) logoEls[id] = el
-}
+function trackLogo(id, el) { if (el) logoEls[id] = el }
 onMounted(() => {
   for (const [id, el] of Object.entries(logoEls)) {
     if (el.complete && !el.naturalWidth) brokenLogo.value[id] = true
   }
 })
+function monogram(name) {
+  return [...name].find((ch) => /[A-Za-z]/.test(ch))?.toUpperCase() ?? name.slice(0, 1)
+}
+function productHref(product) { return '/' + product.id + '/' }
 </script>
 
 <template>
-  <section id="products" class="hub-directory">
-    <h2 class="heading">{{ site.directory.title }}</h2>
-    <p class="note">{{ site.directory.note }}</p>
-
-    <div class="grid">
-      <a
-        v-for="card in cards"
-        :key="card.id"
-        class="card"
-        :href="`/${card.id}/`"
-        :style="card.brand?.accent ? { '--accent': card.brand.accent } : undefined"
-      >
-        <div class="head">
-          <img
-            v-if="card.brand?.logo && !brokenLogo[card.id]"
-            :ref="(el) => trackLogo(card.id, el)"
-            class="logo"
-            :src="card.brand.logo"
-            :alt="card.name"
-            loading="lazy"
-            @error="brokenLogo[card.id] = true"
-          />
-          <span v-else class="logo monogram">{{ monogram(card.name) }}</span>
-          <div class="heading-text">
-            <h3>{{ card.name }}</h3>
-            <p v-if="card.tagline" class="tagline">{{ card.tagline }}</p>
+  <div class="studio-directory" id="products">
+    <section v-if="featured" id="featured" class="studio-featured" aria-labelledby="featured-heading">
+      <header class="studio-section-head">
+        <div>
+          <h2 id="featured-heading">{{ site.home.featuredTitle }}</h2>
+          <p v-if="site.home.featuredNote">{{ site.home.featuredNote }}</p>
+        </div>
+      </header>
+      <div class="featured-surface">
+        <div class="featured-main">
+          <div class="featured-identity">
+            <img v-if="featured.brand?.logo && !brokenLogo[featured.id]"
+              :ref="(el) => trackLogo(featured.id, el)" :src="featured.brand.logo"
+              :alt="featured.name + ' 图标'" class="featured-logo" @error="brokenLogo[featured.id] = true"/>
+            <span v-else class="featured-logo featured-fallback">{{ monogram(featured.name) }}</span>
+            <div>
+              <p class="featured-eyebrow">{{ featured.tagline }}</p>
+              <h3>{{ featured.name }}</h3>
+            </div>
+          </div>
+          <p class="featured-summary">{{ featured.summary || site.home.noDescription }}</p>
+          <div class="featured-tags">
+            <span v-if="featured.factor">{{ site.kindLabels?.[featured.kind] || featured.factor }}</span>
+            <span v-if="featured.version">v{{ featured.version }}</span>
+          </div>
+          <div class="featured-actions">
+            <a class="featured-primary" :href="productHref(featured)">{{ site.home.viewProduct }} <span aria-hidden="true">→</span></a>
+            <a v-if="featured.sections.includes('install')" :href="productHref(featured) + 'install'" class="featured-secondary">
+              {{ site.home.getStarted }} <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
+        <div v-if="site.home.featuredSteps?.length" class="featured-steps">
+          <h4>{{ site.home.featuredStepsTitle }}</h4>
+          <div v-for="(step, index) in site.home.featuredSteps" :key="index" class="featured-step">
+            <span class="featured-step-number">{{ String(index + 1).padStart(2, '0') }}</span>
+            <div>
+              <strong>{{ step.title }}</strong>
+              <p>{{ step.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <p class="summary">{{ card.summary ?? '该产品内容包暂不可用，页面只保留链接目录。' }}</p>
+    <section class="studio-others" aria-labelledby="others-heading">
+      <header class="studio-section-head">
+        <div>
+          <h2 id="others-heading">{{ site.home.othersTitle }}</h2>
+          <p>{{ site.home.directoryNote }}</p>
+        </div>
+        <span class="studio-count">{{ others.length }} {{ site.home.productUnit }}</span>
+      </header>
 
-        <p class="scope">{{ card.scope ?? '该产品未登记可用范围' }}</p>
-
-        <p class="meta">
-          <span v-if="card.factor" class="chip factor">{{ card.factor }}</span>
-          <span v-if="card.version" class="chip">v{{ card.version }}</span>
-          <span v-if="card.statusLabel" class="chip muted">{{ card.statusLabel }}</span>
-        </p>
-
-        <p class="links">
-          <span v-for="link in card.links" :key="link.link" class="link">{{ link.text }}</span>
-        </p>
-      </a>
-    </div>
-  </section>
+      <div class="studio-products-grid">
+        <a v-for="product in others" :key="product.id" class="studio-product"
+          :href="productHref(product)">
+          <div class="studio-product-top">
+            <img v-if="product.brand?.logo && !brokenLogo[product.id]"
+              :ref="(el) => trackLogo(product.id, el)" class="studio-product-logo"
+              :src="product.brand.logo" :alt="product.name + ' 图标'"
+              loading="lazy" @error="brokenLogo[product.id] = true"/>
+            <span v-else class="studio-product-logo studio-product-fallback">{{ monogram(product.name) }}</span>
+            <div class="studio-product-identity">
+              <p>{{ product.tagline || product.factor }}</p>
+              <h3>{{ product.name }}</h3>
+            </div>
+          </div>
+          <p class="studio-product-summary">{{ product.summary || site.home.noDescription }}</p>
+          <div class="studio-product-bottom">
+            <span v-if="product.statusLabel" class="studio-product-status">{{ product.statusLabel }}</span>
+            <span v-else-if="product.version" class="studio-product-status">v{{ product.version }}</span>
+            <span v-else class="studio-product-status">{{ site.kindLabels?.[product.kind] || product.factor }}</span>
+            <span class="studio-product-link">{{ site.home.viewProduct }} <span aria-hidden="true">↗</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
 </template>
 
 <style scoped>
-.hub-directory {
-  max-width: 1152px;
-  margin: 0 auto;
-  padding: 0 24px 48px;
+.studio-directory { max-width: 1184px; margin: 0 auto; padding: 0 28px 112px; }
+.studio-featured { scroll-margin-top: 90px; }
+.studio-section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 0 0 20px; }
+.studio-section-head h2 { font-size: 25px; letter-spacing: -.035em; line-height: 1.35; font-weight: 720; color: var(--vp-c-text-1); margin: 0; }
+.studio-section-head p { color: var(--vp-c-text-2); font-size: 14px; line-height: 1.65; margin: 6px 0 0; }
+.featured-surface {
+  display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+  border: 1px solid var(--vp-c-divider); border-radius: 17px;
+  background: var(--vp-c-bg); overflow: hidden;
+  box-shadow: 0 12px 32px rgba(23, 41, 71, .035);
 }
-.heading {
-  margin: 0;
-  font-size: 28px;
-  line-height: 36px;
-  letter-spacing: -0.2px;
-  color: var(--vp-c-text-1);
+.featured-main { padding: 38px 40px; display: flex; flex-direction: column; align-items: flex-start; }
+.featured-identity { display: flex; align-items: center; gap: 19px; }
+.featured-logo { width: 76px; height: 76px; object-fit: contain; flex-shrink: 0; border-radius: 17px; }
+.featured-fallback, .studio-product-fallback { display: grid; place-items: center; color: var(--vp-c-brand-1); font-weight: 700; background: var(--vp-c-brand-soft); }
+.featured-identity h3 { font-size: 32px; line-height: 1.22; letter-spacing: -.04em; margin: 3px 0 0; font-weight: 740; color: var(--vp-c-text-1); }
+.featured-eyebrow { font-size: 13px; margin: 0; color: var(--vp-c-text-2); }
+.featured-summary { font-size: 16px; line-height: 1.8; color: var(--vp-c-text-2); margin: 25px 0 0; max-width: 490px; }
+.featured-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 19px 0 0; }
+.featured-tags span { font-size: 12px; line-height: 1.6; border: 1px solid var(--vp-c-divider); padding: 5px 10px; border-radius: 6px; color: var(--vp-c-text-2); }
+.featured-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: auto; padding-top: 27px; }
+.featured-actions a { text-decoration: none; display: inline-flex; align-items: center; gap: 15px; border-radius: 8px; padding: 11px 16px; font-size: 14px; font-weight: 620; transition: transform .2s, border-color .2s; }
+.featured-actions a:hover { text-decoration: none; transform: translateY(-1px); }
+.featured-primary { color: #fff; background: var(--vp-c-brand-1); }
+.featured-primary:hover { color: #fff; }
+.featured-secondary { color: var(--vp-c-text-1); border: 1px solid var(--vp-c-divider); }
+.featured-secondary:hover { border-color: var(--vp-c-brand-1); color: var(--vp-c-brand-1); }
+.featured-steps { margin: 32px 0; padding: 9px 36px; border-left: 1px solid var(--vp-c-divider); }
+.featured-steps h4 { font-size: 13px; font-weight: 630; color: var(--vp-c-text-2); margin: 0 0 5px; }
+.featured-step { display: flex; align-items: start; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--vp-c-divider); }
+.featured-step:last-child { border-bottom: 0; }
+.featured-step-number { font-size: 13px; font-weight: 720; color: var(--vp-c-brand-1); letter-spacing: .03em; }
+.featured-step strong { font-size: 14px; font-weight: 670; color: var(--vp-c-text-1); }
+.featured-step p { font-size: 13px; color: var(--vp-c-text-2); line-height: 1.6; margin: 5px 0 0; }
+.studio-others { margin-top: 65px; }
+.studio-count { font-size: 13px; color: var(--vp-c-text-3); white-space: nowrap; padding-bottom: 5px; }
+.studio-products-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.studio-product {
+  display: flex; flex-direction: column; padding: 23px; border: 1px solid var(--vp-c-divider);
+  border-radius: 13px; text-decoration: none; min-width: 0; background: var(--vp-c-bg);
+  transition: transform .2s, border-color .2s, box-shadow .2s;
 }
-.note {
-  margin: 10px 0 28px;
-  max-width: 640px;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--vp-c-text-2);
+.studio-product:hover { text-decoration: none; transform: translateY(-3px); border-color: var(--vp-c-brand-2); box-shadow: 0 10px 24px rgba(23, 41, 71, .06); }
+.studio-product-top { display: flex; gap: 13px; align-items: center; }
+.studio-product-logo { flex-shrink: 0; width: 52px; height: 52px; border-radius: 12px; object-fit: contain; }
+.studio-product-identity { min-width: 0; }
+.studio-product-identity p { color: var(--vp-c-text-3); margin: 0 0 3px; font-size: 12px; line-height: 1.4; }
+.studio-product-identity h3 { color: var(--vp-c-text-1); font-size: 18px; line-height: 1.3; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+.studio-product-summary { font-size: 14px; line-height: 1.75; color: var(--vp-c-text-2); margin: 18px 0 20px; flex: 1; }
+.studio-product-bottom { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.studio-product-status { color: var(--vp-c-text-3); font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.studio-product-link { font-size: 13px; white-space: nowrap; font-weight: 660; color: var(--vp-c-brand-1); }
+@media (min-width: 1100px) {
+ .studio-products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+ .studio-product { min-height: 236px; }
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+@media (max-width: 850px) {
+  .featured-surface { grid-template-columns: 1fr; }
+  .featured-main { padding: 29px; }
+  .featured-steps { border-left: 0; border-top: 1px solid var(--vp-c-divider); margin: 0 29px 22px; padding: 20px 0 0; }
 }
-/* 整张卡是一个链接：主题给 .vp-doc a 加的下划线与字重会渗进来，这里按更高优先级压掉。 */
-.grid .card,
-.grid .card * {
-  color: inherit;
-  font-weight: inherit;
-  text-decoration: none;
-}
-.grid .card:hover .heading-text h3 {
-  color: var(--accent, var(--vp-c-brand-1));
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 22px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-  background: var(--vp-c-bg-soft);
-  transition: border-color 0.2s, transform 0.2s;
-}
-.card:hover {
-  border-color: var(--accent, var(--vp-c-brand-1));
-  transform: translateY(-2px);
-  text-decoration: none;
-}
-.head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-.monogram {
-  display: grid;
-  place-items: center;
-  background: var(--accent, var(--vp-c-brand-1));
-  color: #fff;
-  font-size: 20px;
-  font-weight: 700;
-}
-.heading-text h3 {
-  margin: 0;
-  font-size: 17px;
-  line-height: 24px;
-  letter-spacing: 0;
-  color: var(--vp-c-text-1);
-}
-.tagline {
-  margin: 2px 0 0;
-  font-size: 13px;
-  color: var(--vp-c-text-2);
-}
-.summary {
-  margin: 0;
-  flex: 1;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--vp-c-text-2);
-}
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0;
-}
-.scope {
-  margin: 0;
-  font-size: 12.5px;
-  line-height: 20px;
-  color: var(--vp-c-text-3);
-}
-.chip {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  background: var(--vp-c-default-soft);
-  color: var(--vp-c-text-2);
-}
-.chip.muted {
-  color: var(--vp-c-text-3);
-}
-.chip.factor {
-  border: 1px solid var(--accent, var(--vp-c-brand-1));
-  background: transparent;
-  color: var(--accent, var(--vp-c-brand-1));
-  font-weight: 600;
-}
-.grid .links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin: 0;
-  font-size: 13px;
-  color: var(--vp-c-brand-1);
-}
-@media (max-width: 768px) {
-  .hub-directory {
-    padding: 0 24px 32px;
-  }
+@media (max-width: 767px) {
+  .studio-directory { padding: 0 20px 72px; }
+  .studio-others { margin-top: 46px; }
+  .studio-section-head h2 { font-size: 22px; }
+  .featured-logo { width: 64px; height: 64px; }
+  .featured-identity h3 { font-size: 27px; }
+  .featured-main { padding: 23px; }
+  .featured-summary { margin-top: 18px; font-size: 14px; }
+  .featured-steps { margin: 0 23px 10px; }
+  .studio-products-grid { grid-template-columns: 1fr; gap: 12px; }
+  .studio-product { padding: 19px; }
 }
 </style>
