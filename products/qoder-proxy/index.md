@@ -1,18 +1,19 @@
 ---
 title: "Qoder Proxy"
 description: "Qoder Proxy：把 Qoder CLI 适配成本机 OpenAI / Anthropic / Responses 兼容 HTTP 接口的开源工具。"
+pageClass: product-landing-page
+sidebar: false
+aside: false
+outline: false
+lastUpdated: false
 ---
 
-# Qoder Proxy
-
-<ProductOverview product-id="qoder-proxy" />
+<ProductOverview product-id="qoder-proxy">
 
 <ReleaseInfo product-id="qoder-proxy" />
 
-- [它是什么、不是什么](/qoder-proxy/overview)
-- [快速上手](/qoder-proxy/quickstart)
-- [配置项](/qoder-proxy/config)
-- [常见问题与已知限制](/qoder-proxy/faq)
+</ProductOverview>
+
 
 ## 分发方式
 

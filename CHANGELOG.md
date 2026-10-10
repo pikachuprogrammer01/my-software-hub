@@ -12,6 +12,7 @@
 - feat(theme): 新增全局样式层 `custom.css`，统一品牌色、正文字号、焦点态与产品落地页的宽画布版式
 - feat(site): 站点文案与导航改为作品集口径——导航拆成「所有作品 / 精选项目 / 其他产品 / GitHub ↗」，首页文案集中到 `data/site.json` 的 `home` 键
 - feat(theme): 首页 Hero 与作品目录重构为作品集布局，沿用产品真实图标与内容包，补移动端断点
+- feat(products): 产品首页改为独立落地页（`pageClass: product-landing-page`），去掉手写目录链接，改由 `<ProductOverview/>` 承载
 
 ## 2026-10-07
 
