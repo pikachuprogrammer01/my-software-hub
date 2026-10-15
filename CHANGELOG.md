@@ -7,6 +7,11 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-15
+
+- feat(products): TableFlow 隐私政策同步设备特征采集披露——安装时上传的 6 项设备特征、屏幕分辨率与 WebGL 渲染器改由固定采集页读取、用途限定与保留期限，并补上 1.6.1 已申请却从未披露的 `identity` / `identity.email` 权限说明；按「只说明采集什么、不用于其他用途」的口径不写服务端 Cookie 机制
+- chore(sync): 镜像登记表 `data/mirrors.json` 的 privacy.md 哈希与同步日更新为 2026-10-15（主源 `table-flow/docs/PRIVACY_POLICY.md` 同批改写，逐字节一致）
+
 ## 2026-10-10
 
 - feat(theme): 新增全局样式层 `custom.css`，统一品牌色、正文字号、焦点态与产品落地页的宽画布版式
