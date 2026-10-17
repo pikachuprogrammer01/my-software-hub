@@ -4,79 +4,115 @@ import { fileURLToPath } from 'node:url'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 export const SITE_ROOT = path.dirname(here)
-export const RELEASE_FILE = path.join(SITE_ROOT, '.vitepress', 'release.json')
+export const RELEASE_FILE = path.join(SITE_ROOT, '.vitepress', 'releases.json')
 
 /**
  * 扩展与站点共用同一份更新清单，站点不自行拼版本号与下载直链。
- * HUB_UPDATE_MANIFEST_URL 只给测试与离线镜像用，默认值就是线上真值。
+ * HUB_UPDATE_MANIFEST_BASE 只给测试与离线镜像用，默认值就是线上真值。
  */
-export const UPDATE_MANIFEST_URL =
-  process.env.HUB_UPDATE_MANIFEST_URL ??
-  'https://gitee.com/pikachuprogrammer01/my-software-releases/raw/table-flow/update.json'
+export const UPDATE_MANIFEST_BASE =
+  process.env.HUB_UPDATE_MANIFEST_BASE ??
+  'https://gitee.com/pikachuprogrammer01/my-software-releases/raw'
 
-/**
- * 站点只同步这一个产品的 update.json 快照；渲染层与漂移检查都以此判定"哪个产品
- * 才有下载直链可比"，避免把 table-flow 的直链当成别的产品的事实。
- */
-export const RELEASE_SNAPSHOT_PRODUCT = 'table-flow'
+/** 每个有发布仓分支的产品各有一份清单：<base>/<branch>/update.json */
+export function manifestUrlOf(branch) {
+  // data: / file: 这类测试与离线镜像地址不能再拼路径段，直接当整份清单用。
+  if (/^(data|file):/.test(UPDATE_MANIFEST_BASE)) return UPDATE_MANIFEST_BASE
+  return `${UPDATE_MANIFEST_BASE}/${branch}/update.json`
+}
 
-const FALLBACK = { product: RELEASE_SNAPSHOT_PRODUCT, version: '0.0.0', url: '', notes: '', fetchedAt: null }
+const placeholder = (product) => ({ product, version: '0.0.0', url: '', urls: null, notes: '', fetchedAt: null })
 
-export function readRelease() {
+/** 读整张快照表；文件缺失或损坏都退回空表，调用方按产品各自退回占位。 */
+export function readReleases() {
   try {
-    return { ...FALLBACK, ...JSON.parse(fs.readFileSync(RELEASE_FILE, 'utf8')) }
+    const raw = JSON.parse(fs.readFileSync(RELEASE_FILE, 'utf8'))
+    const products = raw?.products && typeof raw.products === 'object' ? raw.products : {}
+    return { products }
   } catch {
-    return FALLBACK
+    return { products: {} }
   }
+}
+
+export function readRelease(product) {
+  return { ...placeholder(product), ...(readReleases().products?.[product] ?? {}) }
 }
 
 function isValid(v) {
   return /^\d+\.\d+\.\d+$/.test(String(v ?? ''))
 }
 
-/**
- * 开发/构建启动时拉一次线上清单。拉不到就沿用本地 release.json 并明确告警，
- * 避免"网络抖一下 → 站点首页显示 v0.0.0 或旧版"这类静默错报。
- */
-export async function syncRelease({ timeoutMs = 8000 } = {}) {
-  const current = readRelease()
+async function fetchManifest(branch, timeoutMs) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
   try {
-    const res = await fetch(UPDATE_MANIFEST_URL, { signal: controller.signal, cache: 'no-store' })
+    const res = await fetch(manifestUrlOf(branch), { signal: controller.signal, cache: 'no-store' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = await res.json()
     if (!isValid(json.version)) throw new Error(`版本号形态异常：${json.version}`)
-    if (!String(json.url ?? '').startsWith('https://')) throw new Error('下载地址不是 https')
-    const facts = {
-      product: RELEASE_SNAPSHOT_PRODUCT,
+    // 浏览器扩展只给一条 url，桌面应用按平台给 urls；两种都接受，但必须都是 https。
+    const single = typeof json.url === 'string' ? json.url : ''
+    const many = json.urls && typeof json.urls === 'object' ? json.urls : null
+    const all = [single, ...Object.values(many ?? {})].filter(Boolean)
+    if (!all.length) throw new Error('清单里没有下载地址')
+    if (all.some((url) => !String(url).startsWith('https://'))) throw new Error('下载地址不是 https')
+    return {
       version: json.version,
-      url: json.url,
+      url: single,
+      urls: many,
       notes: typeof json.notes === 'string' ? json.notes.trim() : ''
     }
-    // fetchedAt 只在版本事实真的变化时前进：每次构建都刷时间戳会让工作树永远脏，
-    // 而这个文件是"版本事实缓存"，不是"上次运行时间"。
-    if (current.fetchedAt && JSON.stringify({ ...current, fetchedAt: null }) === JSON.stringify({ ...facts, fetchedAt: null })) {
-      return current
-    }
-    const next = { ...facts, fetchedAt: new Date().toISOString() }
-    fs.mkdirSync(path.dirname(RELEASE_FILE), { recursive: true })
-    fs.writeFileSync(RELEASE_FILE, `${JSON.stringify(next, null, 2)}\n`)
-    if (next.version !== current.version) {
-      console.log(`[site] 版本跟随线上 update.json：v${current.version} → v${next.version}`)
-    }
-    return next
-  } catch (err) {
-    const reason = err instanceof Error ? err.message : String(err)
-    if (!isValid(current.version)) {
-      console.error(`[site] 拉取失败（${reason}）且本地无可用版本号，下载按钮将禁用`)
-      return current
-    }
-    console.warn(`[site] 未能拉取线上 update.json（${reason}），沿用本地缓存 v${current.version}`)
-    return current
   } finally {
     clearTimeout(timer)
   }
+}
+
+/**
+ * 开发/构建启动时按产品各拉一次线上清单。某个产品拉不到就沿用本地快照并明确告警，
+ * 避免"网络抖一下 → 站点显示 v0.0.0 或旧版"这类静默错报。
+ * fetchedAt 只在版本事实真的变化时前进：每次构建都刷时间戳会让工作树永远脏，
+ * 而这个文件是"版本事实缓存"，不是"上次运行时间"。
+ */
+export async function syncRelease({ branches, timeoutMs = 8000 } = {}) {
+  const registry = JSON.parse(fs.readFileSync(path.join(SITE_ROOT, 'data', 'products.json'), 'utf8'))
+  const targets = branches ?? [...new Set(registry.products.map((item) => item.releaseBranch).filter(Boolean))]
+  const snapshot = readReleases()
+  let dirty = false
+
+  await Promise.all(
+    targets.map(async (branch) => {
+      const current = { ...placeholder(branch), ...(snapshot.products[branch] ?? {}) }
+      try {
+        const facts = { product: branch, ...(await fetchManifest(branch, timeoutMs)) }
+        const unchanged =
+          current.fetchedAt && JSON.stringify({ ...current, fetchedAt: null }) === JSON.stringify({ ...facts, fetchedAt: null })
+        if (unchanged) return
+        snapshot.products[branch] = { ...facts, fetchedAt: new Date().toISOString() }
+        dirty = true
+        if (current.version !== facts.version) {
+          console.log(`[site] ${branch} 版本跟随线上 update.json：v${current.version} → v${facts.version}`)
+        }
+      } catch (err) {
+        const reason = err instanceof Error ? err.message : String(err)
+        if (!isValid(current.version) || current.version === '0.0.0') {
+          // 拉不到又没有可用缓存：删掉这一条，渲染层会退化成"无下载直链"而不是报错。
+          console.error(`[site] ${branch} 拉取失败（${reason}）且本地无可用版本号`)
+          if (snapshot.products[branch]) {
+            delete snapshot.products[branch]
+            dirty = true
+          }
+        } else {
+          console.warn(`[site] ${branch} 未能拉取线上 update.json（${reason}），沿用本地缓存 v${current.version}`)
+        }
+      }
+    })
+  )
+
+  if (dirty) {
+    fs.mkdirSync(path.dirname(RELEASE_FILE), { recursive: true })
+    fs.writeFileSync(RELEASE_FILE, `${JSON.stringify(snapshot, null, 2)}\n`)
+  }
+  return snapshot
 }
 
 /**
@@ -96,6 +132,6 @@ function isCliEntry() {
 }
 
 if (isCliEntry()) {
-  const release = await syncRelease()
-  console.log(JSON.stringify(release, null, 2))
+  const snapshot = await syncRelease()
+  console.log(JSON.stringify(snapshot, null, 2))
 }

@@ -5,11 +5,6 @@
     "schema": 1,
     "product": "wps-enhancer",
     "facts": {
-      "version.current": {
-        "value": "1.1.0",
-        "effectiveFromVersion": "1.1.0",
-        "source": "release-repo"
-      },
       "platform.macosMin": {
         "value": "12.0",
         "effectiveFromVersion": "1.1.0",
@@ -39,6 +34,21 @@
         "value": "仅桌面系统，不含 Linux。它是独立程序，不是 WPS Office 的插件，也不嵌入 WPS 进程。",
         "effectiveFromVersion": "1.1.0",
         "source": "manual:站点核定的可用范围口径"
+      },
+      "download.giteeZipBase": {
+        "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/wps-enhancer-v1.1.0",
+        "effectiveFromVersion": "1.1.0",
+        "source": "release-repo:wps-enhancer/update.json"
+      },
+      "download.githubZipBase": {
+        "value": "https://github.com/pikachuprogrammer01/wps-enhancer-go/releases/download/v1.1.0",
+        "effectiveFromVersion": "1.1.0",
+        "source": "github-release:v{version}"
+      },
+      "version.current": {
+        "value": "1.1.0",
+        "effectiveFromVersion": "1.1.0",
+        "source": "release-repo"
       }
     },
     "copy": {
@@ -66,8 +76,8 @@
       "summary": "启动后自动检查一次更新，发现新版本在通知里提示。",
       "text": "应用启动 3 秒后向更新清单发一次请求；也可在「设置 → 更新」手动检查。下载完成后按提示退出旧版本并替换应用包，本站不再提供第二条下载路径。"
     },
-    "contentRevision": "content-43ca8314970a",
-    "sha256": "43ca8314970a9507ded4c99f796f6532de0418967acdd3bd8bbcc06bdb1a1f3e"
+    "contentRevision": "content-01243a2daefc",
+    "sha256": "01243a2daefcdc60433dbdb5a42cbd2215a80593620ba3ff3e7fed2b9c6ff885"
   },
   "context": {
     "ownProduct": "wps-enhancer",
@@ -76,7 +86,7 @@
   },
   "expect": {
     "kind": "render",
-    "revision": "content-43ca8314970a",
+    "revision": "content-01243a2daefc",
     "summary": "启动后自动检查一次更新，发现新版本在通知里提示。"
   },
   "subject": "data/generated/<product>/content-latest.v1.json"

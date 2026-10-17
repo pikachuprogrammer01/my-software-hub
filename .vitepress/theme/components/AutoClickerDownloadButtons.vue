@@ -60,7 +60,6 @@ function url(source, asset) {
           <p>{{ source.benefit }}</p>
         </div>
       </div>
-      <code class="filename">{{ fileName(asset) }}</code>
     </div>
   </section>
   <p v-else class="download-warning">当前版本信息暂不可用，暂时无法生成 ZIP 下载按钮。</p>
@@ -120,12 +119,6 @@ function url(source, asset) {
   color: var(--vp-c-text-2);
   font-size: 13px;
   line-height: 20px;
-}
-.filename {
-  display: inline-block;
-  margin-top: 12px;
-  color: var(--vp-c-text-2);
-  font-size: 12px;
 }
 .download-warning {
   color: var(--vp-c-warning-1);

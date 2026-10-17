@@ -2,11 +2,6 @@
   "schema": 1,
   "product": "wps-enhancer",
   "facts": {
-    "version.current": {
-      "value": "1.1.0",
-      "effectiveFromVersion": "1.1.0",
-      "source": "release-repo"
-    },
     "platform.macosMin": {
       "value": "12.0",
       "effectiveFromVersion": "1.1.0",
@@ -36,6 +31,16 @@
       "value": "仅桌面系统，不含 Linux。它是独立程序，不是 WPS Office 的插件，也不嵌入 WPS 进程。",
       "effectiveFromVersion": "1.1.0",
       "source": "manual:站点核定的可用范围口径"
+    },
+    "download.giteeZipBase": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/wps-enhancer-v{version}",
+      "effectiveFromVersion": "1.1.0",
+      "source": "release-repo:wps-enhancer/update.json"
+    },
+    "download.githubZipBase": {
+      "value": "https://github.com/pikachuprogrammer01/wps-enhancer-go/releases/download/v{version}",
+      "effectiveFromVersion": "1.1.0",
+      "source": "github-release:v{version}"
     }
   },
   "copy": {

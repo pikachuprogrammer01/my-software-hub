@@ -1,14 +1,9 @@
 {
   "schema": 1,
   "product": "auto-clicker-mac",
-  "sourceRevision": "8e396c5ee6cfbbe98de72fbd8d16652e5e77bbbc",
-  "generatedAt": "2026-10-17T09:35:08.706Z",
+  "sourceRevision": "2b11ca395ad02d857cd7b9ada5eca2ce4cb0c66c",
+  "generatedAt": "2026-10-17T10:50:17.745Z",
   "facts": {
-    "version.current": {
-      "value": "1.1.0",
-      "effectiveFromVersion": "1.1.0",
-      "source": "github-release:v1.1.0"
-    },
     "verifiedAt": {
       "value": "2026-10-05",
       "effectiveFromVersion": "1.1.0",
@@ -22,7 +17,7 @@
     "platform.arch": {
       "value": "Apple Silicon 与 Intel 分别出包（非 universal）",
       "effectiveFromVersion": "1.1.0",
-      "source": "release:v1.1.0 assets"
+      "source": "release-repo:auto-clicker-mac/update.json urls"
     },
     "limits.intervalMin": {
       "value": 10,
@@ -49,7 +44,7 @@
     "download.githubZipBase": {
       "value": "https://github.com/pikachuprogrammer01/auto-clicker-mac/releases/download/v1.1.0",
       "effectiveFromVersion": "1.1.0",
-      "source": "github-release:v1.1.0"
+      "source": "github-release:latest"
     },
     "form.factor": {
       "value": "macOS 菜单栏应用（原生 SwiftUI）",
@@ -60,6 +55,11 @@
       "value": "仅 macOS，没有 Windows / Linux / 移动端版本。需要授予辅助功能权限才能发出点击。",
       "effectiveFromVersion": "1.1.0",
       "source": "manual:站点核定的可用范围口径"
+    },
+    "version.current": {
+      "value": "1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "release-repo"
     }
   },
   "copy": {
@@ -93,6 +93,6 @@
     "summary": "应用不检查更新，新版本需手动下载。",
     "text": "Auto Clicker 没有任何网络层，不会提示新版本。要升级就重新下载对应芯片的压缩包并替换旧版本。"
   },
-  "contentRevision": "content-6c7970de50c4",
-  "sha256": "6c7970de50c4afcb62b2b311bd4a0a508ac04c7a2c9aaeb72853c1b9886345cb"
+  "contentRevision": "content-b9763b7679b8",
+  "sha256": "b9763b7679b8f76dadae68a825284f5ffb43ef1053ce1bfe4737ffe881bbe667"
 }

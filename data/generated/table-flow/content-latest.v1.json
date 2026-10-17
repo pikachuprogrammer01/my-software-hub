@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "table-flow",
-  "sourceRevision": "8e396c5ee6cfbbe98de72fbd8d16652e5e77bbbc",
-  "generatedAt": "2026-10-17T09:35:08.678Z",
+  "sourceRevision": "2b11ca395ad02d857cd7b9ada5eca2ce4cb0c66c",
+  "generatedAt": "2026-10-17T10:20:21.870Z",
   "facts": {
     "features.autoPaging": {
       "status": "available",
@@ -41,6 +41,11 @@
       "value": "桌面版 Chromium 内核浏览器：Chrome / Edge / 360 极速等。没有 Firefox、Safari 与手机端版本。",
       "effectiveFromVersion": "1.0.2",
       "source": "manual:站点核定的可用范围口径"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
     },
     "version.current": {
       "value": "1.6.1",
@@ -86,6 +91,6 @@
     "text": "修复在线激活码被误报为未登记的问题。",
     "detail": "本版本修复了特定情况下在线激活码验证提示错误的问题。"
   },
-  "contentRevision": "content-0b2fd1b5bc74",
-  "sha256": "0b2fd1b5bc74b970da750df39b3cf87a0c2793b1f59a7b9e17c724cb0ec053e7"
+  "contentRevision": "content-ed0abcff1932",
+  "sha256": "ed0abcff1932ae346c27898019ee26bfc845f0fd47a269c6ffa9b678da440c4f"
 }

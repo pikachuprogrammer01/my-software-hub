@@ -1,0 +1,34 @@
+{
+  "products": {
+    "wps-enhancer": {
+      "product": "wps-enhancer",
+      "version": "1.1.0",
+      "url": "",
+      "urls": {
+        "macos-arm64": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/wps-enhancer-v1.1.0/WPSEnhancer-macos-arm64.zip",
+        "windows-x86_64": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/wps-enhancer-v1.1.0/WPSEnhancer-windows-x86_64.zip"
+      },
+      "notes": "v1.1.0：独立仓首发；更新源切换至 my-software-releases 分支 wps-enhancer",
+      "fetchedAt": "2026-10-17T10:19:52.313Z"
+    },
+    "table-flow": {
+      "product": "table-flow",
+      "version": "1.6.1",
+      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
+      "urls": null,
+      "notes": "v1.6.1：发布两步化验证",
+      "fetchedAt": "2026-10-17T10:19:52.409Z"
+    },
+    "auto-clicker-mac": {
+      "product": "auto-clicker-mac",
+      "version": "1.1.0",
+      "url": "",
+      "urls": {
+        "macos-arm64": "https://raw.giteeusercontent.com/pikachuprogrammer01/my-software-releases/raw/auto-clicker-mac-v1.1.0/Auto-Clicker-v1.1.0-arm64.zip",
+        "macos-x86_64": "https://raw.giteeusercontent.com/pikachuprogrammer01/my-software-releases/raw/auto-clicker-mac-v1.1.0/Auto-Clicker-v1.1.0-intel.zip"
+      },
+      "notes": "Auto Clicker v1.1.0：macOS Apple Silicon 与 Intel 安装包。",
+      "fetchedAt": "2026-10-17T10:20:14.669Z"
+    }
+  }
+}

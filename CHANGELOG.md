@@ -19,6 +19,10 @@
 - feat(theme): 全站不再显示版本号——移除目录卡片与产品落地页的 `v1.6.1` 徽章、`<ReleaseInfo>` 的「当前版本 vX」、两个下载面板标题里的版本号（改「下载最新版」），auto-clicker 概览与 FAQ 里两处 `<Fact id="version.current">` 改写为不标版本的说法；下载文件名与直链 href 仍带版本号（那是下载物的真名，不能省）
 - feat(content): TableFlow 版本号改为构建期从线上清单注入——`packageFromSource` 读 `.vitepress/release.json`（`update.json` 快照）写入 `version.current`，内容源里删掉该条字面量，`validateSource` 拒绝再把它写回源里；发新版只需改 `update.json`，站点仓零改动。快照是拉取失败占位 `0.0.0` 时不注入
 - fix(content): 内容包 hash 不再受键书写顺序影响——`payloadHash` 递归排序对象键，此前挪动一条 fact 的位置就会算出新 revision、让历史里凭空多一份同内容包；顺带补 5 条注入用例，`test-content.mjs` 44 → 49
+- feat(content): 版本号注入扩到所有接了发布仓的产品——`sync-release.mjs` 从单产品 `.vitepress/release.json` 改为多产品 `.vitepress/releases.json`，按 `releaseBranch` 各拉一份清单；WPS Enhancer 与 Auto Clicker 的内容源删掉写死的 `version.current`，下载地址改为 `{version}` 模板由构建期填充（WPS 的 Gitee/GitHub 下载源、Auto Clicker 的 Gitee/GitHub zip base 都不再手拼版本号）；`validateSource` 对这类产品同时拒绝写死的版本号与写死的下载地址
+- feat(data): Auto Clicker 登记 `releaseBranch: auto-clicker-mac`——它本来就有 `my-software-releases` 的 update.json 清单，只是没接上，版本号才一直是源里手写的；接上后进入发布 dry-run 链路
+- fix(theme): Auto Clicker 下载面板不再列出带版本号的文件名（`Auto-Clicker-v1.1.0-arm64.zip`），只留平台与来源；`products/table-flow/changelog.md` 去掉手写的「**当前最新版**」标注，改为指向安装页按钮，日志标题只保留发布日期
+- 站点不再有任何手写的版本号：`README.md`、`DOWNLOADS.md`、`CLIENT-INTEGRATION.md` 的口径同步为「版本号由拉取清单注入、页面不显示、源里禁止写死」
 
 ## 2026-10-16
 

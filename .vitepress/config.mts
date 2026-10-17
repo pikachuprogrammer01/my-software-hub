@@ -109,7 +109,7 @@ function availableLogo(product) {
 }
 
 export default defineConfig(async () => {
-  // 构建期同步线上更新清单快照到 .vitepress/release.json，<ReleaseInfo/> 只读它。
+  // 构建期按产品同步线上更新清单快照到 .vitepress/releases.json，内容包注入只读它。
   await syncRelease()
 
   return {

@@ -1,8 +1,7 @@
 <script setup>
-// 版本号与下载直链只来自线上 update.json 快照（.vitepress/release.json 由构建期同步写入），
-// 且快照只属于它声明的那一个产品：别的产品不能借用它的直链。
+// 下载直链只来自内容包 facts：源里是 {version} 模板，构建期由线上 update.json 的快照
+// 填充版本号后写进内容包，组件既不写死 URL 也不写死版本号。
 import { computed } from 'vue'
-import release from '../../release.json'
 import registry from '../../../data/products.json'
 import { useProductContent } from '../composables/useContent.js'
 
@@ -13,8 +12,11 @@ const props = defineProps({
 
 const content = useProductContent(props.productId)
 const product = registry.products.find((item) => item.id === props.productId)
-// 旧快照没有 product 字段时视为不可比，避免把 table-flow 的直链发给别的产品。
-const directLink = release.product === props.productId && release.version && release.url ? release : null
+// 有更新清单快照的产品（manual 更新方式）给最新版直链按钮。
+const directLink = computed(() => {
+  const url = content.value?.facts?.['download.zipUrl']?.value
+  return url ? { url } : null
+})
 const builtInUpdater = product?.updateMechanism === 'built-in-updater'
 // 未接发布基础设施的产品（updateMechanism: none）只给「获取方式」，不承诺任何更新提示；
 // 直链与措辞同样来自内容包，组件不写死 URL 也不写死文案。

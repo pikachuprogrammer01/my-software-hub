@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "product": "wps-enhancer",
+  "sourceRevision": "2b11ca395ad02d857cd7b9ada5eca2ce4cb0c66c",
+  "generatedAt": "2026-10-17T10:20:21.880Z",
+  "facts": {
+    "platform.macosMin": {
+      "value": "12.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "client-constant:build/darwin/Info.plist:LSMinimumSystemVersion"
+    },
+    "platform.macosArch": {
+      "value": "仅 Apple Silicon（arm64）",
+      "effectiveFromVersion": "1.1.0",
+      "source": "ci:release.yml 按 runner 架构出包，无 macos-x86_64"
+    },
+    "limits.previewRows": {
+      "value": 480,
+      "unit": "行",
+      "effectiveFromVersion": "1.1.0",
+      "source": "client-constant:PreviewPanel 预览上限"
+    },
+    "features.builtInUpdater": {
+      "status": "available",
+      "effectiveFromVersion": "1.1.0"
+    },
+    "form.factor": {
+      "value": "macOS 与 Windows 桌面应用",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "仅桌面系统，不含 Linux。它是独立程序，不是 WPS Office 的插件，也不嵌入 WPS 进程。",
+      "effectiveFromVersion": "1.1.0",
+      "source": "manual:站点核定的可用范围口径"
+    },
+    "download.giteeZipBase": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/wps-enhancer-v1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "release-repo:wps-enhancer/update.json"
+    },
+    "download.githubZipBase": {
+      "value": "https://github.com/pikachuprogrammer01/wps-enhancer-go/releases/download/v1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "github-release:v{version}"
+    },
+    "version.current": {
+      "value": "1.1.0",
+      "effectiveFromVersion": "1.1.0",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "把客户表格整理成手机通讯录"
+    },
+    "overview.summary": {
+      "default": "读取 Excel 或 CSV 客户表，清洗手机号、拆分多号、套用列映射模板，导出 vCard（.vcf）与 Excel / CSV / TXT。所有文件都在本机处理，不上传。"
+    },
+    "install.summary": {
+      "default": "首次安装下载对应平台的安装包；之后的新版本由应用内更新器提示。"
+    },
+    "update.badge": {
+      "default": "应用内更新"
+    },
+    "update.summary": {
+      "default": "启动后自动检查一次更新，发现新版本在通知里提示。"
+    },
+    "update.text": {
+      "default": "应用启动 3 秒后向更新清单发一次请求；也可在「设置 → 更新」手动检查。下载完成后按提示退出旧版本并替换应用包，本站不再提供第二条下载路径。"
+    }
+  },
+  "update": {
+    "badge": "应用内更新",
+    "summary": "启动后自动检查一次更新，发现新版本在通知里提示。",
+    "text": "应用启动 3 秒后向更新清单发一次请求；也可在「设置 → 更新」手动检查。下载完成后按提示退出旧版本并替换应用包，本站不再提供第二条下载路径。"
+  },
+  "contentRevision": "content-01243a2daefc",
+  "sha256": "01243a2daefcdc60433dbdb5a42cbd2215a80593620ba3ff3e7fed2b9c6ff885"
+}

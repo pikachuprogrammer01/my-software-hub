@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "product": "table-flow",
+  "sourceRevision": "2b11ca395ad02d857cd7b9ada5eca2ce4cb0c66c",
+  "generatedAt": "2026-10-17T10:20:21.870Z",
+  "facts": {
+    "features.autoPaging": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "features.localProcessing": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.autoPaging.maxPages": {
+      "value": 50,
+      "unit": "页",
+      "source": "client-constant:settingsStore.defaultMaxPages",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "pricing.pro.monthly": {
+      "value": 5,
+      "currency": "CNY",
+      "period": "month",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "pricing.pro.yearly": {
+      "value": 40,
+      "currency": "CNY",
+      "period": "year",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "form.factor": {
+      "value": "Chromium 浏览器扩展（Manifest V3）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "桌面版 Chromium 内核浏览器：Chrome / Edge / 360 极速等。没有 Firefox、Safari 与手机端版本。",
+      "effectiveFromVersion": "1.0.2",
+      "source": "manual:站点核定的可用范围口径"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
+    },
+    "version.current": {
+      "value": "1.6.1",
+      "effectiveFromVersion": "1.6.1",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "网页表格采集与导出"
+    },
+    "overview.summary": {
+      "default": "从网页已显示的表格中提取数据并导出。",
+      "variants": {
+        "table-flow-panel": "从网页表格中提取并导出数据。"
+      }
+    },
+    "features.autoPaging": {
+      "default": "支持自动翻页采集与断线续采。"
+    },
+    "features.localProcessing": {
+      "default": "采集、预览与导出默认在浏览器本地完成。"
+    },
+    "install.summary": {
+      "default": "Edge 用户可从商店安装，其他 Chromium 浏览器使用压缩包加载。"
+    },
+    "update.badge": {
+      "default": "在线激活修复"
+    },
+    "update.summary": {
+      "default": "修复部分激活码提示错误"
+    },
+    "update.text": {
+      "default": "修复在线激活码被误报为未登记的问题。"
+    },
+    "update.detail": {
+      "default": "本版本修复了特定情况下在线激活码验证提示错误的问题。"
+    }
+  },
+  "update": {
+    "badge": "在线激活修复",
+    "summary": "修复部分激活码提示错误",
+    "text": "修复在线激活码被误报为未登记的问题。",
+    "detail": "本版本修复了特定情况下在线激活码验证提示错误的问题。"
+  },
+  "contentRevision": "content-ed0abcff1932",
+  "sha256": "ed0abcff1932ae346c27898019ee26bfc845f0fd47a269c6ffa9b678da440c4f"
+}

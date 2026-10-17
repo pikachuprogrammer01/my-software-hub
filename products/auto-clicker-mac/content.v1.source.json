@@ -2,11 +2,6 @@
   "schema": 1,
   "product": "auto-clicker-mac",
   "facts": {
-    "version.current": {
-      "value": "1.1.0",
-      "effectiveFromVersion": "1.1.0",
-      "source": "github-release:v1.1.0"
-    },
     "verifiedAt": {
       "value": "2026-10-05",
       "effectiveFromVersion": "1.1.0",
@@ -20,7 +15,7 @@
     "platform.arch": {
       "value": "Apple Silicon 与 Intel 分别出包（非 universal）",
       "effectiveFromVersion": "1.1.0",
-      "source": "release:v1.1.0 assets"
+      "source": "release-repo:auto-clicker-mac/update.json urls"
     },
     "limits.intervalMin": {
       "value": 10,
@@ -40,14 +35,14 @@
       "source": "manual"
     },
     "download.giteeZipBase": {
-      "value": "https://raw.giteeusercontent.com/pikachuprogrammer01/my-software-releases/raw/auto-clicker-mac-v1.1.0",
+      "value": "https://raw.giteeusercontent.com/pikachuprogrammer01/my-software-releases/raw/auto-clicker-mac-v{version}",
       "effectiveFromVersion": "1.1.0",
       "source": "release-repo:auto-clicker-mac/update.json"
     },
     "download.githubZipBase": {
-      "value": "https://github.com/pikachuprogrammer01/auto-clicker-mac/releases/download/v1.1.0",
+      "value": "https://github.com/pikachuprogrammer01/auto-clicker-mac/releases/download/v{version}",
       "effectiveFromVersion": "1.1.0",
-      "source": "github-release:v1.1.0"
+      "source": "github-release:latest"
     },
     "form.factor": {
       "value": "macOS 菜单栏应用（原生 SwiftUI）",

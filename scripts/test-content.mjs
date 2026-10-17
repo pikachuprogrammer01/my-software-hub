@@ -15,6 +15,7 @@ import {
   validateSource,
   verifyPackage
 } from './content-lib.mjs'
+import { readRelease } from './sync-release.mjs'
 
 const results = []
 
@@ -37,8 +38,10 @@ function sandbox() {
     if (!fs.existsSync(src)) continue
     if (entry === '.vitepress') {
       fs.mkdirSync(path.join(dir, entry), { recursive: true })
-      const release = path.join(src, 'release.json')
-      if (fs.existsSync(release)) fs.copyFileSync(release, path.join(dir, entry, 'release.json'))
+      for (const name of ['releases.json', 'release.json']) {
+        const file = path.join(src, name)
+        if (fs.existsSync(file)) fs.copyFileSync(file, path.join(dir, entry, name))
+      }
       continue
     }
     fs.cpSync(src, path.join(dir, entry), { recursive: true })
@@ -169,53 +172,76 @@ test('仓库内已生成的 latest 包自校验通过', () => {
 
 console.log('\n【2.5】版本号只从拉取快照注入')
 
+const SNAPSHOT = (dir) => path.join(dir, '.vitepress', 'releases.json')
+const writeSnapshot = (dir, mutate) => {
+  const snapshot = readJson(SNAPSHOT(dir))
+  mutate(snapshot.products)
+  fs.writeFileSync(SNAPSHOT(dir), `${JSON.stringify(snapshot, null, 2)}\n`)
+}
+
 test('有线上清单的产品，版本号由快照注入而不是内容源', () => {
-  const { source } = readSource('table-flow')
-  assert.equal(source.facts?.['version.current'], undefined, '内容源里不该再有 version.current')
-  const snapshot = readJson(path.join(SITE_ROOT, '.vitepress', 'release.json'))
-  const pkg = packageFromSource(source, { id: 'table-flow', releaseBranch: 'table-flow' })
-  assert.equal(pkg.facts['version.current'].value, snapshot.version)
+  for (const id of ['table-flow', 'wps-enhancer', 'auto-clicker-mac']) {
+    const { source, registry } = readSource(id)
+    assert.equal(source.facts?.['version.current'], undefined, `${id} 的内容源里不该再有 version.current`)
+    const snapshot = readRelease(registry.releaseBranch)
+    const pkg = packageFromSource(source, registry)
+    assert.equal(pkg.facts['version.current'].value, snapshot.version, `${id} 的版本号没从快照注入`)
+  }
 })
 
-test('快照版本推进后重新构建，包里的版本号自动跟上（不改任何源文件）', () => {
-  const dir = sandbox()
-  const snapshotFile = path.join(dir, '.vitepress', 'release.json')
-  const snapshot = readJson(snapshotFile)
-  assert.equal(run(dir, 'content-build.mjs', ['--product', 'table-flow']).code, 0)
-  const latest = path.join(dir, 'data', 'generated', 'table-flow', 'content-latest.v1.json')
-  const before = readJson(latest)
-  assert.equal(before.facts['version.current'].value, snapshot.version)
+test('下载地址里的版本号也是注入的，源里只写 {version} 占位', () => {
+  const { source, registry } = readSource('wps-enhancer')
+  assert.match(source.facts['download.giteeZipBase'].value, /\{version\}/)
+  const pkg = packageFromSource(source, registry)
+  assert.match(pkg.facts['download.giteeZipBase'].value, new RegExp(`wps-enhancer-v${pkg.facts['version.current'].value}$`))
+  assert.doesNotMatch(pkg.facts['download.giteeZipBase'].value, /\{version\}/)
+})
 
-  fs.writeFileSync(snapshotFile, `${JSON.stringify({ ...snapshot, version: '9.9.9' }, null, 2)}\n`)
-  assert.equal(run(dir, 'content-build.mjs', ['--product', 'table-flow']).code, 0)
+test('快照版本推进后重新构建，包里的版本号与地址自动跟上（不改任何源文件）', () => {
+  const dir = sandbox()
+  assert.equal(run(dir, 'content-build.mjs', ['--product', 'wps-enhancer']).code, 0)
+  const latest = path.join(dir, 'data', 'generated', 'wps-enhancer', 'content-latest.v1.json')
+  const before = readJson(latest)
+
+  writeSnapshot(dir, (products) => { products['wps-enhancer'].version = '9.9.9' })
+  assert.equal(run(dir, 'content-build.mjs', ['--product', 'wps-enhancer']).code, 0)
   const after = readJson(latest)
   assert.equal(after.facts['version.current'].value, '9.9.9')
+  assert.match(after.facts['download.giteeZipBase'].value, /wps-enhancer-v9\.9\.9$/, '地址没跟着版本走')
   assert.notEqual(after.contentRevision, before.contentRevision)
 })
 
 test('拉取快照是失败占位 0.0.0 时不注入', () => {
   const dir = sandbox()
-  const snapshotFile = path.join(dir, '.vitepress', 'release.json')
-  const snapshot = readJson(snapshotFile)
-  fs.writeFileSync(snapshotFile, `${JSON.stringify({ ...snapshot, version: '0.0.0' }, null, 2)}\n`)
+  writeSnapshot(dir, (products) => { products['table-flow'].version = '0.0.0' })
   assert.equal(run(dir, 'content-build.mjs', ['--product', 'table-flow']).code, 0)
   const pkg = readJson(path.join(dir, 'data', 'generated', 'table-flow', 'content-latest.v1.json'))
   assert.equal(pkg.facts['version.current'], undefined, '占位版本号不该写进包')
 })
 
-test('没有线上清单的产品不受注入影响', () => {
-  const { source } = readSource('auto-clicker-mac')
-  const pkg = packageFromSource(source, { id: 'auto-clicker-mac', releaseBranch: null })
-  assert.equal(pkg.facts['version.current'].value, '1.1.0')
+test('没有发布清单的产品不受注入影响', () => {
+  const { source, registry } = readSource('qoder-proxy')
+  const pkg = packageFromSource(source, registry)
+  assert.equal(pkg.facts['version.current'], undefined)
+  assert.equal(pkg.facts['download.repoUrl'].value, 'https://github.com/pikachuprogrammer01/qoder-proxy')
 })
 
 test('有线上清单的产品把 version.current 写进内容源会被拒', () => {
-  const { source } = readSource('table-flow')
+  const { source, registry } = readSource('wps-enhancer')
   const bad = structuredClone(source)
   bad.facts['version.current'] = { value: '1.6.1', effectiveFromVersion: '1.6.1' }
-  const result = validateSource(bad, { id: 'table-flow', releaseBranch: 'table-flow' })
+  const result = validateSource(bad, registry)
   assert.equal(result.ok, false)
   assert.match(result.errors.join('\n'), /version\.current 不允许写进内容源/)
+})
+
+test('有线上清单的产品把版本号写死进下载地址会被拒', () => {
+  const { source, registry } = readSource('auto-clicker-mac')
+  const bad = structuredClone(source)
+  bad.facts['download.giteeZipBase'].value = 'https://raw.giteeusercontent.com/pikachuprogrammer01/my-software-releases/raw/auto-clicker-mac-v1.1.0'
+  const result = validateSource(bad, registry)
+  assert.equal(result.ok, false)
+  assert.match(result.errors.join('\n'), /写死了版本号/)
 })
 
 console.log('\n【3】构建/漂移/回滚（临时副本沙箱）')
@@ -439,7 +465,7 @@ test('发布配置里含凭证字段会被拒绝', () => {
 
 test('未接入发布分支的产品不允许发布', () => {
   const dir = sandbox()
-  const out = run(dir, 'content-publish.mjs', ['--product', 'auto-clicker-mac', '--revision', 'content-000000000000'])
+  const out = run(dir, 'content-publish.mjs', ['--product', 'qoder-proxy', '--revision', 'content-000000000000'])
   assert.equal(out.code, 2, out.stdout)
   assert.match(out.stdout, /releaseBranch/)
 })
@@ -614,11 +640,12 @@ function runWithEnv(dir, script, args = [], env = {}) {
 }
 
 const manifest = (o) => `data:application/json,${encodeURIComponent(JSON.stringify(o))}`
-const RELEASE_FILE = (dir) => path.join(dir, '.vitepress/release.json')
+const RELEASE_FILE = (dir) => path.join(dir, '.vitepress/releases.json')
+const snapshotOf = (dir, product) => readJson(RELEASE_FILE(dir)).products[product]
 
-test('线上版本没变时不重写 release.json（构建不该天天弄脏工作树）', () => {
+test('线上版本没变时不重写 releases.json（构建不该天天弄脏工作树）', () => {
   const dir = sandbox()
-  const env = { HUB_UPDATE_MANIFEST_URL: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
+  const env = { HUB_UPDATE_MANIFEST_BASE: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
   assert.equal(runWithEnv(dir, 'sync-release.mjs', [], env).code, 0)
   const first = fs.readFileSync(RELEASE_FILE(dir), 'utf8')
   assert.match(first, /"version": "9\.9\.9"/)
@@ -628,16 +655,25 @@ test('线上版本没变时不重写 release.json（构建不该天天弄脏工�
 
 test('线上版本变了才重写快照并前进 fetchedAt', () => {
   const dir = sandbox()
-  const a = { HUB_UPDATE_MANIFEST_URL: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
-  const b = { HUB_UPDATE_MANIFEST_URL: manifest({ version: '9.9.10', url: 'https://example.invalid/b.zip', notes: 'y' }) }
+  const a = { HUB_UPDATE_MANIFEST_BASE: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
+  const b = { HUB_UPDATE_MANIFEST_BASE: manifest({ version: '9.9.10', url: 'https://example.invalid/b.zip', notes: 'y' }) }
   assert.equal(runWithEnv(dir, 'sync-release.mjs', [], a).code, 0)
-  const before = readJson(RELEASE_FILE(dir))
+  const before = snapshotOf(dir, 'table-flow')
   const out = runWithEnv(dir, 'sync-release.mjs', [], b)
   assert.equal(out.code, 0, out.stdout)
-  const after = readJson(RELEASE_FILE(dir))
+  const after = snapshotOf(dir, 'table-flow')
   assert.equal(after.version, '9.9.10')
   assert.notEqual(after.url, before.url, '版本变了却没重写文件，下载直链就会停在旧版')
   assert.match(out.stdout, /v9\.9\.9 → v9\.9\.10/)
+})
+
+test('每个有发布分支的产品各拉自己那份清单', () => {
+  const dir = sandbox()
+  const env = { HUB_UPDATE_MANIFEST_BASE: manifest({ version: '9.9.9', url: 'https://example.invalid/a.zip', notes: 'x' }) }
+  assert.equal(runWithEnv(dir, 'sync-release.mjs', [], env).code, 0)
+  for (const branch of ['table-flow', 'wps-enhancer', 'auto-clicker-mac']) {
+    assert.equal(snapshotOf(dir, branch).version, '9.9.9', `${branch} 没拉到清单`)
+  }
 })
 
 test('把安装包塞进 public/ 会被 lint 挡住', () => {

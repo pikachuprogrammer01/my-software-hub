@@ -3,15 +3,14 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import Ajv from 'ajv/dist/2020.js'
-import { RELEASE_SNAPSHOT_PRODUCT, SITE_ROOT } from './sync-release.mjs'
+import { SITE_ROOT, readRelease, readReleases } from './sync-release.mjs'
 
-export { SITE_ROOT, RELEASE_SNAPSHOT_PRODUCT }
+export { SITE_ROOT }
 
 export const PRODUCTS_FILE = path.join(SITE_ROOT, 'data', 'products.json')
 export const PRODUCTS_DIR = path.join(SITE_ROOT, 'products')
 export const GENERATED_DIR = path.join(SITE_ROOT, 'data', 'generated')
 export const SCHEMA_DIR = path.join(SITE_ROOT, 'schema')
-export const RELEASE_SNAPSHOT_FILE = path.join(SITE_ROOT, '.vitepress', 'release.json')
 
 const ajv = new Ajv({ allErrors: true, strict: false, formats: { 'date-time': true } })
 const contentSchema = JSON.parse(fs.readFileSync(path.join(SCHEMA_DIR, 'content.v1.json'), 'utf8'))
@@ -55,11 +54,20 @@ export function validateSource(source, registry) {
     if (fact.variants || fact.channels) errors.push(`事实禁止渠道变体：${fieldId}`)
     if (/^(icon|color|accent|layout)(\.|$)/i.test(fieldId)) errors.push(`事实字段疑似视觉字段：${fieldId}`)
   }
-  // 有线上清单的产品版本号由拉取快照注入；源里再写一个就一定会过期，直接拒绝。
-  if (registry.releaseBranch === RELEASE_SNAPSHOT_PRODUCT && source.facts?.['version.current']) {
-    errors.push(
-      `version.current 不允许写进内容源：${registry.id} 的版本号由拉取的 update.json 快照注入（见 packageFromSource）`
-    )
+  // 有线上清单的产品，版本号与下载地址都由拉取快照注入；源里再写死就一定会过期。
+  if (registry.releaseBranch) {
+    if (source.facts?.['version.current']) {
+      errors.push(
+        `version.current 不允许写进内容源：${registry.id} 的版本号由拉取的 update.json 快照注入（见 packageFromSource）`
+      )
+    }
+    for (const [fieldId, fact] of Object.entries(source.facts ?? {})) {
+      if (typeof fact.value === 'string' && /v?\d+\.\d+\.\d+/.test(fact.value) && !fact.value.includes('{version}')) {
+        errors.push(
+          `下载地址里写死了版本号：${fieldId} → ${fact.value}（有发布清单的产品请写成 {version} 占位，构建期填充）`
+        )
+      }
+    }
   }
   for (const [fieldId, copy] of Object.entries(source.copy ?? {})) {
     const values = [copy.default, ...Object.values(copy.variants ?? {})]
@@ -126,20 +134,26 @@ export function revisionOf(hash) {
  * 快照由 `pnpm sync` 与 VitePress 配置加载时刷新，这里只读不拉，保证构建可复现。
  */
 export function pulledVersionOf(registry) {
-  if (registry?.releaseBranch !== RELEASE_SNAPSHOT_PRODUCT) return null
-  try {
-    const snapshot = JSON.parse(fs.readFileSync(RELEASE_SNAPSHOT_FILE, 'utf8'))
-    const version = String(snapshot?.version ?? '')
-    // 0.0.0 是拉取失败时的占位，不能当真值写进包。
-    return /^\d+\.\d+\.\d+$/.test(version) && version !== '0.0.0' ? version : null
-  } catch {
-    return null
-  }
+  if (!registry?.releaseBranch) return null
+  const { version } = readRelease(registry.releaseBranch)
+  // 0.0.0 是拉取失败时的占位，不能当真值写进包。
+  return /^\d+\.\d+\.\d+$/.test(version) && version !== '0.0.0' ? version : null
+}
+
+/** 下载地址模板里的 `{version}` 由拉到的版本号填：源里只写模板，不写具体版本。 */
+function fillVersion(text, version) {
+  return typeof text === 'string' ? text.replaceAll('{version}', version) : text
 }
 
 export function packageFromSource(source, registry) {
   const pulledVersion = pulledVersionOf(registry)
-  const facts = { ...source.facts }
+  const facts = {}
+  for (const [fieldId, fact] of Object.entries(source.facts ?? {})) {
+    // 版本占位符出现在任何 fact 的 value 里都要替换：giteeZipBase 这类地址带版本段。
+    facts[fieldId] = typeof fact.value === 'string' && fact.value.includes('{version}') && pulledVersion
+      ? { ...fact, value: fillVersion(fact.value, pulledVersion) }
+      : fact
+  }
   if (pulledVersion) {
     facts['version.current'] = {
       ...(facts['version.current'] ?? {}),

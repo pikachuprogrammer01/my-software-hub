@@ -12,7 +12,7 @@
 
 | 项 | 值 |
 |----|----|
-| 更新清单（扩展与站点共用同一份） | `https://gitee.com/pikachuprogrammer01/my-software-releases/raw/table-flow/update.json` |
+| 更新清单（扩展与站点共用同一份） | `https://gitee.com/pikachuprogrammer01/my-software-releases/raw/<发布分支>/update.json`，发布分支见 `data/products.json` 的 `releaseBranch`（现有 `table-flow` / `wps-enhancer` / `auto-clicker-mac`） |
 | Releases 总入口（tag 列表，站点不逐条链接） | `https://gitee.com/pikachuprogrammer01/my-software-releases/releases` |
 | 最新版直链规律 | `.../releases/download/table-flow-v<版本>/table-flow-v<版本>.zip`（**由 update.json 的 `url` 字段给出，不自行拼接**） |
 | 命名约定 | Release tag / 附件名 / `update.json.url` 三处完全一致，格式 `table-flow-v<版本>` |

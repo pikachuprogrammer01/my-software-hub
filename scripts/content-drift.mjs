@@ -12,9 +12,9 @@ import {
   readJson,
   readSource,
   semanticPayload,
-  verifyPackage,
-  RELEASE_SNAPSHOT_PRODUCT
+  verifyPackage
 } from './content-lib.mjs'
+import { readRelease } from './sync-release.mjs'
 
 const { flags } = parseArgs()
 const only = flagValue(flags, 'product')
@@ -64,18 +64,15 @@ for (const product of products) {
     if (!fs.existsSync(revisionPath)) throw new Error(`latest 指向的 revision 不存在：${actual.contentRevision}`)
     if (!sameFileSemantics(revisionPath, actual)) throw new Error(`history revision 与 latest 不一致：${actual.contentRevision}`)
 
-    // .vitepress/release.json 只同步 table-flow 的 update.json，别的版本事实不能拿它比对。
-    // 版本号由 packageFromSource 从该快照注入，这里守的是"注入真的落进了包"：
-    // 快照可用而包里版本号缺失或对不上，说明 latest 还是旧快照生成的包。
-    if (product.releaseBranch === RELEASE_SNAPSHOT_PRODUCT) {
-      const releaseFile = path.join(SITE_ROOT, '.vitepress', 'release.json')
+    // 有发布清单的产品，版本号由 packageFromSource 从 .vitepress/releases.json 注入，
+    // 这里守的是"注入真的落进了包"：快照可用而包里版本号缺失或对不上，
+    // 说明 latest 还是旧快照生成的包。
+    if (product.releaseBranch) {
+      const release = readRelease(product.releaseBranch)
       const current = actual.facts?.['version.current']?.value
-      if (fs.existsSync(releaseFile)) {
-        const release = readJson(releaseFile)
-        // 只有真从发布仓同步来的版本号才可比；0.0.0 是拉取失败的占位。
-        if (release.version && release.version !== '0.0.0' && current !== release.version) {
-          throw new Error(`内容事实 v${current ?? '（缺失）'} 与 update.json v${release.version} 不一致`)
-        }
+      // 只有真从发布仓同步来的版本号才可比；0.0.0 是拉取失败的占位。
+      if (release.version && release.version !== '0.0.0' && current !== release.version) {
+        throw new Error(`内容事实 v${current ?? '（缺失）'} 与 update.json v${release.version} 不一致`)
       }
     }
 

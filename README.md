@@ -15,7 +15,7 @@ pnpm dev        # http://localhost:5173（未配 server.port，取 VitePress 默
 pnpm build      # 前置契约自检 + 产物在 .vitepress/dist（构建时校验死链）
 pnpm validate   # 数据面契约自检；加 --strict 让「线上真值分叉」也算失败
 pnpm preview    # 本地看构建产物
-pnpm sync       # 只手动同步线上版本号到 .vitepress/release.json
+pnpm sync       # 手动同步各产品的线上 update.json 到 .vitepress/releases.json
 ```
 
 内容一致性流水线见 [`CONTENT-PIPELINE.md`](./CONTENT-PIPELINE.md)。结构化产品内容源位于 `products/*/content.v1.source.json`，生成包位于 `data/generated/*/`。
@@ -29,7 +29,7 @@ pnpm sync       # 只手动同步线上版本号到 .vitepress/release.json
 | 改正文 md → dev 页面 | ✅ 即时热更新 |
 | **新增** `products/<id>/x.md` | ✅ 自动成页并进侧栏（dev 由 `scripts/dev.mjs` 监听 md 增删并触发重扫；`pnpm build` 直接生效，无需改任何代码）；但**必须同时登记进 `data/products.json` 的 `sections`**，否则 lint 直接失败——页面没登记就不会出现在侧栏 |
 | **删除** md | ✅ 页面与侧栏条目同时消失 |
-| 版本号 / 下载按钮 | ✅ 启动与构建时从线上 `update.json` 拉取；离线则沿用 `.vitepress/release.json` 并**明确告警**，不会静默显示旧版本 |
+| 版本号 / 下载按钮 | ✅ 启动与构建时按产品从线上 `update.json` 拉取；离线则沿用 `.vitepress/releases.json` 并**明确告警**，不会静默显示旧版本 |
 | 死链 | ✅ 构建失败即报错（当前 0 条） |
 | 数据面契约 | ✅ `pnpm build` 前置 `validate-contract`；schema 自身坏掉即失败，线上真值分叉只告警（见 `CONTRACT.md` 第七、八节） |
 
@@ -48,7 +48,7 @@ public/assets/hub/                     站点品牌图标（svg + 32/180/512 png
 public/assets/qr/                      收款与联系二维码
 .vitepress/config.mts    扫 products/ 生成路由与按产品分组的侧栏、拉取版本、注入 per-product 图标与标题
 .vitepress/theme/        默认主题 + <SiteHero/> <ProductDirectory/> <ReleaseInfo/> <ProductOverview/> <Fact/>
-.vitepress/release.json  线上 update.json 的本地快照（版本事实缓存，只属于 table-flow）
+.vitepress/releases.json 各产品线上 update.json 的本地快照（版本事实缓存，按 releaseBranch 分条）
 scripts/sync-release.mjs 版本事实同步（dev/build/手动三处共用）
 scripts/dev.mjs          dev 包装：md 增删自动重扫导航
 schema/                  数据面契约 v1 的机器可读定义（content/products/facts/release-notes/proposal + 提案信封）
@@ -79,7 +79,7 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 渲染层不硬编码任何文案或版本号：
 
 1. **一篇 md = 一个页面**。路由与侧栏由 `.vitepress/config.mts` 扫 `products/` 生成；`front-matter` 决定标题、`order` 排序、SEO 描述，`draft: true` 可临时下线一页。
-2. **承重事实只在内容源里存一份，版本号例外**。价格、适用范围这类事实写在 `products/<id>/content.v1.source.json`，页面用 `<Fact product="…" id="…" />` 取；md 里出现裸版本号（`x.y.z`）lint 直接失败（IP 地址 `127.0.0.1` 不算版本号）。**版本号既不显示、也不写进源**：有线上清单的产品（`releaseBranch === 'table-flow'`）由 `packageFromSource` 从 `.vitepress/release.json`（线上 `update.json` 快照）注入 `version.current`，源里再写一条会被 `content-validate` 拒绝。页面一律不渲染版本号——下载按钮写「免费下载 latest」，目录卡片与产品落地页只显示形态标签。下载入口统一用 `<ReleaseInfo product-id="…" />`。
+2. **承重事实只在内容源里存一份，版本号例外**。价格、适用范围这类事实写在 `products/<id>/content.v1.source.json`，页面用 `<Fact product="…" id="…" />` 取；md 里出现裸版本号（`x.y.z`）lint 直接失败（IP 地址 `127.0.0.1` 不算版本号）。**版本号既不显示、也不写进源**：凡登记了 `releaseBranch` 的产品（table-flow / wps-enhancer / auto-clicker-mac），`version.current` 与带版本的下载地址都由 `packageFromSource` 从 `.vitepress/releases.json`（线上 `update.json` 快照）注入，源里只能写 `{version}` 占位；写死版本号或写死带版本的地址都会被 `content-validate` 拒绝。页面一律不渲染版本号——下载按钮写「免费下载 latest」，目录卡片与产品落地页只显示形态标签。下载入口统一用 `<ReleaseInfo product-id="…" />`。
 3. **站点的下载区由 `updateMechanism` 单一决定**：`manual` 给最新版直链、`built-in-updater` 只说明应用内检查（本站不再放第二个下载按钮）、`none` 只给获取入口且不承诺更新提示。
 4. **逐字副本登记在 `data/mirrors.json`**。它们不加 front-matter、不写占位符，以保持与开发仓逐字节一致；登记表里的哈希会在 lint 里核对——**在站点侧手改镜像文件会被挡住**。源仓跑到前面时 `pnpm validate` 只告警，因为副本里可能刻意不含未发布功能。
 5. **更新日志**首条应与该产品 `update.json.version` 对得上，对不上时人工核对（见 `products/table-flow/changelog.md` 顶部对照表）。
@@ -127,7 +127,7 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 
 ## 当前事实
 
-版本号、直链、发布日**一律不在文档里抄**：构建时从线上 `update.json` 拉，拉不到就沿用 `.vitepress/release.json` 并明确告警。要看当前值跑 `pnpm sync`。
+版本号、直链、发布日**一律不在文档里抄**：构建时从线上 `update.json` 拉，拉不到就沿用 `.vitepress/releases.json` 并明确告警。要看当前值跑 `pnpm sync`。
 站点只挂最新版，不提供历史版本入口。早前"公开最新为 1.4.4"的判断来自开发仓签入的过期快照 `table-flow/release-repo/`，已作废（详见 `DOWNLOADS.md`）。
 
 ## 待你决策

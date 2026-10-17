@@ -4,6 +4,7 @@ import { useProductContent } from '../composables/useContent.js'
 
 const content = useProductContent('wps-enhancer')
 const version = computed(() => content.value?.facts?.['version.current']?.value ?? null)
+const fact = (id) => content.value?.facts?.[id]?.value ?? null
 
 const platforms = [
   {
@@ -18,6 +19,7 @@ const platforms = [
   }
 ]
 
+// 地址来自内容包（源里是 {version} 模板，构建期由线上清单填充），组件不拼版本号。
 const sources = computed(() => {
   if (!version.value) return []
   return [
@@ -25,15 +27,15 @@ const sources = computed(() => {
       id: 'gitee',
       name: 'Gitee',
       benefit: '国内访问通常更快，应用内更新器也使用这个来源。',
-      base: `https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/wps-enhancer-v${version.value}`
+      base: fact('download.giteeZipBase')
     },
     {
       id: 'github',
       name: 'GitHub',
       benefit: '海外网络通常更稳定，作为备用下载来源。',
-      base: `https://github.com/pikachuprogrammer01/wps-enhancer-go/releases/download/v${version.value}`
+      base: fact('download.githubZipBase')
     }
-  ]
+  ].filter((source) => source.base)
 })
 
 function url(source, platform) {
