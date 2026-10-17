@@ -43,7 +43,6 @@ function monogram(name) { return [...(name || '')].find((ch) => /[A-Za-z]/.test(
         <p class="landing-summary">{{ content?.copy?.['overview.summary']?.default || site.home.noDescription }}</p>
         <div class="landing-badges">
           <span v-if="content?.facts?.['form.factor']?.value">{{ site.kindLabels?.[product?.kind] || content.facts['form.factor'].value }}</span>
-          <span v-if="content?.facts?.['version.current']?.value">v{{ content.facts['version.current'].value }}</span>
         </div>
         <div class="landing-actions">
           <a v-if="primarySection" class="landing-button landing-button--primary" :href="sectionHref(primarySection)">

@@ -16,6 +16,9 @@
 - feat(products): TableFlow 免费额度口径改为「平台真值」——默认 3 次授予、耗尽后预算内自动核对、平台重置/追加后自动恢复、卸载重装不刷新；离线授权到期转免费需联网补进定价与 FAQ
 - feat(products): 安装页权限清单补 `identity` / `identity.email` 与授权服务器定点主机权限（不申请 cookies 权限）；产品首页与快速上手补统计与网页填充入口、对比表导出格式加 Markdown
 - refactor(theme): 直链下载按钮统一为「免费下载 latest」——不再把快照版本号打印在按钮上，同时去掉按钮下方的更新摘要与「该版本自 X 起未变化」快照日期两行；`DOWNLOADS.md` 的 Hero 文案模板同步，并修掉模板行尾多出的右括号
+- feat(theme): 全站不再显示版本号——移除目录卡片与产品落地页的 `v1.6.1` 徽章、`<ReleaseInfo>` 的「当前版本 vX」、两个下载面板标题里的版本号（改「下载最新版」），auto-clicker 概览与 FAQ 里两处 `<Fact id="version.current">` 改写为不标版本的说法；下载文件名与直链 href 仍带版本号（那是下载物的真名，不能省）
+- feat(content): TableFlow 版本号改为构建期从线上清单注入——`packageFromSource` 读 `.vitepress/release.json`（`update.json` 快照）写入 `version.current`，内容源里删掉该条字面量，`validateSource` 拒绝再把它写回源里；发新版只需改 `update.json`，站点仓零改动。快照是拉取失败占位 `0.0.0` 时不注入
+- fix(content): 内容包 hash 不再受键书写顺序影响——`payloadHash` 递归排序对象键，此前挪动一条 fact 的位置就会算出新 revision、让历史里凭空多一份同内容包；顺带补 5 条注入用例，`test-content.mjs` 44 → 49
 
 ## 2026-10-16
 

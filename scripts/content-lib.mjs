@@ -55,6 +55,12 @@ export function validateSource(source, registry) {
     if (fact.variants || fact.channels) errors.push(`事实禁止渠道变体：${fieldId}`)
     if (/^(icon|color|accent|layout)(\.|$)/i.test(fieldId)) errors.push(`事实字段疑似视觉字段：${fieldId}`)
   }
+  // 有线上清单的产品版本号由拉取快照注入；源里再写一个就一定会过期，直接拒绝。
+  if (registry.releaseBranch === RELEASE_SNAPSHOT_PRODUCT && source.facts?.['version.current']) {
+    errors.push(
+      `version.current 不允许写进内容源：${registry.id} 的版本号由拉取的 update.json 快照注入（见 packageFromSource）`
+    )
+  }
   for (const [fieldId, copy] of Object.entries(source.copy ?? {})) {
     const values = [copy.default, ...Object.values(copy.variants ?? {})]
     if (values.some((value) => /<[^>]+>/.test(value))) errors.push(`文案禁止 HTML：${fieldId}`)
@@ -87,7 +93,22 @@ export function sourceRevision() {
 }
 
 export function payloadHash(payload) {
-  return crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex')
+  return crypto.createHash('sha256').update(JSON.stringify(sortKeys(payload))).digest('hex')
+}
+
+/**
+ * 事实与文案都是"键 → 内容"的字典，书写顺序不该算语义。
+ * 不排序的话，把一条 fact 挪个位置、或者由构建期注入的顺序不同，都会算出一个
+ * 新 revision —— 历史里凭空多一份一模一样的包，漂移检查也会跟着红。
+ */
+function sortKeys(value) {
+  if (Array.isArray(value)) return value.map(sortKeys)
+  if (!value || typeof value !== 'object') return value
+  return Object.fromEntries(
+    Object.keys(value)
+      .sort()
+      .map((key) => [key, sortKeys(value[key])])
+  )
 }
 
 /** 只有语义内容参与 hash：时间与 Git 可用性变化不算漂移。 */
@@ -99,13 +120,40 @@ export function revisionOf(hash) {
   return `content-${hash.slice(0, 12)}`
 }
 
+/**
+ * 有线上更新清单可拉的产品，版本号一律从拉取快照取，不在内容源里写死：
+ * 源里写死等于"每发一版都要回站点仓改一次"，且站点会悄悄停在旧版。
+ * 快照由 `pnpm sync` 与 VitePress 配置加载时刷新，这里只读不拉，保证构建可复现。
+ */
+export function pulledVersionOf(registry) {
+  if (registry?.releaseBranch !== RELEASE_SNAPSHOT_PRODUCT) return null
+  try {
+    const snapshot = JSON.parse(fs.readFileSync(RELEASE_SNAPSHOT_FILE, 'utf8'))
+    const version = String(snapshot?.version ?? '')
+    // 0.0.0 是拉取失败时的占位，不能当真值写进包。
+    return /^\d+\.\d+\.\d+$/.test(version) && version !== '0.0.0' ? version : null
+  } catch {
+    return null
+  }
+}
+
 export function packageFromSource(source, registry) {
+  const pulledVersion = pulledVersionOf(registry)
+  const facts = { ...source.facts }
+  if (pulledVersion) {
+    facts['version.current'] = {
+      ...(facts['version.current'] ?? {}),
+      value: pulledVersion,
+      effectiveFromVersion: pulledVersion,
+      source: 'release-repo'
+    }
+  }
   const base = {
     schema: 1,
     product: source.product,
     sourceRevision: sourceRevision(),
     generatedAt: new Date().toISOString(),
-    facts: source.facts,
+    facts,
     copy: source.copy
   }
   const update = {}

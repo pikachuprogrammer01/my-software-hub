@@ -79,7 +79,7 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 渲染层不硬编码任何文案或版本号：
 
 1. **一篇 md = 一个页面**。路由与侧栏由 `.vitepress/config.mts` 扫 `products/` 生成；`front-matter` 决定标题、`order` 排序、SEO 描述，`draft: true` 可临时下线一页。
-2. **承重事实只在内容源里存一份**。版本号写 `<Fact product="…" id="version.current" />`，下载入口写 `<ReleaseInfo product-id="…" />`，两者都从 `products/<id>/content.v1.source.json` 取；md 里出现裸版本号（`x.y.z`）lint 直接失败。IP 地址（`127.0.0.1`）不算版本号。
+2. **承重事实只在内容源里存一份，版本号例外**。价格、适用范围这类事实写在 `products/<id>/content.v1.source.json`，页面用 `<Fact product="…" id="…" />` 取；md 里出现裸版本号（`x.y.z`）lint 直接失败（IP 地址 `127.0.0.1` 不算版本号）。**版本号既不显示、也不写进源**：有线上清单的产品（`releaseBranch === 'table-flow'`）由 `packageFromSource` 从 `.vitepress/release.json`（线上 `update.json` 快照）注入 `version.current`，源里再写一条会被 `content-validate` 拒绝。页面一律不渲染版本号——下载按钮写「免费下载 latest」，目录卡片与产品落地页只显示形态标签。下载入口统一用 `<ReleaseInfo product-id="…" />`。
 3. **站点的下载区由 `updateMechanism` 单一决定**：`manual` 给最新版直链、`built-in-updater` 只说明应用内检查（本站不再放第二个下载按钮）、`none` 只给获取入口且不承诺更新提示。
 4. **逐字副本登记在 `data/mirrors.json`**。它们不加 front-matter、不写占位符，以保持与开发仓逐字节一致；登记表里的哈希会在 lint 里核对——**在站点侧手改镜像文件会被挡住**。源仓跑到前面时 `pnpm validate` 只告警，因为副本里可能刻意不含未发布功能。
 5. **更新日志**首条应与该产品 `update.json.version` 对得上，对不上时人工核对（见 `products/table-flow/changelog.md` 顶部对照表）。

@@ -34,7 +34,7 @@
 | `update.summary` | 横幅单行（`white-space:nowrap` + `ellipsis`，默认宽 420px） | 26 字 | 整层留空并回落离线快照 |
 | `update.text` | 展开后的更新说明 | 120 字 | 整层留空 |
 | `update.detail` | 仅站点长文 | — | 面板忽略 |
-| `facts.version.current` | 版本号显示 | — | 只取 `value` |
+| `facts.version.current` | 版本号显示 | — | 只取 `value`；该值由站点从线上 `update.json` 快照注入，**站点页面不显示版本号，只有客户端面板用它** |
 | `facts.pricing.*` / `features.*` | 不进面板 UI | — | 站点侧用 `<Fact>` 渲染 |
 
 ## 四、WPS Enhancer 设置页映射

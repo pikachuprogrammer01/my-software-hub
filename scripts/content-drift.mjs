@@ -65,14 +65,16 @@ for (const product of products) {
     if (!sameFileSemantics(revisionPath, actual)) throw new Error(`history revision 与 latest 不一致：${actual.contentRevision}`)
 
     // .vitepress/release.json 只同步 table-flow 的 update.json，别的版本事实不能拿它比对。
+    // 版本号由 packageFromSource 从该快照注入，这里守的是"注入真的落进了包"：
+    // 快照可用而包里版本号缺失或对不上，说明 latest 还是旧快照生成的包。
     if (product.releaseBranch === RELEASE_SNAPSHOT_PRODUCT) {
       const releaseFile = path.join(SITE_ROOT, '.vitepress', 'release.json')
       const current = actual.facts?.['version.current']?.value
       if (fs.existsSync(releaseFile)) {
         const release = readJson(releaseFile)
         // 只有真从发布仓同步来的版本号才可比；0.0.0 是拉取失败的占位。
-        if (release.version && release.version !== '0.0.0' && current && current !== release.version) {
-          throw new Error(`内容事实 v${current} 与 update.json v${release.version} 不一致`)
+        if (release.version && release.version !== '0.0.0' && current !== release.version) {
+          throw new Error(`内容事实 v${current ?? '（缺失）'} 与 update.json v${release.version} 不一致`)
         }
       }
     }

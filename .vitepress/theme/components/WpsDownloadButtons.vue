@@ -44,7 +44,7 @@ function url(source, platform) {
 <template>
   <section v-if="version && sources.length" class="download-panel" aria-labelledby="wps-download-title">
     <div class="heading">
-      <h3 id="wps-download-title">下载 v{{ version }}</h3>
+      <h3 id="wps-download-title">下载最新版</h3>
       <p>下面的按钮全部下载 ZIP 压缩包，按你的网络情况选择来源；页面不提供 EXE 直链。</p>
     </div>
 

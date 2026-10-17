@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "qoder-proxy",
-  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
-  "generatedAt": "2026-10-07T08:20:19.188Z",
+  "sourceRevision": "8e396c5ee6cfbbe98de72fbd8d16652e5e77bbbc",
+  "generatedAt": "2026-10-17T09:35:08.717Z",
   "facts": {
     "verifiedAt": {
       "value": "2026-10-05",
@@ -71,6 +71,6 @@
     "summary": "跟随仓库 main 或自己选定的 tag 更新。",
     "text": "本仓库按 tag 发布，但站点不替某个 tag 背书：文档描述的是当前源码的行为，升级前先看 CHANGELOG。"
   },
-  "contentRevision": "content-8a2893107406",
-  "sha256": "8a28931074067981db3201020cda71d09b5da4eb126ca22f1466cc5b6274c5bf"
+  "contentRevision": "content-f8c1728c0dcd",
+  "sha256": "f8c1728c0dcdd5b269da3b36160150c6c56fab382228225f39a195a3c0fb1f0a"
 }

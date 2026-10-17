@@ -15,7 +15,6 @@ const products = registry.products
       summary: content?.copy?.['overview.summary']?.default ?? '',
       factor: content?.facts?.['form.factor']?.value ?? '',
       scope: content?.facts?.['form.scope']?.value ?? '',
-      version: content?.facts?.['version.current']?.value ?? '',
       statusLabel: STATUS_LABEL[product.status] ?? ''
     }
   })
@@ -60,7 +59,6 @@ function productHref(product) { return '/' + product.id + '/' }
           <p class="featured-summary">{{ featured.summary || site.home.noDescription }}</p>
           <div class="featured-tags">
             <span v-if="featured.factor">{{ site.kindLabels?.[featured.kind] || featured.factor }}</span>
-            <span v-if="featured.version">v{{ featured.version }}</span>
           </div>
           <div class="featured-actions">
             <a class="featured-primary" :href="productHref(featured)">{{ site.home.viewProduct }} <span aria-hidden="true">→</span></a>
@@ -108,7 +106,6 @@ function productHref(product) { return '/' + product.id + '/' }
           <p class="studio-product-summary">{{ product.summary || site.home.noDescription }}</p>
           <div class="studio-product-bottom">
             <span v-if="product.statusLabel" class="studio-product-status">{{ product.statusLabel }}</span>
-            <span v-else-if="product.version" class="studio-product-status">v{{ product.version }}</span>
             <span v-else class="studio-product-status">{{ site.kindLabels?.[product.kind] || product.factor }}</span>
             <span class="studio-product-link">{{ site.home.viewProduct }} <span aria-hidden="true">↗</span></span>
           </div>

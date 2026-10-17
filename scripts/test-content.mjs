@@ -167,8 +167,58 @@ test('仓库内已生成的 latest 包自校验通过', () => {
   }
 })
 
-console.log('\n【3】构建/漂移/回滚（临时副本沙箱）')
+console.log('\n【2.5】版本号只从拉取快照注入')
 
+test('有线上清单的产品，版本号由快照注入而不是内容源', () => {
+  const { source } = readSource('table-flow')
+  assert.equal(source.facts?.['version.current'], undefined, '内容源里不该再有 version.current')
+  const snapshot = readJson(path.join(SITE_ROOT, '.vitepress', 'release.json'))
+  const pkg = packageFromSource(source, { id: 'table-flow', releaseBranch: 'table-flow' })
+  assert.equal(pkg.facts['version.current'].value, snapshot.version)
+})
+
+test('快照版本推进后重新构建，包里的版本号自动跟上（不改任何源文件）', () => {
+  const dir = sandbox()
+  const snapshotFile = path.join(dir, '.vitepress', 'release.json')
+  const snapshot = readJson(snapshotFile)
+  assert.equal(run(dir, 'content-build.mjs', ['--product', 'table-flow']).code, 0)
+  const latest = path.join(dir, 'data', 'generated', 'table-flow', 'content-latest.v1.json')
+  const before = readJson(latest)
+  assert.equal(before.facts['version.current'].value, snapshot.version)
+
+  fs.writeFileSync(snapshotFile, `${JSON.stringify({ ...snapshot, version: '9.9.9' }, null, 2)}\n`)
+  assert.equal(run(dir, 'content-build.mjs', ['--product', 'table-flow']).code, 0)
+  const after = readJson(latest)
+  assert.equal(after.facts['version.current'].value, '9.9.9')
+  assert.notEqual(after.contentRevision, before.contentRevision)
+})
+
+test('拉取快照是失败占位 0.0.0 时不注入', () => {
+  const dir = sandbox()
+  const snapshotFile = path.join(dir, '.vitepress', 'release.json')
+  const snapshot = readJson(snapshotFile)
+  fs.writeFileSync(snapshotFile, `${JSON.stringify({ ...snapshot, version: '0.0.0' }, null, 2)}\n`)
+  assert.equal(run(dir, 'content-build.mjs', ['--product', 'table-flow']).code, 0)
+  const pkg = readJson(path.join(dir, 'data', 'generated', 'table-flow', 'content-latest.v1.json'))
+  assert.equal(pkg.facts['version.current'], undefined, '占位版本号不该写进包')
+})
+
+test('没有线上清单的产品不受注入影响', () => {
+  const { source } = readSource('auto-clicker-mac')
+  const pkg = packageFromSource(source, { id: 'auto-clicker-mac', releaseBranch: null })
+  assert.equal(pkg.facts['version.current'].value, '1.1.0')
+})
+
+test('有线上清单的产品把 version.current 写进内容源会被拒', () => {
+  const { source } = readSource('table-flow')
+  const bad = structuredClone(source)
+  bad.facts['version.current'] = { value: '1.6.1', effectiveFromVersion: '1.6.1' }
+  const result = validateSource(bad, { id: 'table-flow', releaseBranch: 'table-flow' })
+  assert.equal(result.ok, false)
+  assert.match(result.errors.join('\n'), /version\.current 不允许写进内容源/)
+})
+
+console.log('\n【3】构建/漂移/回滚（临时副本沙箱）')
 test('重复构建幂等：第二次构建不改字节', () => {
   const dir = sandbox()
   const first = run(dir, 'content-build.mjs')
@@ -229,7 +279,8 @@ test('校验失败时不移动 latest', () => {
   const before = fs.readFileSync(file, 'utf8')
   const sourceFile = path.join(dir, 'products', 'table-flow', 'content.v1.source.json')
   const broken = JSON.parse(fs.readFileSync(sourceFile, 'utf8'))
-  delete broken.facts['version.current'].effectiveFromVersion
+  // 版本号由拉取快照注入、不再写在源里，所以这里改用一条手写事实做坏。
+  delete broken.facts['form.factor'].effectiveFromVersion
   fs.writeFileSync(sourceFile, `${JSON.stringify(broken, null, 2)}\n`)
   assert.equal(run(dir, 'content-build.mjs').code, 1)
   assert.equal(fs.readFileSync(file, 'utf8'), before, 'latest 被移动了')

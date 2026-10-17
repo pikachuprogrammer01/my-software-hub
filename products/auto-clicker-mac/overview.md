@@ -30,4 +30,4 @@ AppleScript、键盘鼠标录制器那类工具解决的是"把一串动作录�
 
 ## 版本与状态
 
-当前发布版本 <Fact product="auto-clicker-mac" id="version.current" prefix="v" />，以源码方式公开（MIT）。它不检查更新，也不会主动提醒你新版本——[获取与更新方式](/auto-clicker-mac/install)里写清楚了该怎么拿新版。
+以源码方式公开（MIT），下载入口永远指向最新发布版。它不检查更新，也不会主动提醒你新版本——[获取与更新方式](/auto-clicker-mac/install)里写清楚了该怎么拿新版。

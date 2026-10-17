@@ -30,11 +30,6 @@
       "since": "1.5.0",
       "effectiveFromVersion": "1.5.0"
     },
-    "version.current": {
-      "value": "1.6.1",
-      "effectiveFromVersion": "1.6.1",
-      "source": "release-repo"
-    },
     "form.factor": {
       "value": "Chromium 浏览器扩展（Manifest V3）",
       "effectiveFromVersion": "1.0.0",

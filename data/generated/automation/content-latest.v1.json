@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "automation",
-  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
-  "generatedAt": "2026-10-05T12:51:00.705Z",
+  "sourceRevision": "8e396c5ee6cfbbe98de72fbd8d16652e5e77bbbc",
+  "generatedAt": "2026-10-17T09:35:08.728Z",
   "facts": {
     "verifiedAt": {
       "value": "2026-10-05",
@@ -71,6 +71,6 @@
     "summary": "跟随仓库 main 分支更新。",
     "text": "管理器自身没有更新检查。升级就是 git pull 后重新 npm start；改了前端源码必须重新构建，否则界面与后端会静默失同步。"
   },
-  "contentRevision": "content-aabd3417e231",
-  "sha256": "aabd3417e231a02437c6f1675b583da88ac9d4686c96e6965fe28b40913b8ee3"
+  "contentRevision": "content-bbee8a5663c3",
+  "sha256": "bbee8a5663c38efe4f61848b50af025fff12558ae57f9c84e06258f52f500864"
 }

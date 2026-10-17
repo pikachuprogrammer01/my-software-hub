@@ -39,7 +39,7 @@ function url(source, asset) {
 <template>
   <section v-if="version && sources.length" class="download-panel" aria-labelledby="auto-clicker-download-title">
     <div class="heading">
-      <h3 id="auto-clicker-download-title">下载 v{{ version }}</h3>
+      <h3 id="auto-clicker-download-title">下载最新版</h3>
       <p>按芯片选择 ZIP 压缩包；两个来源的文件内容相同，网络不通时切换另一个来源。</p>
     </div>
 

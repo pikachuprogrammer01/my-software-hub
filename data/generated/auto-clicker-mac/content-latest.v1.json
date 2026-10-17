@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "auto-clicker-mac",
-  "sourceRevision": "5cc758ac611826d06c41e66fe31be88ae76a067f",
-  "generatedAt": "2026-10-07T10:05:01.090Z",
+  "sourceRevision": "8e396c5ee6cfbbe98de72fbd8d16652e5e77bbbc",
+  "generatedAt": "2026-10-17T09:35:08.706Z",
   "facts": {
     "version.current": {
       "value": "1.1.0",
@@ -93,6 +93,6 @@
     "summary": "应用不检查更新，新版本需手动下载。",
     "text": "Auto Clicker 没有任何网络层，不会提示新版本。要升级就重新下载对应芯片的压缩包并替换旧版本。"
   },
-  "contentRevision": "content-d4342c00f37f",
-  "sha256": "d4342c00f37f11b64c5e9d21147179bc90b8c268f5c2537d6925ba1c957217be"
+  "contentRevision": "content-6c7970de50c4",
+  "sha256": "6c7970de50c4afcb62b2b311bd4a0a508ac04c7a2c9aaeb72853c1b9886345cb"
 }

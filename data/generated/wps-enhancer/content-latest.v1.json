@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "wps-enhancer",
-  "sourceRevision": "aeb2984987b7a48876f1a41531d0ff5629794587",
-  "generatedAt": "2026-10-05T12:51:00.674Z",
+  "sourceRevision": "8e396c5ee6cfbbe98de72fbd8d16652e5e77bbbc",
+  "generatedAt": "2026-10-17T09:35:08.696Z",
   "facts": {
     "version.current": {
       "value": "1.1.0",
@@ -65,6 +65,6 @@
     "summary": "启动后自动检查一次更新，发现新版本在通知里提示。",
     "text": "应用启动 3 秒后向更新清单发一次请求；也可在「设置 → 更新」手动检查。下载完成后按提示退出旧版本并替换应用包，本站不再提供第二条下载路径。"
   },
-  "contentRevision": "content-d71c7cdcf6a7",
-  "sha256": "d71c7cdcf6a789473d2934b61735d9fb897039730e14addd6ab1e20cf260f52d"
+  "contentRevision": "content-43ca8314970a",
+  "sha256": "43ca8314970a9507ded4c99f796f6532de0418967acdd3bd8bbcc06bdb1a1f3e"
 }
