@@ -2,7 +2,7 @@
 order: 20
 title: "安装与加载"
 shortTitle: "安装与加载"
-description: "Edge 商店与压缩包两条安装通道、环境要求、验证安装与权限说明。"
+description: "Edge 商店、Chrome 商店与压缩包三条安装通道、环境要求、验证安装与权限说明。"
 ---
 
 # 安装与加载
@@ -12,20 +12,21 @@ description: "Edge 商店与压缩包两条安装通道、环境要求、验证�
 
 <ReleaseInfo />
 
-## 两条获取通道
+## 三条获取通道
 
 | 通道 | 适用 | 更新方式 |
 |------|------|----------|
-| **Edge Add-ons 商店** | Edge 用户 | 浏览器自动更新，无需任何操作 |
-| **压缩包（免费）** | Chrome 及其他 Chromium 内核浏览器 | 应用内检测新版本 + 手动解压覆盖（[详见 update.md](./update.md)） |
+| **Chrome 应用商店** | Chrome 用户（首选） | 浏览器自动更新，无需任何操作 · [商店页面](https://chromewebstore.google.com/detail/tableflow/cgliggkiiecdmideilajldhdmhpaiepj) |
+| **Edge Add-ons 商店** | Edge 用户 | 浏览器自动更新，无需任何操作 · [商店页面](https://microsoftedge.microsoft.com/addons/detail/tableflow/iedocnmbkmhoeccfdoilabeffkncbhmn) |
+| **压缩包（免费）** | 其他 Chromium 内核浏览器（360 极速等） | 应用内检测新版本 + 手动解压覆盖（[详见 update.md](./update.md)） |
 
-> Chrome 因开发者账号原因未上架商店，Chrome 用户走压缩包通道。
+> 商店版与压缩包版功能一致；360 极速等其余 Chromium 内核浏览器暂未上架，走压缩包通道。
 
 ## 环境要求
 
 - Chromium 内核浏览器：Chrome / Edge / 360 极速等
-- Manifest V3 扩展；MV3 隐含下限约 Chrome/Edge 88+（本项目 manifest 未声明 `minimum_chrome_version`，**未在 Edge 上实测**）
-- 需要开启浏览器的「开发者模式」才能加载压缩包版扩展
+- Manifest V3 扩展；MV3 隐含下限约 Chrome/Edge 88+（本项目 manifest 未声明 `minimum_chrome_version`）
+- 商店版点击「获取 / 添加至 Chrome」即完成安装；只有**压缩包版**需要开启「开发者模式」加载
 
 ## 安装步骤（压缩包版）
 
@@ -48,7 +49,10 @@ description: "Edge 商店与压缩包两条安装通道、环境要求、验证�
 
 ## 关于权限
 
-扩展使用的权限：`storage`、`scripting`、`activeTab`、`tabs`，主机权限 `<all_urls>` 与 `file:///*`。
+扩展使用的权限：`storage`、`scripting`、`activeTab`、`tabs`、`identity`、`identity.email`，主机权限 `<all_urls>` 与 `file:///*`，以及授权服务器域名（license.pikachu01.me）的定点主机权限。
+
+- `identity` / `identity.email` 只用于读取当前 Chrome 账号邮箱并在**本地**计算哈希，让同一账号下的免费额度跨卸载重装保持连续；原始邮箱不出网、不落盘、不进日志，未登录 Chrome 时自动降级、不影响其他能力。
+- 扩展**不申请** `cookies` 权限，不读取、不解析、也不修改任何 Cookie 的内容。
 
 每项权限的用途说明见[隐私政策](/table-flow/privacy) §5。
 

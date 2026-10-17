@@ -38,7 +38,7 @@
 
 ## 页面文案模板
 
-- Hero 主按钮：`免费下载 v{{version}}`（`{{version}}` 来自 update.json）
+- Hero 主按钮：`免费下载 latest`
 - 次按钮 / 说明：`Edge 用户可从 Edge 加载项商店安装，浏览器自动更新`
 - 下载页一句话：`当前版本 v{{version}}（{{published_at}} 发布）。下载后解压，按安装页步骤加载。`
 - 更新提示横幅文案与本页 `notes` 同源，站点不再另写一遍。

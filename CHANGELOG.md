@@ -7,6 +7,16 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-17
+
+- feat(products): 安装页 Edge 行补 Edge Add-ons 商店页面链接（iedocnmbkmhoeccfdoilabeffkncbhmn，已核对开发者 pikachuprogrammer01 与线上 v1.6.1 一致）；快速上手页「面板里的四步」改为采集工作流口径并补面板头部入口（模式切换 Excel 填充网页 / 统计 / 调试），一次完整导出流程同步批量勾选、虚拟列表补全、页数预算与统计入口
+- feat(products): TableFlow 获取通道改为三条——Chrome 已上架 Chrome Web Store（商店页面链接进安装页），安装/更新/对比三页口径同步：Chrome 用户首选商店自动更新，压缩包降级为 360 极速等其余 Chromium 内核浏览器通道；usage-guide 镜像随主仓「Edge 商店与 Chrome 应用商店用户由浏览器自动更新」表述重新同步并更新登记哈希
+- chore(sync): TableFlow 文档面整体跟上主仓——usage-guide.md 逐字镜像前进到「表格统计 + Excel 填充网页（Pro）+ 批量导出」版并更新镜像登记哈希（同步日 2026-10-17，pendingRelease 记 1.7.0）
+- feat(products): TableFlow 功能全景/适用范围/免费与 Pro/常见问题/安装五页同步新能力口径——表格统计（免费 15 项指标）、Excel 填充网页（Pro）、批量当前页采集导出（Pro）、Markdown 导出、脚注标记剥离、自定义导出文件名、ul/li 列表表格、加载更多 append 采集；翻页页数改为自起始页起算的预算口径
+- feat(products): TableFlow 免费额度口径改为「平台真值」——默认 3 次授予、耗尽后预算内自动核对、平台重置/追加后自动恢复、卸载重装不刷新；离线授权到期转免费需联网补进定价与 FAQ
+- feat(products): 安装页权限清单补 `identity` / `identity.email` 与授权服务器定点主机权限（不申请 cookies 权限）；产品首页与快速上手补统计与网页填充入口、对比表导出格式加 Markdown
+- refactor(theme): 直链下载按钮统一为「免费下载 latest」——不再把快照版本号打印在按钮上，同时去掉按钮下方的更新摘要与「该版本自 X 起未变化」快照日期两行；`DOWNLOADS.md` 的 Hero 文案模板同步，并修掉模板行尾多出的右括号
+
 ## 2026-10-16
 
 - chore(sync): privacy.md 镜像跟上主源 eff78be 之后的合并版——开发仓在政策里补了「离线授权到期后本机按免费用户处理、免费翻页需联网」一句，登记表哈希与同步日更新为 2026-10-16

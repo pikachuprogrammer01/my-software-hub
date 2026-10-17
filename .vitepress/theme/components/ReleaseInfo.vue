@@ -40,14 +40,8 @@ const download = computed(() => {
 
     <template v-else-if="directLink">
       <a class="vp-btn" :href="directLink.url" target="_blank" rel="noopener">
-        免费下载 v{{ directLink.version }}
+        免费下载 latest
       </a>
-      <p v-if="content?.update?.summary || directLink.notes" class="notes">
-        {{ content?.update?.summary || directLink.notes }}
-      </p>
-      <p v-if="directLink.fetchedAt" class="fetched">
-        版本信息取自扩展同款更新清单（该版本自 {{ directLink.fetchedAt.slice(0, 10) }} 起未变化）
-      </p>
     </template>
 
     <template v-else-if="download">
