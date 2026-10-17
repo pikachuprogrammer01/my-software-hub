@@ -9,6 +9,7 @@
 
 ## 2026-10-17
 
+- docs(products): TableFlow 网页填充口径跟上主仓 `5f15788`——usage-guide 镜像逐字前进到「行/列/单元格范围选择 + 填充模板 + 控件适配器」版并重算登记哈希（`pendingRelease` 1.7.0 保持）；features 页四步闭环、下拉严格匹配、填充模板、撤销上次填充与设置项名（默认值→偏好）同步新口径；scope 页两处边界行改写为「真实表格行或普通表单 + open Shadow DOM / 同源 iframe 组合」
 - feat(products): 安装页 Edge 行补 Edge Add-ons 商店页面链接（iedocnmbkmhoeccfdoilabeffkncbhmn，已核对开发者 pikachuprogrammer01 与线上 v1.6.1 一致）；快速上手页「面板里的四步」改为采集工作流口径并补面板头部入口（模式切换 Excel 填充网页 / 统计 / 调试），一次完整导出流程同步批量勾选、虚拟列表补全、页数预算与统计入口
 - feat(products): TableFlow 获取通道改为三条——Chrome 已上架 Chrome Web Store（商店页面链接进安装页），安装/更新/对比三页口径同步：Chrome 用户首选商店自动更新，压缩包降级为 360 极速等其余 Chromium 内核浏览器通道；usage-guide 镜像随主仓「Edge 商店与 Chrome 应用商店用户由浏览器自动更新」表述重新同步并更新登记哈希
 - chore(sync): TableFlow 文档面整体跟上主仓——usage-guide.md 逐字镜像前进到「表格统计 + Excel 填充网页（Pro）+ 批量导出」版并更新镜像登记哈希（同步日 2026-10-17，pendingRelease 记 1.7.0）
