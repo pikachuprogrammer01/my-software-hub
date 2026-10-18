@@ -13,11 +13,11 @@
     },
     "table-flow": {
       "product": "table-flow",
-      "version": "1.6.1",
-      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
+      "version": "2.0.0",
+      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.0/table-flow-v2.0.0.zip",
       "urls": null,
-      "notes": "v1.6.1：发布两步化验证",
-      "fetchedAt": "2026-10-17T10:19:52.409Z"
+      "notes": "v2.0.0：Excel 填充网页（单页批量填写免费，填充模板为 Pro）；表格统计 15 项指标与拖选排除、统计结果并入导出；设备码服务端签发，免费翻页额度跨卸载重装保持；默认授予的采集流程次数调整为 5 次",
+      "fetchedAt": "2026-10-19T00:42:00.000Z"
     },
     "auto-clicker-mac": {
       "product": "auto-clicker-mac",

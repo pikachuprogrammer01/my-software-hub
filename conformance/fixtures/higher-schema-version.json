@@ -50,13 +50,13 @@
         "source": "manual:站点核定的可用范围口径"
       },
       "download.zipUrl": {
-        "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
+        "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.0/table-flow-v2.0.0.zip",
         "effectiveFromVersion": "1.0.0",
         "source": "release-repo:table-flow/update.json"
       },
       "version.current": {
-        "value": "1.6.1",
-        "effectiveFromVersion": "1.6.1",
+        "value": "2.0.0",
+        "effectiveFromVersion": "2.0.0",
         "source": "release-repo"
       }
     },
@@ -98,7 +98,7 @@
       "text": "新增 Excel 填充网页：把本地 Excel 逐行写进网页表单。单页批量填写免费，翻页与采集共享免费机会；填充模板为 Pro。四步改为选表格、设置填充行列、检查映射、批量填充，支持行/列/字段选择与「行 × 列」区域自动识别。",
       "detail": "表格统计升到第二版：15 项指标、整体/按列/按行三档范围，可在结果快照上拖选纳入或排除，算不出来的格子显式标注原因而不是用 0 占位；统计结果可作为独立区块并入 Excel/CSV 导出。设备码改为只由服务端签发并双写本地与同步存储，安装时采集的设备特征收敛为 6 项，免费翻页额度跨卸载重装保持连续。默认授予的采集流程次数由平台统一调整。"
     },
-    "contentRevision": "content-88fdc21099c8",
+    "contentRevision": "content-c5c60691d357",
     "sha256": null
   },
   "context": {
