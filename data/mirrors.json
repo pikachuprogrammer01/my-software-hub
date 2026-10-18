@@ -5,19 +5,20 @@
     {
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
-      "syncedAt": "2026-10-17",
-      "siteSha256": "1d043d8b471b589f901de5af48de3e24507d4556236bcb54a151d04c3971d4cc",
-      "sourceSha256": "1d043d8b471b589f901de5af48de3e24507d4556236bcb54a151d04c3971d4cc",
-      "pendingRelease": "1.7.0",
-      "whyBehind": "本次为随主仓主动前进的同步（应用户要求）：副本已包含「表格统计」「Excel 填充网页（Pro）」「批量当前页采集导出」等尚未发版的说明，源仓 package.json 仍是 1.6.1；新版发布后即为已发布口径，发布前站点文案略领先于商店在售版本。"
+      "syncedAt": "2026-10-19",
+      "siteSha256": "6a38d7b9658e2cf928ac7059e6d23710d2f974405b0ccd2cdb7780c956c15817",
+      "sourceSha256": "6a38d7b9658e2cf928ac7059e6d23710d2f974405b0ccd2cdb7780c956c15817",
+      "pendingRelease": "2.0.0",
+      "whyBehind": "本次为随主仓 v2.0.0 主动前进的同步（应用户要求）：副本已包含「Excel 填充网页」四步改版（选表格 / 设置填充行列 / 映射与十条对照 / 批量填充）、表格统计与设备身份记账加固等尚未发版的说明，源仓 package.json 已 bump 到 2.0.0 但线上 update.json 仍是 1.6.1；新版发布后即为已发布口径，发布前站点文案略领先于商店在售版本。"
     },
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
-      "syncedAt": "2026-10-17",
-      "siteSha256": "9c22f594db94c791b9785bb4f776e4b65aaff5eb65c8dcd8f945e99a9387e624",
-      "sourceSha256": "9c22f594db94c791b9785bb4f776e4b65aaff5eb65c8dcd8f945e99a9387e624",
-      "whyBehind": ""
+      "syncedAt": "2026-10-19",
+      "siteSha256": "e39b029ccf345057315f0153e3b5b7d4e12c972c5c1b2183f360adc19f5ae23c",
+      "sourceSha256": "e39b029ccf345057315f0153e3b5b7d4e12c972c5c1b2183f360adc19f5ae23c",
+      "pendingRelease": "2.0.0",
+      "whyBehind": "适用版本已改为 v2.0.0，源仓尚未发布；发布后即为已发布口径。"
     }
   ]
 }

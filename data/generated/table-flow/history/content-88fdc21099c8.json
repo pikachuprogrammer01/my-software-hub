@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "product": "table-flow",
+  "sourceRevision": "be06bbe98ab44de2b4def0628a3fb456c0975ef5",
+  "generatedAt": "2026-10-18T16:32:39.171Z",
+  "facts": {
+    "features.autoPaging": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "features.localProcessing": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.autoPaging.maxPages": {
+      "value": 50,
+      "unit": "页",
+      "source": "client-constant:settingsStore.defaultMaxPages",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.freePaging.flows": {
+      "value": 5,
+      "unit": "次",
+      "source": "platform-default:LicenseHub 新设备默认授予的采集流程次数（采集与 Excel 填充翻页共享，实际以服务端授予为准）",
+      "effectiveFromVersion": "2.0.0"
+    },
+    "pricing.pro.monthly": {
+      "value": 5,
+      "currency": "CNY",
+      "period": "month",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "pricing.pro.yearly": {
+      "value": 40,
+      "currency": "CNY",
+      "period": "year",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "form.factor": {
+      "value": "Chromium 浏览器扩展（Manifest V3）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "桌面版 Chromium 内核浏览器：Chrome / Edge / 360 极速等。没有 Firefox、Safari 与手机端版本。",
+      "effectiveFromVersion": "1.0.2",
+      "source": "manual:站点核定的可用范围口径"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v1.6.1/table-flow-v1.6.1.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
+    },
+    "version.current": {
+      "value": "1.6.1",
+      "effectiveFromVersion": "1.6.1",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "网页表格采集与导出"
+    },
+    "overview.summary": {
+      "default": "从网页已显示的表格中提取数据并导出。",
+      "variants": {
+        "table-flow-panel": "从网页表格中提取并导出数据。"
+      }
+    },
+    "features.autoPaging": {
+      "default": "支持自动翻页采集与断线续采。"
+    },
+    "features.localProcessing": {
+      "default": "采集、预览与导出默认在浏览器本地完成。"
+    },
+    "install.summary": {
+      "default": "Edge 用户可从商店安装，其他 Chromium 浏览器使用压缩包加载。"
+    },
+    "update.badge": {
+      "default": "Excel 填充网页上线"
+    },
+    "update.summary": {
+      "default": "单页批量填写免费，填充模板需 Pro"
+    },
+    "update.text": {
+      "default": "新增 Excel 填充网页：把本地 Excel 逐行写进网页表单。单页批量填写免费，翻页与采集共享免费机会；填充模板为 Pro。四步改为选表格、设置填充行列、检查映射、批量填充，支持行/列/字段选择与「行 × 列」区域自动识别。"
+    },
+    "update.detail": {
+      "default": "表格统计升到第二版：15 项指标、整体/按列/按行三档范围，可在结果快照上拖选纳入或排除，算不出来的格子显式标注原因而不是用 0 占位；统计结果可作为独立区块并入 Excel/CSV 导出。设备码改为只由服务端签发并双写本地与同步存储，安装时采集的设备特征收敛为 6 项，免费翻页额度跨卸载重装保持连续。默认授予的采集流程次数由平台统一调整。"
+    }
+  },
+  "update": {
+    "badge": "Excel 填充网页上线",
+    "summary": "单页批量填写免费，填充模板需 Pro",
+    "text": "新增 Excel 填充网页：把本地 Excel 逐行写进网页表单。单页批量填写免费，翻页与采集共享免费机会；填充模板为 Pro。四步改为选表格、设置填充行列、检查映射、批量填充，支持行/列/字段选择与「行 × 列」区域自动识别。",
+    "detail": "表格统计升到第二版：15 项指标、整体/按列/按行三档范围，可在结果快照上拖选纳入或排除，算不出来的格子显式标注原因而不是用 0 占位；统计结果可作为独立区块并入 Excel/CSV 导出。设备码改为只由服务端签发并双写本地与同步存储，安装时采集的设备特征收敛为 6 项，免费翻页额度跨卸载重装保持连续。默认授予的采集流程次数由平台统一调整。"
+  },
+  "contentRevision": "content-88fdc21099c8",
+  "sha256": "88fdc21099c89ba9d7469a3176d147eb67578c97e7871dd47be33b1594abfbca"
+}
