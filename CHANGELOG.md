@@ -9,6 +9,7 @@
 
 ## 2026-10-19
 
+- chore(sync): `releases.json` 的 table-flow `notes` 换回线上 `update.json` 原文——构建时拉取发现快照里存的仍是手写摘要（版本号与直链没变，`notes` 也不参与渲染），顺手对齐，避免工作树长期挂着一笔假漂移
 - feat(content): 内容源 `update.*` 文案切到 v2.0.1——badge/summary/text/detail 换成统一接入链、横向虚拟列与 iframe 重载修复口径；重生成 table-flow 内容包（新增 revision `content-70db657ee7f2`）与 13 份夹具；版本事实仍留 v2.0.0，等 2.0.1 包上线后再 `pnpm sync` 推进
 - docs(products): TableFlow 文档跟进主仓 v2.0.1 口径——usage-guide 镜像的当前版本行与 privacy 适用版本改为 v2.0.1（新增「统一表格接入架构 + 调试控制台 Grid 画像」），登记哈希与 `pendingRelease` 记 2.0.1；changelog 补 v2.0.1 待发布条目，features 加「统一表格接入」行并把调试台写成八页签，scope 补 LBI div 网格适配、横向虚拟列投影修复与 Grid 页签排障指向，faq 新增「div 网格为什么没被识别」一问
 - chore(sync): TableFlow 两份逐字镜像跟上主仓 v2.0.0——usage-guide 前进到「选择表格 / 设置填充行列 / 检查映射 / 批量填充」四步改版版（含「行 × 列」区域自动识别、None 映射、前 10 行 × 前 10 列对照表、填完一轮回第 1 行、免费次数 3 → 5），privacy 适用版本改为 v2.0.0；登记表哈希与同步日更新为 2026-10-19，`pendingRelease` 记 2.0.0
