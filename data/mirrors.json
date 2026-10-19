@@ -6,18 +6,18 @@
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
       "syncedAt": "2026-10-19",
-      "siteSha256": "6a38d7b9658e2cf928ac7059e6d23710d2f974405b0ccd2cdb7780c956c15817",
-      "sourceSha256": "6a38d7b9658e2cf928ac7059e6d23710d2f974405b0ccd2cdb7780c956c15817",
-      "pendingRelease": "2.0.0",
+      "siteSha256": "51c89fa012b09389ce12aebde63cb2235323c5c16d7ddbc1ad871a69dc28381d",
+      "sourceSha256": "51c89fa012b09389ce12aebde63cb2235323c5c16d7ddbc1ad871a69dc28381d",
+      "pendingRelease": "2.0.1",
       "whyBehind": ""
     },
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
       "syncedAt": "2026-10-19",
-      "siteSha256": "e39b029ccf345057315f0153e3b5b7d4e12c972c5c1b2183f360adc19f5ae23c",
-      "sourceSha256": "e39b029ccf345057315f0153e3b5b7d4e12c972c5c1b2183f360adc19f5ae23c",
-      "pendingRelease": "2.0.0",
+      "siteSha256": "bf6b8c0560e2cfd63ad2297994312dadfe680da1f0d6a3cd7f8aa2d3a35ab1d0",
+      "sourceSha256": "bf6b8c0560e2cfd63ad2297994312dadfe680da1f0d6a3cd7f8aa2d3a35ab1d0",
+      "pendingRelease": "2.0.1",
       "whyBehind": ""
     }
   ]
