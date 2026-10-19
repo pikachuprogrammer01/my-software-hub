@@ -9,6 +9,7 @@
 
 ## 2026-10-19
 
+- feat(products): TableFlow 更新日志把 v2.0.1 并入官方更新说明对照表（列为当前版本，发布日 2026-10-19），条目头去掉「待发布」并改为指向官方说明的工程口径；v2.0.0 行降为非当前版本
 - chore(sync): `releases.json` 的 table-flow `notes` 换回线上 `update.json` 原文——构建时拉取发现快照里存的仍是手写摘要（版本号与直链没变，`notes` 也不参与渲染），顺手对齐，避免工作树长期挂着一笔假漂移
 - feat(content): 内容源 `update.*` 文案切到 v2.0.1——badge/summary/text/detail 换成统一接入链、横向虚拟列与 iframe 重载修复口径；重生成 table-flow 内容包（新增 revision `content-70db657ee7f2`）与 13 份夹具；版本事实仍留 v2.0.0，等 2.0.1 包上线后再 `pnpm sync` 推进
 - docs(products): TableFlow 文档跟进主仓 v2.0.1 口径——usage-guide 镜像的当前版本行与 privacy 适用版本改为 v2.0.1（新增「统一表格接入架构 + 调试控制台 Grid 画像」），登记哈希与 `pendingRelease` 记 2.0.1；changelog 补 v2.0.1 待发布条目，features 加「统一表格接入」行并把调试台写成八页签，scope 补 LBI div 网格适配、横向虚拟列投影修复与 Grid 页签排障指向，faq 新增「div 网格为什么没被识别」一问
