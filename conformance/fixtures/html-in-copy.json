@@ -50,13 +50,13 @@
         "source": "manual:站点核定的可用范围口径"
       },
       "download.zipUrl": {
-        "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.0/table-flow-v2.0.0.zip",
+        "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.1/table-flow-v2.0.1.zip",
         "effectiveFromVersion": "1.0.0",
         "source": "release-repo:table-flow/update.json"
       },
       "version.current": {
-        "value": "2.0.0",
-        "effectiveFromVersion": "2.0.0",
+        "value": "2.0.1",
+        "effectiveFromVersion": "2.0.1",
         "source": "release-repo"
       }
     },
@@ -98,7 +98,7 @@
       "text": "<b>加粗</b> 更新说明",
       "detail": "修复横向虚拟表（固定列副本与生成列不同名）整行读成空值、iframe 内表格重载后第 2 页读成第 1 页；DOM 快照覆盖扩展到列表、ARIA、自定义网格与已脱离文档的表，页面快照支持同源 iframe/frame、template 与 open shadow root，跨域与 closed shadow 明确标注限制；?tfdebug=1 在登记表为空时先重扫再捕获。"
     },
-    "contentRevision": "content-70db657ee7f2",
+    "contentRevision": "content-072f632e4182",
     "sha256": null
   },
   "context": {

@@ -13,11 +13,11 @@
     },
     "table-flow": {
       "product": "table-flow",
-      "version": "2.0.0",
-      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.0/table-flow-v2.0.0.zip",
+      "version": "2.0.1",
+      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.1/table-flow-v2.0.1.zip",
       "urls": null,
-      "notes": "v2.0.0：新增 Excel 填充网页（Pro）——把本地 Excel 逐行填进网页表单，支持区域选择、类型化值、模板保存与自动翻页；表格统计 v2（15 项指标、范围与拖选排除、大表后台计算、统计并入导出）；设备注册指纹收敛为 6 项、设备码由服务端签发，免费翻页额度跨卸载重装保持；离线 授权到期后回落免费通道；修复翻页预算口径、免费额度真值同步与批量/网页填充若干缺陷。",
-      "fetchedAt": "2026-10-19T15:36:15.008Z"
+      "notes": "v2.0.1：统一表格接入架构（GridDescriptor/会话/RowSource、LBI div 网格、声明式 spec 与 conformance）；调试控制台新增 Grid 画像、报告 JSON 的 grid 段与独立 Grid JSON 导出；修复横向虚拟列投影、iframe 重载采集与 DOM 快照覆盖（列表/自定义网格/脱离文档/同源 frame/open shadow）。",
+      "fetchedAt": "2026-10-19T15:41:04.000Z"
     },
     "auto-clicker-mac": {
       "product": "auto-clicker-mac",

@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "product": "table-flow",
+  "sourceRevision": "bb7b376b97af2d57c3deddb812f174163a517370",
+  "generatedAt": "2026-10-19T15:41:17.205Z",
+  "facts": {
+    "features.autoPaging": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "features.localProcessing": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.autoPaging.maxPages": {
+      "value": 50,
+      "unit": "页",
+      "source": "client-constant:settingsStore.defaultMaxPages",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.freePaging.flows": {
+      "value": 5,
+      "unit": "次",
+      "source": "platform-default:LicenseHub 新设备默认授予的采集流程次数（采集与 Excel 填充翻页共享，实际以服务端授予为准）",
+      "effectiveFromVersion": "2.0.0"
+    },
+    "pricing.pro.monthly": {
+      "value": 5,
+      "currency": "CNY",
+      "period": "month",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "pricing.pro.yearly": {
+      "value": 40,
+      "currency": "CNY",
+      "period": "year",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "form.factor": {
+      "value": "Chromium 浏览器扩展（Manifest V3）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "桌面版 Chromium 内核浏览器：Chrome / Edge / 360 极速等。没有 Firefox、Safari 与手机端版本。",
+      "effectiveFromVersion": "1.0.2",
+      "source": "manual:站点核定的可用范围口径"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.1/table-flow-v2.0.1.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
+    },
+    "version.current": {
+      "value": "2.0.1",
+      "effectiveFromVersion": "2.0.1",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "网页表格采集与导出"
+    },
+    "overview.summary": {
+      "default": "从网页已显示的表格中提取数据并导出。",
+      "variants": {
+        "table-flow-panel": "从网页表格中提取并导出数据。"
+      }
+    },
+    "features.autoPaging": {
+      "default": "支持自动翻页采集与断线续采。"
+    },
+    "features.localProcessing": {
+      "default": "采集、预览与导出默认在浏览器本地完成。"
+    },
+    "install.summary": {
+      "default": "Edge 用户可从商店安装，其他 Chromium 浏览器使用压缩包加载。"
+    },
+    "update.badge": {
+      "default": "表格读取更稳"
+    },
+    "update.summary": {
+      "default": "统一接入链；修复横向虚拟列与 iframe 重载"
+    },
+    "update.text": {
+      "default": "表格识别统一到一条接入链：原生表、已知框架、ARIA、列表与 LBI div 网格共用同一套扫描与读取；调试控制台新增 Grid 页签，可对任意 CSS selector 现场画像并导出 Grid JSON。"
+    },
+    "update.detail": {
+      "default": "修复横向虚拟表（固定列副本与生成列不同名）整行读成空值、iframe 内表格重载后第 2 页读成第 1 页；DOM 快照覆盖扩展到列表、ARIA、自定义网格与已脱离文档的表，页面快照支持同源 iframe/frame、template 与 open shadow root，跨域与 closed shadow 明确标注限制；?tfdebug=1 在登记表为空时先重扫再捕获。"
+    }
+  },
+  "update": {
+    "badge": "表格读取更稳",
+    "summary": "统一接入链；修复横向虚拟列与 iframe 重载",
+    "text": "表格识别统一到一条接入链：原生表、已知框架、ARIA、列表与 LBI div 网格共用同一套扫描与读取；调试控制台新增 Grid 页签，可对任意 CSS selector 现场画像并导出 Grid JSON。",
+    "detail": "修复横向虚拟表（固定列副本与生成列不同名）整行读成空值、iframe 内表格重载后第 2 页读成第 1 页；DOM 快照覆盖扩展到列表、ARIA、自定义网格与已脱离文档的表，页面快照支持同源 iframe/frame、template 与 open shadow root，跨域与 closed shadow 明确标注限制；?tfdebug=1 在登记表为空时先重扫再捕获。"
+  },
+  "contentRevision": "content-072f632e4182",
+  "sha256": "072f632e4182542662128186571f2fc9d79f836ce8b965da84234b3039c055db"
+}
