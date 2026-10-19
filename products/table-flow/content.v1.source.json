@@ -72,16 +72,16 @@
       "default": "Edge 用户可从商店安装，其他 Chromium 浏览器使用压缩包加载。"
     },
     "update.badge": {
-      "default": "Excel 填充网页上线"
+      "default": "表格读取更稳"
     },
     "update.summary": {
-      "default": "单页批量填写免费，填充模板需 Pro"
+      "default": "统一接入链；修复横向虚拟列与 iframe 重载"
     },
     "update.text": {
-      "default": "新增 Excel 填充网页：把本地 Excel 逐行写进网页表单。单页批量填写免费，翻页与采集共享免费机会；填充模板为 Pro。四步改为选表格、设置填充行列、检查映射、批量填充，支持行/列/字段选择与「行 × 列」区域自动识别。"
+      "default": "表格识别统一到一条接入链：原生表、已知框架、ARIA、列表与 LBI div 网格共用同一套扫描与读取；调试控制台新增 Grid 页签，可对任意 CSS selector 现场画像并导出 Grid JSON。"
     },
     "update.detail": {
-      "default": "表格统计升到第二版：15 项指标、整体/按列/按行三档范围，可在结果快照上拖选纳入或排除，算不出来的格子显式标注原因而不是用 0 占位；统计结果可作为独立区块并入 Excel/CSV 导出。设备码改为只由服务端签发并双写本地与同步存储，安装时采集的设备特征收敛为 6 项，免费翻页额度跨卸载重装保持连续。默认授予的采集流程次数由平台统一调整。"
+      "default": "修复横向虚拟表（固定列副本与生成列不同名）整行读成空值、iframe 内表格重载后第 2 页读成第 1 页；DOM 快照覆盖扩展到列表、ARIA、自定义网格与已脱离文档的表，页面快照支持同源 iframe/frame、template 与 open shadow root，跨域与 closed shadow 明确标注限制；?tfdebug=1 在登记表为空时先重扫再捕获。"
     }
   }
 }
