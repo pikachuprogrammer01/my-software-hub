@@ -5,20 +5,20 @@
     {
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
-      "syncedAt": "2026-10-19",
-      "siteSha256": "51c89fa012b09389ce12aebde63cb2235323c5c16d7ddbc1ad871a69dc28381d",
-      "sourceSha256": "51c89fa012b09389ce12aebde63cb2235323c5c16d7ddbc1ad871a69dc28381d",
-      "pendingRelease": "2.0.1",
-      "whyBehind": ""
+      "syncedAt": "2026-10-22",
+      "siteSha256": "b9699792cbb2a71bcc0ab54e08fb98270e2e7b18302addaaf24ad3686877e57f",
+      "sourceSha256": "b9699792cbb2a71bcc0ab54e08fb98270e2e7b18302addaaf24ad3686877e57f",
+      "pendingRelease": "2.0.2",
+      "whyBehind": "应用户要求随主仓主动前进：副本含 v2.0.2 的「收紧用户可见文案」与账号锚披露，线上 update.json 仍是 v2.0.1，v2.0.2 上线前站点文案略领先于在售版本。"
     },
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
-      "syncedAt": "2026-10-19",
-      "siteSha256": "bf6b8c0560e2cfd63ad2297994312dadfe680da1f0d6a3cd7f8aa2d3a35ab1d0",
-      "sourceSha256": "bf6b8c0560e2cfd63ad2297994312dadfe680da1f0d6a3cd7f8aa2d3a35ab1d0",
-      "pendingRelease": "2.0.1",
-      "whyBehind": ""
+      "syncedAt": "2026-10-22",
+      "siteSha256": "6abd1427c27dac244ba8662719aa56300c688514772b955fcb91e725ec897d66",
+      "sourceSha256": "6abd1427c27dac244ba8662719aa56300c688514772b955fcb91e725ec897d66",
+      "pendingRelease": "2.0.2",
+      "whyBehind": "应用户要求随主仓主动前进：副本已是 v2.0.2 口径（账号标识哈希恢复披露、适用版本改 v2.0.2），但线上 update.json 仍是 v2.0.1、商店 v2.0.1 被驳回后待重新提交；v2.0.2 正式上线前站点文案略领先于在售版本。"
     }
   ]
 }

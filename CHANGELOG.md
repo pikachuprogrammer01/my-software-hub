@@ -7,6 +7,10 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-22
+
+- docs(products): TableFlow 隐私政策跟上主仓 v2.0.2——`privacy.md` 镜像前进到「恢复账号标识哈希披露」版（设备注册读取已登录 Chrome / Edge 账号的 id 或邮箱，仅本地哈希，服务端只存加盐二次哈希、默认保留 180 天），适用版本改 v2.0.2；`usage-guide.md` 同步主仓「收紧用户可见文案」；安装页权限说明改写为账号 id 优先、覆盖 Edge MSA / Entra ID；镜像登记 `pendingRelease` 记 2.0.2（线上 `update.json` 仍为 2.0.1，v2.0.2 尚未正式上线）
+
 ## 2026-10-19
 
 - feat(content): TableFlow 版本事实推进到 2.0.1——`releases.json` 由 2.0.0 前进到 2.0.1，直链改 `table-flow-v2.0.1.zip`，notes 用发布脚本 `--notes` 原文；重新生成内容包（`version.current` 与下载直链随之解析到 2.0.1，新增不可变 revision `content-072f632e4182`）并同步重生成 13 份夹具

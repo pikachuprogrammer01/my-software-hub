@@ -51,7 +51,7 @@ description: "Edge 商店、Chrome 商店与压缩包三条安装通道、环境
 
 扩展使用的权限：`storage`、`scripting`、`activeTab`、`tabs`、`identity`、`identity.email`，主机权限 `<all_urls>` 与 `file:///*`，以及授权服务器域名（license.pikachu01.me）的定点主机权限。
 
-- `identity` / `identity.email` 只用于读取当前 Chrome 账号邮箱并在**本地**计算哈希，让同一账号下的免费额度跨卸载重装保持连续；原始邮箱不出网、不落盘、不进日志，未登录 Chrome 时自动降级、不影响其他能力。
+- `identity` / `identity.email` 只用于**设备注册时读取一次**当前已登录的浏览器账号标识（Chrome 账号，或 Edge 的 Microsoft 账户 / 云端 Entra ID），在**本地**计算 SHA-256 后作为可选字段随注册请求发送，让同一账号下的免费额度在卸载重装、清 Cookie 后保持连续；优先用账号 id（改邮箱也不变），id 为空才用邮箱。原始 id / 邮箱不出网、不落盘、不进日志，服务端只保存加盐二次哈希；未登录或未授权时自动降级、不影响其他能力。
 - 扩展**不申请** `cookies` 权限，不读取、不解析、也不修改任何 Cookie 的内容。
 
 每项权限的用途说明见[隐私政策](/table-flow/privacy) §5。
