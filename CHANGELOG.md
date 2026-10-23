@@ -7,6 +7,12 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-24
+
+- chore(aoci): 接入 AOCI 仓库认知——`aoci init` 生成 AGENTS 合同、LF 行尾属性与 `.aoci` 治理配置（目录内默认全忽略，白名单只放行 baseline/config/curation 等正式资产）
+- chore(aoci): `aoci scan` 建立 164 文件字节级基线（node_modules 等 6283 个文件排除在外）
+- feat(aoci): 首建全仓认知索引 `aoci.txt`/`aoci.meta.txt`/`aoci.code.txt`——161 条 Entry 覆盖主题组件、根文档、五产品内容源与页面、schema 契约、19 个脚本与图标/二维码资产，收尾 Verify/Check/Guide 全绿（aligned）
+
 ## 2026-10-23
 
 - docs(products): TableFlow 设置页搜索与悬浮图标恢复口径跟进主仓 `42017f9`/`61ff335`——`usage-guide.md` 镜像再前进（图标隐藏后点扩展图标恢复并开面板、图标还在时点图标只重扫不开面板、设置页搜索与快捷键）；`features.md` 新增「设置页搜索」行并改写 FAB 行为；`scope.md` 补设置页搜索能力行；`faq.md` 新增「悬浮图标不见了」「设置项太多」两问；`changelog.md` v2.0.2 段补设置页搜索小节与「×」定位修复

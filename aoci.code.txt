@@ -1,0 +1,230 @@
+#AOCI-CODE-VOLUME: 1
+
+===/Users/pikachu/code/my-software-hub/===
+.gitattributes[FG4T]: F:Git 属性声明：全部文本强制 LF 检出，保证 AOCI 基线在任意平台字节级一致 | R:- | A:- | S:AOCI 按原始字节建基线，Windows 默认 autocrlf 若改写行尾会把整树判为 stale
+.gitignore[FG3T]: F:Git 忽略清单：node_modules/dist/缓存、proposals 三态目录（保留 .gitkeep）、data/publish 产物与本地工具目录不入库 | R:- | A:- | S:-
+AGENTS.md[SG8S]: F:仓库 Agent 合同（aoci 区块）：规定 AOCI 认知建立/恢复/维护、刷新门禁与任务收尾原则，代理在本仓工作前必读 | R:- | A:列出 aoci_rules/overview/maintain/update_entry/report 最小工具入口与 Fresh Bootstrap 边界 | S:裁决优先级为机器合同与实时 Guide 高于本静态文档，静态文档不能覆盖工具 Schema 与 Validator
+CHANGELOG.md[SV5S]: F:站点自身变更日志（非产品日志，产品日志在 products/<id>/changelog.md）：一行一个提交批次，句子与 commit message 同源，行尾短哈希可 git show 复核 | R:code:scripts/changelog-guard.mjs | A:- | S:根目录 md 不在发布白名单内，本文件不上线；动了发布面却不记日志会让 pnpm validate 红
+CLIENT-INTEGRATION.md[SB7T]: F:客户端接入交接文档：内容包消费 12 条 MUST、TableFlow 更新面板与 WPS 设置页字段映射及字数预算、离线提案通道、一致性夹具与客户端仓待办台账 | R:code:scripts/proposal-validate.mjs,code:scripts/conformance-fixtures.mjs,code:scripts/test-conformance.mjs | A:update.json URL 已硬编码进分发包不可变更；仅 table-flow/wps-enhancer 有内容包，其余产品 contentSource:null 客户端不得请求 | S:必需字段只认 schema+product，其余缺失一律回落不抛异常；本仓不含客户端源码，第七节待办需客户端团队落地
+CONTENT-PIPELINE.md[SB7T]: F:内容流水线执行说明：主源在 products/<id>/content.v1.source.json，生成 data/generated/<id>/；日常六步流程（validate→build→drift→vitepress build）、回滚与离线提案通道 | R:code:scripts/content-build.mjs,code:scripts/content-validate.mjs,code:scripts/content-rollback.mjs,code:scripts/proposal-validate.mjs | A:content:publish 默认 dry-run 不写外部发布仓；单产品内容损坏不得阻断其他产品 | S:回滚只移动本地 latest 指针，不删除历史 revision；无结构化源的 manual 产品会被明确跳过，不能当作已接入
+CONTRACT.md[SG9S]: F:数据面契约 v1（2026-10-01 冻结）：三仓角色与单向数据流、append-only 三铁律、文件与 URL 契约、字段规则与按产品文案预算、客户端 MUST 与存量偏差台账 | R:code:scripts/validate-contract.mjs,code:CLIENT-INTEGRATION.md,code:PRODUCTS.md | A:update.json URL 已硬编码进分发包永不可变；url 与 urls 双形永久合法；.v1 文件名与 schema 大版本冻结，破坏性变更走 .v2 新文件 | S:律1 存量字段永不改名不改形不删除；未知枚举必须回落不抛错（schema 管兼容、lint 管质量）；本文件最终归属发布仓 main:docs/CONTRACT.md 交接时整体迁走；同步脚本禁止遍历 Automation 目录（含登录态与密钥）
+DEPLOY.md[SV6S]: F:部署方案与执行清单：Cloudflare Pages Git 集成（push main 自动发布）、hub.pikachu01.me 子域 CNAME、构建参数表、上线验证清单与回滚方式 | R:code:public/robots.txt,code:.vitepress/config.mts | A:换域名只改 config 的 sitemap hostname 与 robots.txt 两处 | S:Pages 项目类型不可逆（Git 集成不能改 Direct Upload）；Framework preset 必须选 None 防绕过前置校验；必须建 Pages 而非 Workers（Workers 会猜错输出目录）
+DOWNLOADS.md[SV6T]: F:下载与版本事实口径：一切最新版/下载只从线上 update.json 取号，页面不打印版本号；单一事实源 URL、命名约定（tag/附件/url 三处一致）与 Gitee Releases 校对表 | R:code:.vitepress/releases.json,code:.vitepress/theme/components/ReleaseInfo.vue | A:站点只提供最新版压缩包不列历史版本；更新日志手写并与 update.json 版本对齐校验 | S:v1.4.4 未出现在 Releases 但用户拿到过：CHANGELOG 保留条目并标注无法核对公开状态；早前「1.4.4 是最新」的判断来自开发仓过期快照，已作废
+PRODUCTS.md[SB7S]: F:五仓实测审计（2026-10-01）：产品判定（table-flow/wps-enhancer 已接 Gitee、auto-clicker 零发布设施、qoder-proxy 无分发概念、Automation 非产品）、P0-P2 风险登记、承重事实扇出实测与当前态/历史态设计启示 | R:code:CONTRACT.md,code:REQUIREMENTS.md | A:由清单推出的契约要求（badge 层必有、updateMechanism 决定站点下载区、assets 必须数组） | S:Automation 含真实登录态与 fernet key：任何同步/导出脚本禁止整树遍历它；价格 ¥4→¥5 是涨价史不是缺陷，护栏必须按当前态/历史态分区
+README.md[SG8S]: F:仓库总览与运行手册：文档阅读顺序、pnpm 命令、目录说明、内容架构契约七条、加页/加产品完整动作清单、更新日志来源纪律与命名品牌 | R:code:.vitepress/config.mts,code:data/products.json,code:data/site.json | A:发布面是白名单：只有 index.md 与 products/** 成页，其余 md 自动排除 | S:承重事实只在内容源存一份（版本号例外由构建注入）；md 出现裸版本号 lint 失败；新增页面必须登记进 products.json 的 sections 否则 lint 红
+REQUIREMENTS.md[SB6S]: F:PRD v1.0：范围与四类角色主场景、FR-1~26 功能需求（多产品门户/数据面消费/更新说明作者端/接入交付物/工程基线）、NFR、硬约束 C1-C4、里程碑 M0-M4 与风险登记 R1-R7 | R:code:VISION.md,code:SITE-DESIGN.md,code:PRODUCTS.md | A:- | S:硬约束 C1 已分发客户端硬编码的 raw URL 永不可变；C4 同步脚本不得遍历 Automation 目录；验收总则要求断网重跑成功且不接受「已实现」作为结论
+SITE-DESIGN.md[SB7M]: F:站点设计（已实施到阶段 4）：三条不变原则、L1/L2/L3 内容分层与 factsSource 双源、路由与 visibility 三态、section 库+kind 投影、updateMechanism 渲染规则表、当前态/历史态护栏与迁移阶段 -1~5 | R:code:data/products.json,code:.vitepress/config.mts,code:REQUIREMENTS.md | A:updateMechanism 决定下载区：manual 直链、built-in-updater 只说明应用内检查、none 只写获取方式不承诺更新提示 | S:qoder-proxy 控制台无 Markdown 渲染器（实测更正）：detail 长文只有站点能承载，其 text 预算 2000 是无容器的占位值
+VISION.md[SG7T]: F:目标与决策原则：为什么做多产品门户（单产品 8 组事实≈48 处副本实测）、G1-G5 可验证目标、P1-P7 冲突让步原则、已否决方案表、关键假设 A1-A4 与四类干系人张力 | R:code:REQUIREMENTS.md | A:- | S:冲突时以第五节原则为准（P1 宁可少功能不多双写、P4 存量永不为难已分发用户）；第六节已否决方案不得重新提出
+demo.py[KZ1T]: F:仓根临时演示脚本：把元组/列表递归转成字典结构链表并打印，与站点工程无关（未纳入 git 跟踪） | R:- | A:- | S:空列表路径 capacity[-1] 会 IndexError，与注释宣称的返回 None 不符
+index.md[SU7T]: F:站点首页（layout: home）：仅由 SiteHero 与 ProductDirectory 两个组件组成，文案零硬编码 | R:code:.vitepress/theme/components/SiteHero.vue,code:.vitepress/theme/components/ProductDirectory.vue | A:- | S:首页文案全部来自 data/site.json，本文件不含一句正文
+package.json[FV7T]: F:工程清单：pnpm 脚本矩阵（build 前置契约与内容校验、validate 十步链、verify/sync/content 系列），依赖仅 vitepress 与 ajv | R:code:scripts/validate-contract.mjs,code:scripts/dev.mjs,code:scripts/verify.mjs | A:- | S:build 已前置四道校验；不得在 Pages 后台换成裸 vitepress build 绕过
+pnpm-lock.yaml[FV2L]: F:pnpm 锁文件（lockfileVersion 9.0，autoInstallPeers）：锁定 vitepress/ajv 及其传递依赖的精确版本 | R:code:package.json | A:- | S:Pages 构建用 --frozen-lockfile，改依赖后必须同步更新本文件
+pnpm-workspace.yaml[FV5T]: F:pnpm 工作区声明：packages 为单包仓 ['.']；allowBuilds 放行 esbuild 的构建脚本 | R:code:package.json | A:- | S:packages 字段不能删——pnpm 9（Cloudflare 构建机）缺它即报 packages field missing 退出；esbuild 不放行会被 ERR_PNPM_IGNORED_BUILDS 拦
+
+===/Users/pikachu/code/my-software-hub/.vitepress/===
+config.mts[AV8S]: F:VitePress 主配置：读 data/site.json 与 products.json，扫描 products/** 生成路由重写、侧栏与导航，构建前先调 syncRelease 拉线上清单 | R:code:scripts/sync-release.mjs,code:.vitepress/releases.json,code:data/site.json,code:data/products.json | A:仅 products/<id>/** 与根 index.md 发布，其余 md 由目录实况算出排除清单；品牌事实只在 data/ 单点维护 | S:新增产品 md 自动进站无需改本文件；产品首页标题不拼后缀防「TableFlow · TableFlow」
+releases.json[FV6T]: F:多产品线上 update.json 快照（构建期 sync-release.mjs 按 releaseBranch 拉取生成）：各产品当前版本、下载直链与更新说明 | R:code:scripts/sync-release.mjs,code:.vitepress/config.mts | A:- | S:版本事实未变时 sync 不重写本文件（防 fetchedAt 刷新让工作树恒脏）；拉取失败占位 0.0.0 时不注入版本
+
+===/Users/pikachu/code/my-software-hub/.vitepress/theme/===
+Layout.vue[AU6T]: F:主题布局包装：包裹 VitePress 默认 Layout，在 layout-bottom 插槽挂 SiteContact，让联系区块在带侧栏页面也可见 | R:code:.vitepress/theme/index.ts,code:.vitepress/theme/components/SiteContact.vue | A:- | S:自带页脚在带侧栏页面被隐藏，联系区必须走 layout-bottom 插槽而非 themeConfig.footer
+custom.css[FU6T]: F:全站自定义样式层：亮/暗双套品牌色与字体变量、正文排版与焦点态、产品落地页宽画布（product-landing-page）与移动端断点 | R:code:.vitepress/theme/index.ts | A:- | S:必须在默认主题之后引入：VitePress :root/.dark 与本文件同权重，后进 CSS 才生效，先引入整层配色被默认值覆盖
+index.ts[EU7T]: F:主题入口：继承默认主题与 Layout，注册 Fact/ProductDirectory/ProductOverview/ReleaseInfo/SiteHero/AutoClickerDownloadButtons/WpsDownloadButtons 全局组件并引入 custom.css | R:code:.vitepress/theme/Layout.vue,code:.vitepress/theme/custom.css,code:.vitepress/theme/components/Fact.vue,code:.vitepress/theme/components/ProductOverview.vue | A:md 里直接写组件标签即可取线上版本、内容包文案与承重事实 | S:custom.css 的 import 必须排在 DefaultTheme 之后，同权重 CSS 后进生效
+
+===/Users/pikachu/code/my-software-hub/.vitepress/theme/components/===
+AutoClickerDownloadButtons.vue[AU5S]: F:Auto Clicker 下载面板：按 arm64/Intel 芯片 × Gitee/GitHub 双来源生成 ZIP 直链，版本号与地址 base 全部来自内容包 facts | R:code:.vitepress/theme/composables/useContent.js | A:- | S:文件名由 base 与 Auto-Clicker-v{version}-{arm64|intel}.zip 模板拼出；版本或来源缺失时整面板不渲染并出警告
+Fact.vue[AU7T]: F:承重事实占位组件：按 product+id 从内容包 facts 取值，支持货币符号/计费周期/单位/前后缀与 as=link 链接形态 | R:code:.vitepress/theme/composables/useContent.js | A:md 写 Fact 组件标签传 product/id 即用；取不到值时渲染「（id 暂不可用）」不空渲染 | S:价格/版本/上限数字只在内容源一处维护，页面与组件禁止抄写数字
+ProductDirectory.vue[AU7S]: F:首页作品目录：featured 大卡 + 其余产品网格卡，从 products.json 与内容包拼 tagline/摘要/状态标签，图标加载失败回落首字母 monogram | R:code:data/products.json,code:data/site.json,code:.vitepress/theme/composables/useContent.js | A:visibility=internal 不进目录，featured 卡由 visibility=featured 唯一决定 | S:图标 404 检测在 onMounted 查 naturalWidth，缓存命中的坏图不触发 onerror 事件
+ProductOverview.vue[AU7S]: F:产品落地页头部：面包屑+Hero（图标/标题/摘要/主次按钮）+事实侧栏+文档入口网格；板块可见性与顺序由 site.json 的 sectionLabels/sectionOrder 决定 | R:code:data/products.json,code:data/site.json,code:.vitepress/theme/composables/useContent.js,code:.vitepress/theme/custom.css | A:slot 承载 ReleaseInfo；primary 按钮依 install/quickstart/config 优先级选取 | S:宽画布版式依赖页面 frontmatter pageClass=product-landing-page，样式在 custom.css
+ReleaseInfo.vue[AU6T]: F:发布信息组件三态：built-in-updater 只提示应用内更新器；manual 给「免费下载 latest」直链；无清单产品给 releasesUrl/repoUrl 获取按钮 | R:code:.vitepress/theme/composables/useContent.js,code:data/products.json | A:- | S:直链与文案只来自内容包 facts/copy，组件不写死 URL 与版本号；updateMechanism=built-in-updater 不得再显示第二条升级路径
+SiteContact.vue[AU4T]: F:全站底部联系区块：文案与邮箱只读 data/site.json 的 contact 键；无侧栏页面让位自带页脚去掉顶部分隔线 | R:code:data/site.json,code:.vitepress/theme/Layout.vue | A:- | S:960px+ 有侧栏时左内边距让位侧栏宽度，居中不能按整屏算
+SiteHero.vue[AU5T]: F:首页 Hero 区：标题/高亮/简介/行动按钮全部读 data/site.json 的 home 与 actions，桌面与移动各一套标题文案 | R:code:data/site.json | A:- | S:-
+WpsDownloadButtons.vue[AU5S]: F:WPS Enhancer 下载面板：macOS arm64 与 Windows x86_64 × Gitee/GitHub 双来源 ZIP 直链；地址 base 来自内容包，文件名固定不含版本模板 | R:code:.vitepress/theme/composables/useContent.js | A:- | S:文件名固定 WPSEnhancer-<platform>.zip（无 {version} 模板）；页面不提供 EXE 直链
+
+===/Users/pikachu/code/my-software-hub/.vitepress/theme/composables/===
+useContent.js[CB7T]: F:内容包读取 composable：构建期 glob data/generated/*/content-latest.v1.json 成映射，按 productId 精确返回该产品内容包 | R:- | A:- | S:取不到即返回 null，禁止回落其他产品兜底；缓存失效靠包内 contentRevision
+
+===/Users/pikachu/code/my-software-hub/.vscode/===
+settings.json[FG2T]: F:VSCode 工作区设置：字符串/注释等位置关闭自动补全建议（offWhenInlineCompletions），避免抢占内联补全 | R:- | A:- | S:-
+
+===/Users/pikachu/code/my-software-hub/data/generated/auto-clicker-mac/===
+content-latest.v1.json[FB6T]: F:Auto Clicker 当前内容包（latest 指针，revision content-b9763b7679b8）：facts（minOs 13、双芯片分包、间隔 10-60000ms、Gitee/GitHub zip base）+ copy + update 三段 | R:code:products/auto-clicker-mac/content.v1.source.json,code:.vitepress/theme/composables/useContent.js | A:- | S:contentRevision 等于 content-<sha 前 12 位>；version.current 由构建期从 releases.json 注入，不由源手写
+content.v1.json[FB5T]: F:Auto Clicker 内容包构建产物（稳定文件名副本，与 content-latest.v1.json 同字节）：由 content-build.mjs 从内容源生成，供发布适配器导出与核对 | R:code:scripts/content-build.mjs,code:products/auto-clicker-mac/content.v1.source.json | A:- | S:站点渲染只 glob latest 文件；本文件是发布链路的稳定名产物
+
+===/Users/pikachu/code/my-software-hub/data/generated/auto-clicker-mac/history/===
+content-236dcc2f01e1.json[FB3T]: F:Auto Clicker 内容包不可变历史 revision content-236dcc2f01e1（2026-10-04 生成，源 aeb2984987b7）：记录当时的 facts/copy/update 快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-394a277f0c77.json[FB3T]: F:Auto Clicker 内容包不可变历史 revision content-394a277f0c77（2026-10-17 生成，源 2b11ca395ad）：接入发布仓清单后的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-6c7970de50c4.json[FB3T]: F:Auto Clicker 内容包不可变历史 revision content-6c7970de50c4（2026-10-17 生成，源 8e396c5ee6cf）：多产品重构批次的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-b9763b7679b8.json[FB3T]: F:Auto Clicker 内容包不可变历史 revision content-b9763b7679b8（2026-10-17 生成）：与当前 latest 同内容，是现役版本的 history 存档 | R:code:data/generated/auto-clicker-mac/content-latest.v1.json | A:- | S:history 只追加不可修改；当前 latest 的 revision 即本文件名后缀
+content-d4342c00f37f.json[FB3T]: F:Auto Clicker 内容包不可变历史 revision content-d4342c00f37f（2026-10-07 生成，源 5cc758ac6118）：接入发布仓清单前的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-f923c68a0681.json[FB3T]: F:Auto Clicker 内容包不可变历史 revision content-f923c68a0681（2026-10-05 生成，源 aeb2984987b7）：首批接入后的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+
+===/Users/pikachu/code/my-software-hub/data/generated/automation/===
+content-latest.v1.json[FB5T]: F:Automation 当前内容包（latest 指针，revision content-bbee8a5663c3）：facts（仅 macOS、Node 20.11、回环端口 4765、GitHub 仓库地址）+ copy + update 三段 | R:code:products/automation/content.v1.source.json,code:.vitepress/theme/composables/useContent.js | A:- | S:Automation 是源码分发工具（updateMechanism:none）：站点不放下载按钮、不承诺更新提示；页面描述全部站点手写
+content.v1.json[FB4T]: F:Automation 内容包构建产物（稳定文件名副本，与 latest 同字节）：供发布适配器导出与核对 | R:code:scripts/content-build.mjs,code:products/automation/content.v1.source.json | A:- | S:站点渲染只 glob latest 文件；本文件是发布链路的稳定名产物
+
+===/Users/pikachu/code/my-software-hub/data/generated/automation/history/===
+content-aabd3417e231.json[FB3T]: F:Automation 内容包不可变历史 revision content-aabd3417e231（2026-10-05 生成，源 aeb2984987b7）：首批接入时的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-bbee8a5663c3.json[FB3T]: F:Automation 内容包历史 revision content-bbee8a5663c3（2026-10-17 生成）：与当前 latest 同内容，现役版本的 history 存档 | R:code:data/generated/automation/content-latest.v1.json | A:- | S:history 只追加不可修改；当前 latest 的 revision 即本文件名后缀
+content-c6139e2f16d3.json[FB3T]: F:Automation 内容包历史 revision content-c6139e2f16d3（2026-10-04 生成，源 aeb2984987b7）：首批接入时的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+
+===/Users/pikachu/code/my-software-hub/data/generated/qoder-proxy/===
+content-latest.v1.json[FB5T]: F:Qoder Proxy 当前内容包（latest 指针，revision content-f8c1728c0dcd）：facts（Node 18、回环 127.0.0.1:3100、GitHub 仓库地址、仅本机自用口径）+ copy + update 三段 | R:code:products/qoder-proxy/content.v1.source.json,code:.vitepress/theme/composables/useContent.js | A:- | S:源码分发（updateMechanism:none）：站点不放下载按钮不承诺更新提示；控制台无 Markdown 渲染器，长文只由站点承载
+content.v1.json[FB4T]: F:Qoder Proxy 内容包构建产物（稳定文件名副本，与 latest 同字节）：供发布适配器导出与核对 | R:code:scripts/content-build.mjs,code:products/qoder-proxy/content.v1.source.json | A:- | S:站点渲染只 glob latest 文件；本文件是发布链路的稳定名产物
+
+===/Users/pikachu/code/my-software-hub/data/generated/qoder-proxy/history/===
+content-3362fceb6462.json[FB3T]: F:Qoder Proxy 内容包历史 revision content-3362fceb6462（2026-10-05 生成，源 aeb2984987b7）：首批接入时的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-7cbe5c04cf2d.json[FB3T]: F:Qoder Proxy 内容包历史 revision content-7cbe5c04cf2d（2026-10-04 生成，源 aeb2984987b7）：最早一批生成快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-8a2893107406.json[FB3T]: F:Qoder Proxy 内容包历史 revision content-8a2893107406（2026-10-07 生成，源 aeb2984987b7）：接入后一周内的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-f8c1728c0dcd.json[FB3T]: F:Qoder Proxy 内容包历史 revision content-f8c1728c0dcd（2026-10-17 生成）：与当前 latest 同内容，现役版本的 history 存档 | R:code:data/generated/qoder-proxy/content-latest.v1.json | A:- | S:history 只追加不可修改；当前 latest 的 revision 即本文件名后缀
+
+===/Users/pikachu/code/my-software-hub/data/generated/table-flow/===
+content-latest.v1.json[FB7T]: F:TableFlow 当前内容包（latest，revision content-072f632e4182，v2.0.1）：facts（翻页 50 页、免费 5 次、Pro ¥5/月 ¥40/年、zipUrl 直链）+ copy（含面板渠道变体）+ update 四层文案 | R:code:products/table-flow/content.v1.source.json,code:.vitepress/theme/composables/useContent.js | A:- | S:版本与直链由构建期从 releases.json 注入；pricing 带 since 表达涨价史；overview.summary 有面板渠道变体
+content.v1.json[FB5T]: F:TableFlow 内容包构建产物（稳定文件名副本，与 latest 同字节）：由 content-build.mjs 生成，供发布适配器导出与核对 | R:code:scripts/content-build.mjs,code:products/table-flow/content.v1.source.json | A:- | S:站点渲染只 glob latest 文件；本文件是发布链路的稳定名产物
+
+===/Users/pikachu/code/my-software-hub/data/generated/table-flow/history/===
+content-072f632e4182.json[FB3T]: F:TableFlow 内容包历史 revision content-072f632e4182（2026-10-19 生成，v2.0.1 版本事实推进）：与当前 latest 同内容，现役版本的 history 存档 | R:code:data/generated/table-flow/content-latest.v1.json | A:- | S:history 只追加不可修改；当前 latest 的 revision 即本文件名后缀
+content-0b2fd1b5bc74.json[FB3T]: F:TableFlow 内容包历史 revision content-0b2fd1b5bc74（2026-10-17 生成，源 8e396c5ee6cf）：多产品重构批次的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-3ddedc454921.json[FB3T]: F:TableFlow 内容包历史 revision content-3ddedc454921（2026-10-03 生成，源 working-tree，版本事实 v1.6.1）：站点仓纳管前最早的生成快照 | R:- | A:- | S:working-tree 表示生成时无提交可引用；history 只追加
+content-54dd79e36ee8.json[FB3T]: F:TableFlow 内容包历史 revision content-54dd79e36ee8（2026-10-18 生成，源 be06bbe98ab）：v2.0.0 期间的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-63ace4a6d96d.json[FB3T]: F:TableFlow 内容包历史 revision content-63ace4a6d96d（2026-10-18 生成，源 a01d0eb4e185）：v2.0.0 期间的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-70db657ee7f2.json[FB3T]: F:TableFlow 内容包历史 revision content-70db657ee7f2（2026-10-19 生成，源 cfb18d75ddc）：v2.0.1 上线前的文案切换快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-88fdc21099c8.json[FB3T]: F:TableFlow 内容包历史 revision content-88fdc21099c8（2026-10-05 生成，源 aeb2984987b7）：首批接入时的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-c5c60691d357.json[FB3T]: F:TableFlow 内容包历史 revision content-c5c60691d357（2026-10-17 生成，源 8e396c5ee6cf）：多产品重构批次的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-ce7d96ea14df.json[FB3T]: F:TableFlow 内容包历史 revision content-ce7d96ea14df（2026-10-03 生成，源 c104ca0034d9）：纳管初期的生成快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-ea90484723ae.json[FB3T]: F:TableFlow 内容包历史 revision content-ea90484723ae（2026-10-03 生成，源 working-tree，版本事实 v1.6.1）：站点仓纳管前最早的生成快照之一 | R:- | A:- | S:working-tree 表示生成时无提交可引用；history 只追加
+content-ed0abcff1932.json[FB3T]: F:TableFlow 内容包历史 revision content-ed0abcff1932（2026-10-17 生成，源 2b11ca395ad）：多产品重构批次的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-f4bdf8b892c7.json[FB3T]: F:TableFlow 内容包历史 revision content-f4bdf8b892c7（2026-10-18 生成，源 be06bbe98ab）：v2.0.0 期间的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+
+===/Users/pikachu/code/my-software-hub/data/generated/wps-enhancer/===
+content-latest.v1.json[FB6T]: F:WPS Enhancer 当前内容包（latest，revision content-01243a2daefc，v1.1.0）：facts（macOS 12+ 仅 arm64、预览 480 行、内置更新器、Gitee/GitHub zip base）+ copy + update 三段 | R:code:products/wps-enhancer/content.v1.source.json,code:.vitepress/theme/composables/useContent.js | A:- | S:仅桌面系统不含 Linux，是独立程序非 WPS 插件；更新机制 built-in-updater，站点不放第二条下载路径
+content.v1.json[FB5T]: F:WPS Enhancer 内容包构建产物（稳定文件名副本，与 latest 同字节）：供发布适配器导出与核对 | R:code:scripts/content-build.mjs,code:products/wps-enhancer/content.v1.source.json | A:- | S:站点渲染只 glob latest 文件；本文件是发布链路的稳定名产物
+
+===/Users/pikachu/code/my-software-hub/data/generated/wps-enhancer/history/===
+content-01243a2daefc.json[FB3T]: F:WPS Enhancer 内容包历史 revision content-01243a2daefc（2026-10-17 生成）：与当前 latest 同内容，现役版本的 history 存档 | R:code:data/generated/wps-enhancer/content-latest.v1.json | A:- | S:history 只追加不可修改；当前 latest 的 revision 即本文件名后缀
+content-231a334cf208.json[FB3T]: F:WPS Enhancer 内容包历史 revision content-231a334cf208（2026-10-17 生成，源 8e396c5ee6cf）：多产品重构批次的中间快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-43ca8314970a.json[FB3T]: F:WPS Enhancer 内容包历史 revision content-43ca8314970a（2026-10-04 生成，源 aeb2984987b7）：首批接入时的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-6193a0ae983e.json[FB3T]: F:WPS Enhancer 内容包历史 revision content-6193a0ae983e（2026-10-05 生成，源 aeb2984987b7）：首批接入时的早期快照 | R:- | A:- | S:history 只追加不可修改；回滚只移动 latest 指针
+content-d71c7cdcf6a7.json[FB3T]: F:WPS Enhancer 内容包历史 revision content-d71c7cdcf6a7（2026-10-03 生成，源 working-tree，v1.1.0）：纳管前最早的生成快照 | R:- | A:- | S:working-tree 表示生成时无提交可引用；history 只追加
+content-f0de750e6b43.json[FB3T]: F:WPS Enhancer 内容包历史 revision content-f0de750e6b43（2026-10-03 生成，源 working-tree，v1.1.0）：纳管前最早的生成快照 | R:- | A:- | S:working-tree 表示生成时无提交可引用；history 只追加
+
+===/Users/pikachu/code/my-software-hub/data/===
+mirrors.json[FC6T]: F:逐字镜像登记表：usage-guide.md 与 privacy.md 的站点/源仓双侧 SHA-256、同步日期、pendingRelease（2.0.2）与落后原因；content-drift 靠 sourceSha256 判断源仓是否跑前 | R:code:products/table-flow/usage-guide.md,code:products/table-flow/privacy.md,code:scripts/content-drift.mjs | A:镜像不加 front-matter、不写占位符，豁免当前态 lint | S:要改镜像内容必须回开发仓改再同步；站点侧手改会被 lint 挡；源仓跑前时 validate 只告警
+products.json[FC8S]: F:L1 产品注册表：五产品（table-flow featured，其余 listed）的 id/kind/visibility/status/releaseBranch/updateMechanism/sections/contentSource/budget/brand 字段 | R:code:.vitepress/config.mts,code:schema/products.v1.json,code:.vitepress/theme/components/ProductDirectory.vue | A:id 即 URL 前缀一经发布不得改名；visibility=internal 不进目录导航与 sitemap；contentEndpoint:null 的产品客户端不得请求内容包 | S:sections 与 products/<id>/*.md 一一对应，缺登记 lint 红；budget 是按产品实测的硬约束，超长 lint 失败
+site.json[FC8S]: F:站点品牌唯一真源：站名/标语/描述/图标/页脚/联系邮箱（contact）、首页全部文案（home）、sectionLabels/sectionOrder 与 kindLabels | R:code:.vitepress/config.mts,code:.vitepress/theme/components/SiteHero.vue,code:.vitepress/theme/components/SiteContact.vue | A:改名只改本文件 name，全站标题/og/页脚/导航一起变 | S:组件不携带文案，全站文案键集中在此；工作室名 Pikachu 与宝可梦商标同形，商业化前需评估
+
+===/Users/pikachu/code/my-software-hub/docs/===
+EDGE_ADDONS_LISTING.md[SV4T]: F:Edge Add-ons 商店申报指南（v1.6.0 口径）：单一用途描述、隐私政策 URL、数据使用/隐私实践逐项申报建议 | R:- | A:诊断数据只能报错误/崩溃报告与扩展功能用途，不得描述为广告/画像/跨站跟踪 | S:根目录 docs/ 不在发布白名单，本文件不上线；后台字段名随 Microsoft UI 变化按语义选等价项
+README.md[SG4T]: F:发布仓 my-software-releases 的 README 副本（内部参考，不发布）：分支结构说明（每产品一分支，update.json 在分支根）、产品列表与发布说明入口 | R:- | A:- | S:docs/ 不在发布白名单；内容为发布仓旧版副本，与发布仓现行版可能不一致，以发布仓为准
+
+===/Users/pikachu/code/my-software-hub/products/auto-clicker-mac/===
+content.v1.source.json[FB6T]: F:Auto Clicker 内容源：facts（minOs 13、双芯片分包、间隔 10-60000ms、Gitee/GitHub {version} 模板直链）+ copy 全部对外文案；生成 data/generated 包 | R:code:data/generated/auto-clicker-mac/content-latest.v1.json,code:scripts/content-build.mjs | A:- | S:下载地址写 {version} 占位由构建期注入；源里写死版本号或带版本地址会被 content-validate 拒绝
+faq.md[SU4T]: F:Auto Clicker FAQ：点了没反应（权限/前台）、快捷键冲突自动恢复、覆盖安装后权限失效、长按与单击差异、无网络层不上传、无脚本接口等问答 | R:code:products/auto-clicker-mac/install.md | A:- | S:页面不标版本号（应用 UI 本身也不显示），最新版以安装页按钮为准
+features.md[SU5T]: F:Auto Clicker 功能与边界：可配置项表（键/方式/次数/间隔）、跟随鼠标真实行为（长按抬起前重读位置）、全局快捷键规则（默认 ⌥C、拒 ⌘Q/⌘W）、权限与明确不做清单 | R:code:products/auto-clicker-mac/content.v1.source.json | A:- | S:间隔范围等承重数字用 Fact 组件取内容包，页面不写裸数字
+index.md[SU6T]: F:Auto Clicker 产品首页（product-landing-page）：ProductOverview 头部 + AutoClickerDownloadButtons 下载面板，无正文文案 | R:code:.vitepress/theme/components/ProductOverview.vue,code:.vitepress/theme/components/AutoClickerDownloadButtons.vue | A:- | S:-
+install.md[SU5T]: F:Auto Clicker 安装与授权：按芯片选包、.sha256 比对、ad-hoc 未公证的「仍要打开」流程、辅助功能授权与覆盖安装后失效处理、更新获取方式 | R:code:.vitepress/theme/components/AutoClickerDownloadButtons.vue,code:products/auto-clicker-mac/content.v1.source.json | A:- | S:macOS 15 移除「右键打开」绕过；.sha256 记录的是打包路径，直接 shasum -c 会报找不到文件，要比对哈希值本身
+overview.md[SU5T]: F:Auto Clicker 定位页：跟随鼠标不记坐标、常驻菜单栏、不联网无账号三条设计取向，适合/不适合对照表与不做脚本录制的边界 | R:code:products/auto-clicker-mac/content.v1.source.json | A:- | S:下载入口永远指向最新发布版，不承诺更新提醒
+
+===/Users/pikachu/code/my-software-hub/products/automation/===
+config.md[SU4T]: F:Automation 配置项：环境变量表（端口/数据根/launchd 前缀/测试注入点）、数据落点表（registry/tasks/logs/browser-data 的敏感性）、前端构建产物同步要求 | R:code:products/automation/content.v1.source.json | A:- | S:后三个变量是测试注入点，避免真碰 launchd/通知；var/browser-data 等同登录态
+content.v1.source.json[FB5T]: F:Automation 内容源：facts（macOS、Node 20.11、端口 4765、GitHub 仓库地址、形态与范围口径）+ copy 全部对外文案；factsSource=manual | R:code:data/generated/automation/content-latest.v1.json,code:scripts/content-build.mjs | A:- | S:manual 源必须带 verifiedAt（页面显示人工核对于 X）；该产品不接 releaseBranch
+faq.md[SU4T]: F:Automation FAQ：端口撞车、playwright_cli_missing 退码 3、构建产物失同步、失败提醒当天一次、陈旧锁接管 lockStale、private/var 不入库边界与迁移方法 | R:code:products/automation/config.md | A:- | S:合规口径：目标站点条款由使用者自查，作者不背书；示例只用内置演示站点
+index.md[SU5T]: F:Automation 产品首页（product-landing-page）：ProductOverview 头部 + ReleaseInfo 获取入口，无正文 | R:code:.vitepress/theme/components/ProductOverview.vue,code:.vitepress/theme/components/ReleaseInfo.vue | A:- | S:-
+overview.md[SU5T]: F:Automation 定位页：为什么做（crontab/插件/RPA 各有过不去的坎）、五条产品原则（无事可做≠失败、失败可读、凭据不出机器、无任意命令、默认能活）与代码数据三区划分 | R:code:products/automation/content.v1.source.json | A:- | S:隐私边界靠 private/ 与 var/ 目录名加入库的 .gitignore 成立，不依赖单机配置
+quickstart.md[SU5T]: F:Automation 快速上手：零依赖起服务（cp 登记表 + npm start 到 127.0.0.1:4765）、内置演示站点四步录制链路、录制依赖安装（否则退码 3）与沙箱隔离变量 | R:code:products/automation/content.v1.source.json | A:- | S:不装录制依赖任务以退码 3 显式失败（playwright_cli_missing），不是静默跳过
+
+===/Users/pikachu/code/my-software-hub/products/qoder-proxy/===
+config.md[SU4T]: F:Qoder Proxy 配置项：.env 监听与鉴权（PORT/HOST/PROXY_API_KEY）、CLI 后端选择（cn/global）、生成参数（超时/推理强度/上下文窗口） | R:code:products/qoder-proxy/content.v1.source.json | A:- | S:PROXY_API_KEY 空值即不鉴权；HOST 设 0.0.0.0 必须同时设 key
+content.v1.source.json[FB5T]: F:Qoder Proxy 内容源：facts（Node 18、127.0.0.1:3100、GitHub 仓库地址、仅本机自用口径）+ copy 全部对外文案；factsSource=manual | R:code:data/generated/qoder-proxy/content-latest.v1.json,code:scripts/content-build.mjs | A:- | S:manual 源必须带 verifiedAt；不接 releaseBranch，版本跟随仓库 main
+faq.md[SU4T]: F:Qoder Proxy FAQ 与已知限制：401/403 防护、工具调用是提示词注入加文本解析（非原生 function calling）、Chat Test 不走流式、并发每请求一个 CLI 子进程、Usage 按字符估算非账单 | R:code:products/qoder-proxy/config.md | A:- | S:工具调用参数在流结束时才补齐，边流边取参数行不通
+index.md[SU5T]: F:Qoder Proxy 产品首页（product-landing-page）：ProductOverview + ReleaseInfo；正文仅分发方式段 | R:code:.vitepress/theme/components/ProductOverview.vue,code:.vitepress/theme/components/ReleaseInfo.vue | A:- | S:源码分发 MIT，为上游 avaritiachaos/qoder-proxy 的二开版，问题提到本仓库不打扰原作者
+overview.md[SU5T]: F:Qoder Proxy 定位页：回环地址协议适配层（OpenAI Chat/Responses、Anthropic Messages 三端点）、可接客户端（Codex/Claude Code/OpenCode/CC Switch）、本地控制台五页签 | R:code:products/qoder-proxy/content.v1.source.json | A:- | S:base URL 拼错一层有路径别名兜底，不因多写 /v1 全线 404
+quickstart.md[SU5T]: F:Qoder Proxy 快速上手：装 Qoder CLI 并登录（国内/国际两版）、clone 源码 pnpm install、配 .env、起服务接客户端的完整步骤 | R:code:products/qoder-proxy/config.md,code:products/qoder-proxy/content.v1.source.json | A:- | S:-
+
+===/Users/pikachu/code/my-software-hub/products/table-flow/===
+changelog.md[SV6M]: F:TableFlow 用户视角更新日志：官方更新说明对照表（v2.0.2 至 v1.4.0，Gitee Release 原文）与每版本用户可感知变化详述 | R:code:.vitepress/releases.json,code:data/mirrors.json | A:当前最新版以安装页按钮为准，页面不手写版本号 | S:历史态只追加不修改且 lint 豁免；v1.4.4 未出现在 Releases 标注待核；v1.5.0 官方「内网」模式实际未实现，以上游 scope 口径为准
+content.v1.source.json[FB7T]: F:TableFlow 内容源（featured 产品）：facts（翻页 50 页、免费 5 次、Pro ¥5/月 ¥40/年 since 1.5.0、zipUrl {version} 模板）+ copy 四层更新文案（含面板渠道变体） | R:code:data/generated/table-flow/content-latest.v1.json,code:scripts/content-build.mjs | A:- | S:version.current 不写在源里，由 packageFromSource 从 releases.json 注入；validateSource 拒绝写死版本号与带版本地址
+faq.md[SU5T]: F:TableFlow FAQ（源自主仓手册摘录）：表格不识别、列名规则、科学计数法、翻页入口手动拾取、虚拟列表补全、Grid 页签排障、加载更多轮数与「未能确认已进入下一页」处理 | R:code:products/table-flow/features.md,code:products/table-flow/usage-guide.md | A:- | S:页面跳走后数据按标签页缓存，回同标签页顶部横幅可直接导出；换标签页找不回
+features.md[SU6S]: F:TableFlow 功能全景：统一表格接入链（框架/ARIA/列表/div 网格）、方块表适配、翻页三级识别与页码序列、加载更多按新增行推进、虚拟滚动补全、97 条识别列、统计 15 项指标、调试控制台八页签 | R:code:products/table-flow/content.v1.source.json,code:products/table-flow/scope.md | A:- | S:承重数字用 Fact 取内容包；功能清单与代码实际入口一一对应，未上线功能不写
+index.md[SU6T]: F:TableFlow 产品首页（featured，product-landing-page）：ProductOverview 头部 + ReleaseInfo 免费下载 latest 按钮，无正文 | R:code:.vitepress/theme/components/ProductOverview.vue,code:.vitepress/theme/components/ReleaseInfo.vue | A:- | S:-
+install.md[SU6T]: F:TableFlow 安装与加载：Chrome 商店/Edge 商店/压缩包三通道表、MV3 环境要求（隐含 88+）、压缩包开发者模式加载步骤与验证 | R:code:.vitepress/theme/components/ReleaseInfo.vue,code:products/table-flow/update.md | A:- | S:商店版与压缩包版功能一致；页面只提供最新版压缩包
+overview.md[SU6T]: F:TableFlow 定位页：读渲染成品 DOM 不猜后台数据、与同类四款工具对比表、三个最省时间能力（翻页断点续采/模板/政务 iframe）与相关页面导航 | R:code:products/table-flow/features.md,code:products/table-flow/scope.md | A:- | S:跨域 iframe 白名单默认放行 .gov.cn/.mil.cn/.gov
+pricing.md[SU6T]: F:TableFlow 免费版与 Pro：功能对照表（免费含统计与单页 Excel 填充；Pro 含模板/识别列/键列去重/离线激活）、订阅制价格与激活说明 | R:code:products/table-flow/content.v1.source.json,code:.vitepress/theme/components/Fact.vue | A:- | S:价格与免费额度全部 Fact 取内容包；授权机制实现细节属防破解信息不对外发布
+privacy.md[SS7S]: F:TableFlow 隐私政策（逐字镜像自开发仓，v2.0.2 口径）：本地处理原则、仅内存的诊断记录与白名单过滤、明确不收集清单、账号标识仅本地哈希不出网 | R:code:data/mirrors.json | A:- | S:逐字副本：不加 front-matter 不写占位符，改内容必须回开发仓再同步；站点手改会被 lint 挡
+quickstart.md[SU5T]: F:TableFlow 快速上手：面板四步（开面板→选表选列→配置采集→预览导出）、面板头部三入口（模式切换/统计/调试）与一次完整导出流程 | R:code:products/table-flow/features.md,code:products/table-flow/usage-guide.md | A:- | S:步骤条可点跳转，未选表格时不能直接进列配置
+scope.md[SU6S]: F:TableFlow 适用范围与边界：只采渲染出的 DOM、术语速查表、场景覆盖矩阵（原生表/框架表/div 网格降级/列表型/虚拟滚动/同源跨域 iframe/合并）与已知边界 | R:code:products/table-flow/features.md,code:products/table-flow/faq.md | A:- | S:canvas 表格是图片读不出；数据只在接口响应从未渲染成 DOM 的采不到；未登记组件库 div 形态适配前采不全
+update.md[SU5T]: F:TableFlow 自动更新：商店版浏览器自动更新；压缩包版开面板检查（6 小时冷却、失败不重置）、横幅提示与按版本号持久化忽略、手动检查不受冷却限制 | R:code:.vitepress/releases.json | A:- | S:只检测加提示，不强制不自动下载；扩展升级后页面未刷新会明确提示一键刷新
+usage-guide.md[SU7L]: F:TableFlow 使用指南（逐字镜像自开发仓 docs/USAGE_GUIDE.md，v2.0.2 口径，866 行）：安装/更新/四步操作/模板系统/自定义规则/翻页采集/断线续采/统计与 Excel 填充全量手册 | R:code:data/mirrors.json,code:products/table-flow/quickstart.md | A:- | S:主源在开发仓，站点只摘录不改写；改内容必须回开发仓同步并更新登记哈希；当前 pendingRelease=2.0.2 领先线上 2.0.1
+
+===/Users/pikachu/code/my-software-hub/products/wps-enhancer/===
+content.v1.source.json[FB6T]: F:WPS Enhancer 内容源：facts（macOS 12+ 仅 arm64、预览 480 行、内置更新器、Gitee/GitHub {version} zip base）+ copy 全部对外文案 | R:code:data/generated/wps-enhancer/content-latest.v1.json,code:scripts/content-build.mjs | A:- | S:updateMechanism=built-in-updater：站点不放第二条下载路径；下载地址 {version} 模板构建期注入
+faq.md[SU4T]: F:WPS Enhancer FAQ：无需 WPS Office、txt 只导不入、预览行数上限、同名合并仅 xlsx、vCard 字段勾选与费用授权问答 | R:code:products/wps-enhancer/features.md | A:- | S:-
+features.md[SU5T]: F:WPS Enhancer 功能清单：批量导入通讯录三步向导（数据源→列映射→预览导出）、输入格式（Excel/CSV 编码自动识别）、号码清洗规则（校验/拆分/声明行跳过）与模板 | R:code:products/wps-enhancer/content.v1.source.json | A:- | S:预览上限 480 行用 Fact 取内容包；数据截断会告警不静默少导出
+index.md[SU5T]: F:WPS Enhancer 产品首页（product-landing-page）：ProductOverview 头部 + ReleaseInfo 应用内更新说明，无正文 | R:code:.vitepress/theme/components/ProductOverview.vue,code:.vitepress/theme/components/ReleaseInfo.vue | A:- | S:-
+install.md[SU5T]: F:WPS Enhancer 安装与首次打开：系统要求表（macOS 12+ 仅 arm64、Win x64 免安装 ZIP、无需 WPS Office）、双源下载按钮、Gatekeeper「仍要打开」流程 | R:code:.vitepress/theme/components/WpsDownloadButtons.vue,code:products/wps-enhancer/content.v1.source.json | A:- | S:包名 wps-enhancer-go.app 与显示名「WPS 增强工具」是同一程序；macOS 15 起右键打开绕过已移除
+overview.md[SU5T]: F:WPS Enhancer 定位页：把杂乱客户表变成手机可导入的通讯录（vCard 3.0）、当前版本只有批量导入一个功能、独立程序非 WPS 插件、适合/不适合对照 | R:code:products/wps-enhancer/content.v1.source.json | A:- | S:没做的功能不写在页面上：功能清单与代码实际入口一一对应（Word 标签是占位）
+privacy.md[SS4T]: F:WPS Enhancer 隐私说明：表格全程本机不上传、仅三类主动联网（检查更新/下载更新包/授权校验且当前无激活入口）、更新请求不携带文件内容 | R:- | A:- | S:-
+update.md[SU4T]: F:WPS Enhancer 如何更新：启动 3 秒检查一次不轮询、内置更新器只下载不自动安装、四步替换流程与更新页无下载按钮的原因 | R:code:products/wps-enhancer/content.v1.source.json | A:- | S:更新页不放下载按钮防覆盖应用内更新包；Intel Mac 无对应产物
+
+===/Users/pikachu/code/my-software-hub/public/===
+_redirects[FN4T]: F:Cloudflare Pages 重定向表：路由改为一产品一目录后，11 条旧地址 301 到 /table-flow/<页>，历史链接不再 404 | R:code:.vitepress/config.mts | A:- | S:VitePress 把 public/ 原样拷进构建产物根目录，Pages 读构建产物根的本文件
+robots.txt[FN3T]: F:robots 声明：允许全站抓取并指向 sitemap 地址 hub.pikachu01.me/sitemap.xml | R:code:.vitepress/config.mts | A:- | S:换域名要同步改本文件与 config 的 sitemap hostname 两处
+
+===/Users/pikachu/code/my-software-hub/public/assets/hub/===
+icon.svg[FU4T]: F:站点品牌图标 SVG（favicon/导航/og，路径登记在 data/site.json）：蓝底白色 P 字临时占位标记，等正式品牌图替换 | R:code:data/site.json | A:- | S:换图只需替换本文件并保持路径，注册表与配置不用动
+icon-180.png[FU3T]: F:站点品牌图标 180×180 PNG（apple-touch-icon，路径登记在 site.json） | R:code:data/site.json | A:- | S:-
+icon-32.png[FU3T]: F:站点品牌图标 32×32 PNG（品牌图标组成员，主 favicon 为 icon.svg） | R:code:data/site.json | A:- | S:-
+icon-512.png[FU3T]: F:站点 og 分享图 512×512 PNG（site.json 的 ogImage） | R:code:data/site.json | A:- | S:-
+
+===/Users/pikachu/code/my-software-hub/schema/===
+content.v1.json[FG7T]: F:内容包/内容源 Schema v1：必填 schema+product+facts+copy，fact 必须 effectiveFromVersion，文案禁 HTML，update 四层可选 | R:code:scripts/content-lib.mjs,code:scripts/content-validate.mjs | A:- | S:copy 文案用 not pattern 禁 <...> 形态；schema const=1，破坏性变更走 v2 新文件
+facts.v1.json[FG6T]: F:承重事实 Schema v1：冻结信封放开载荷——limits 开放键值表（键名稳定即契约），pricing 是带 since/until 的数组表达涨价史 | R:code:CONTRACT.md | A:- | S:provenance=manual 必须 verified_at（lint 强制）；limits 新增键兼容，改名删除即破坏性
+manifest.v1.json[FG8T]: F:update.json 冻结兼容面 Schema v1：刻意宽松——schema 可缺省，url 与 urls 均非必填且可并存，version 只允许三段纯数字 | R:code:scripts/validate-contract.mjs,code:CONTRACT.md | A:- | S:收紧一律交给 lint 不进 schema；url 是已分发 table-flow 客户端唯一读取形态永久合法；禁预发布号（客户端 parseInt 会误判）
+products.v1.json[FG7T]: F:产品注册表 Schema v1：必填 id/name/kind/visibility/updateMechanism/sections；id 即 URL 前缀，visibility 三态，factsSource 决定阻断或告警 | R:code:data/products.json,code:scripts/content-lib.mjs | A:- | S:未知 kind 站点必须回落通用模板而非构建失败；kind/visibility 不放对外文案
+proposal.v1.json[FG5T]: F:提案 JSON Schema v1：必填 schema/product/fieldId/value/source/createdAt，fieldId 限定 copy.* 或 facts.* 前缀 | R:code:scripts/proposal-validate.mjs | A:- | S:additionalProperties false，未知字段直接校验失败
+release-notes.v1.json[FG6T]: F:更新说明 Schema v1：分层文案 badge/summary/changes[].text/detail 各对应一类容器，kind 故意不用封闭 enum（pattern） | R:code:CONTRACT.md,code:CLIENT-INTEGRATION.md | A:- | S:未知 kind 客户端必须回落 misc 样式禁抛异常；badge/summary 受产品 budget 约束（lint 强制）
+
+===/Users/pikachu/code/my-software-hub/scripts/===
+changelog-guard.mjs[XQ6T]: F:CHANGELOG 守卫：HEAD 动了发布面（.vitepress/data/products/public/scripts/index.md）同笔提交必须也动 CHANGELOG.md，另有跨日兜底判据 | R:code:CHANGELOG.md | A:- | S:data/generated/ 等派生物不重复要求记日志；日期粒度到日，同日先代码后补日志不判红
+conformance-fixtures.mjs[XQ5S]: F:从真实内容包派生 13 个 conformance 夹具（正常/同 revision/错 product/SHA 不符/超预算等），--check 校验入库夹具与内容包同步 | R:code:scripts/conformance-lib.mjs,code:CLIENT-INTEGRATION.md | A:- | S:夹具只锁语义字段，generatedAt/sourceRevision 每次构建会变，抄进去就是假漂移
+conformance-lib.mjs[XQ5S]: F:内容包消费规则参考实现 consumePackage：必需字段、schema 版本、product 匹配、SHA 校验、revision 缓存与回落三态判定，让夹具期望可机器验证 | R:code:scripts/conformance-fixtures.mjs,code:CONTRACT.md | A:- | S:高 schema 版本按已知版本尽力渲染加告警不得崩；规则来源是 CONTRACT 第五节 MUST
+content-build.mjs[XB6T]: F:内容包生成器：对每个已接入产品 validateSource→packageFromSource→写不可变 history revision 与 latest；--product 单产品，--dry-run 只预告 | R:code:scripts/content-lib.mjs,code:data/products.json | A:- | S:历史 revision 落地即不可变，同名不同语义必须停手不覆盖；单产品失败只摘除该产品其他继续
+content-drift.mjs[XB5S]: F:内容漂移检查：逐产品核对 latest 包自校验、与源重算结果一致、包内 SHA 由自身语义推出，并对照镜像登记表哈希与线上清单 | R:code:scripts/content-lib.mjs,code:data/mirrors.json | A:- | S:镜像源仓跑前时只告警不失败；分发面上被改过的包直接判失败
+content-lib.mjs[XB7M]: F:内容流水线共享库：Ajv 编译 content/products schema、注册表与内容源校验（禁 HTML/视觉字段/渠道变体/写死版本号）、packageFromSource 版本注入、payloadHash 与包自校验 | R:code:schema/content.v1.json,code:schema/products.v1.json,code:scripts/sync-release.mjs | A:- | S:有 releaseBranch 的产品版本号由快照注入，写死会被拒；payloadHash 排序键防同内容新 revision
+content-lint.mjs[XQ7M]: F:当前态/历史态分区 lint：当前区（index.md 与 products/ 除 changelog/镜像）裸字面量判失败，历史态豁免；逐字镜像按登记表哈希核对防手改 | R:code:data/mirrors.json,code:scripts/content-lib.mjs | A:- | S:只校已登记事实，未登记裸数字由报告列出等人工确认——编造 effectiveFromVersion 比留着更糟
+content-publish.mjs[XB5S]: F:发布适配器：把不可变 revision 组装进本地 staging 目录与发布计划；默认 dry-run 绝不写远程仓，--publish 才走真实发布 | R:code:scripts/content-build.mjs | A:- | S:未登记 releaseBranch 的产品不允许发布；revision 自校验失败拒绝发布
+content-rollback.mjs[XB4T]: F:内容包回滚：校验目标 revision 自洽与文件名一致后，把 content.v1.json 与 latest 移回该版本 | R:code:scripts/content-build.mjs | A:- | S:只移动 latest 指针，历史 revision 不删除
+content-schema.mjs[XB2T]: F:打印 schema/content.v1.json 原文的六行小工具 | R:code:schema/content.v1.json | A:- | S:-
+content-validate.mjs[XQ5T]: F:内容源校验入口：先验 data/products.json 过 products.v1 schema，再逐产品 validateSource；无内容源的产品明确跳过 | R:code:scripts/content-lib.mjs,code:data/products.json | A:- | S:校验失败退出码 1 并逐条列出错误
+dev.mjs[XV4T]: F:dev 包装：spawn vitepress dev 并监听 md 增删，触碰 config.mts 借 VitePress 配置热重启触发导航重扫 | R:code:.vitepress/config.mts | A:- | S:dev 进程启动后不会重扫，加一篇 md 就多一个页面靠 bump config 实现
+proposal-validate.mjs[XB4T]: F:提案校验 CLI：Ajv 校 proposal.v1 schema、拒未知产品、拒 facts.* 带 channel 变体 | R:code:schema/proposal.v1.json,code:scripts/content-lib.mjs | A:- | S:-
+sync-release.mjs[XB7S]: F:版本事实同步：按产品 releaseBranch 拉 Gitee update.json 写 .vitepress/releases.json；导出 SITE_ROOT/manifestUrlOf/readRelease；url 与 urls 双形都接受但必须 https，版本须三段纯数字 | R:code:.vitepress/releases.json,code:.vitepress/config.mts,code:scripts/content-lib.mjs | A:- | S:HUB_UPDATE_MANIFEST_BASE 只给测试与离线镜像用；版本事实未变不重写文件防工作树恒脏
+test-conformance.mjs[XQ5T]: F:跑 conformance 夹具：用注册表 budget 与 updateMechanism 构造上下文，assertFixture 对照期望；被丢弃必须有原因、渲染结果不得含 HTML，并校验夹具与最新内容包同步 | R:code:scripts/conformance-lib.mjs,code:scripts/conformance-fixtures.mjs | A:- | S:夹具停在旧内容包上直接红（提示重新生成）；数量不足 12 或缺 WPS 也红
+test-content.mjs[XQ6L]: F:内容流水线测试（760 行）：在临时沙箱副本上跑 build/validate/drift/lint/publish/rollback 全链路断言，含版本注入用例与「未接发布分支不允许发布」 | R:code:scripts/content-lib.mjs,code:scripts/content-build.mjs | A:- | S:每类断言用 tmpdir 沙箱并 symlink node_modules，绝不改动仓库真实产物
+validate-contract.mjs[XQ7S]: F:契约自检约 20 项：线上 table-flow/wps 两份 update.json 实拉过 manifest.v1，破坏性形态被拒（预发布号/http 明文/超长 notes），双形并存可过，五产品注册表通过 | R:code:schema/manifest.v1.json,code:CONTRACT.md | A:- | S:线上真值与 schema 分叉默认只告警不阻断（--strict 才失败）；离线回落 2026-10-01 实测副本仅供复跑不当真值
+verify.mjs[XQ7T]: F:统一验证入口（pnpm verify）：契约→内容→漂移→lint→夹具→流水线测试→发布 dry-run→VitePress 构建串行执行，并检查内部文档不外泄 | R:code:package.json,code:scripts/validate-contract.mjs | A:- | S:--skip-site 跳过构建；失败时首个错误块加全量日志落 tmp 文件；forbidden 名单内部文档出现在 dist 即红
+
+===/Users/pikachu/code/my-software-hub/scripts/lib/===
+args.mjs[XG4T]: F:CLI 参数解析共享库：同时支持 --product x 与 --product=x 两种写法；flagValue 把布尔 flag 视为未提供值 | R:- | A:- | S:-
+
+===/Users/pikachu/code/my-software-hub/public/assets/auto-clicker-mac/===
+icon.png[FU3T]: F:Auto Clicker 产品图标（512×512 PNG，约定路径登记于 products.json 的 brand.logo，目录卡片与产品页 favicon 使用） | R:code:data/products.json | A:- | S:文件后补即生效，缺图时前端回落字母标记
+
+===/Users/pikachu/code/my-software-hub/public/assets/automation/===
+icon.png[FU3T]: F:Automation 产品图标（512×512 PNG，约定路径登记于 products.json 的 brand.logo） | R:code:data/products.json | A:- | S:文件后补即生效，缺图时前端回落字母标记
+
+===/Users/pikachu/code/my-software-hub/public/assets/qoder-proxy/===
+icon.png[FU3T]: F:Qoder Proxy 产品图标（512×512 PNG，约定路径登记于 products.json 的 brand.logo） | R:code:data/products.json | A:- | S:文件后补即生效，缺图时前端回落字母标记
+
+===/Users/pikachu/code/my-software-hub/public/assets/qr/===
+alipay-monthly.jpg[FU2T]: F:支付宝月付收款二维码图片（1080×1619 JPEG，public/assets/qr 收款图组） | R:- | A:- | S:-
+alipay-yearly.jpeg[FU2T]: F:支付宝年付收款二维码图片（JPEG，public/assets/qr 收款图组） | R:- | A:- | S:-
+qq-add.png[FU2T]: F:QQ 好友添加二维码图片（PNG，public/assets/qr 联系图组） | R:- | A:- | S:-
+qq-group.jpg[FU2T]: F:QQ 群二维码图片（992×1407 PNG，public/assets/qr 联系图组） | R:- | A:- | S:-
+wechat-monthly.png[FU2T]: F:微信月付收款二维码图片（PNG，public/assets/qr 收款图组） | R:- | A:- | S:-
+wechat-yearly.jpeg[FU2T]: F:微信年付收款二维码图片（JPEG，public/assets/qr 收款图组） | R:- | A:- | S:-
+
+===/Users/pikachu/code/my-software-hub/public/assets/table-flow/===
+icon.png[FU4T]: F:TableFlow 产品图标（512×512 PNG，featured 产品，约定路径登记于 products.json 的 brand.logo） | R:code:data/products.json | A:- | S:文件后补即生效，缺图时前端回落字母标记
+
+===/Users/pikachu/code/my-software-hub/public/assets/wps-enhancer/===
+icon.png[FU3T]: F:WPS Enhancer 产品图标（512×512 PNG，约定路径登记于 products.json 的 brand.logo） | R:code:data/products.json | A:- | S:文件后补即生效，缺图时前端回落字母标记
