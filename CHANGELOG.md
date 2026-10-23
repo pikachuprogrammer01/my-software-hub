@@ -7,6 +7,10 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-23
+
+- docs(products): TableFlow v2.0.2 上线前文案全量同步——`usage-guide.md` 镜像跟上主仓 `d03197d`（悬浮图标收起/隐藏、设置滑块、场景识别与异常值、中文单位、合并单元格去重、行内脚注）；`scope.md` 框架矩阵补 vxe-table / TDesign / Arco 与 div 型行网格、虚拟表改为保留样式与合并、跨域帧内可手动拾取翻页入口、统计缓存 32MB 上限与六项检测；`features.md` 补方块表适配、固定列表头分离、行内脚注开关、悬浮图标与滑块交互、统计检测全接入；`pricing.md` / `faq.md` / `overview.md` 框架清单与统计口径跟进；`changelog.md` 新增 v2.0.2 官方说明对照行与用户视角详细条目（账号锚、权限收敛、悬浮图标、统计检测、方块表适配、嵌套三层、假阴性标记）
+
 ## 2026-10-22
 
 - docs(products): TableFlow 隐私政策跟上主仓 v2.0.2——`privacy.md` 镜像前进到「恢复账号标识哈希披露」版（设备注册读取已登录 Chrome / Edge 账号的 id 或邮箱，仅本地哈希，服务端只存加盐二次哈希、默认保留 180 天），适用版本改 v2.0.2；`usage-guide.md` 同步主仓「收紧用户可见文案」；安装页权限说明改写为账号 id 优先、覆盖 Edge MSA / Entra ID；镜像登记 `pendingRelease` 记 2.0.2（线上 `update.json` 仍为 2.0.1，v2.0.2 尚未正式上线）

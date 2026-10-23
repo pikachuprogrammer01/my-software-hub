@@ -27,7 +27,7 @@ description: "Chrome / Edge 扩展 TableFlow 的产品定位、与同类工具�
 | 数据预览 | **表格/卡片双视图** | ✗ | 有 | ✗ |
 | 导出格式 | **Excel/CSV/JSON/Markdown/剪贴板** | Excel/CSV/Sheets | Excel/CSV | Excel |
 | 隐私安全 | **采集数据本地处理；Pro 激活联网验证；诊断仅本地缓存并由用户主动导出** | 部分 AI 功能联网 | 未说明 | 未说明 |
-| 框架表格支持 | Element UI / Element Plus / Ant Design / Bootstrap Table / Layui | 基础 | 基础 | 基础 |
+| 框架表格支持 | Element UI / Element Plus / Ant Design / Bootstrap Table / Layui / vxe-table / TDesign / Arco / AG Grid 等 div 网格（读当前窗口） | 基础 | 基础 | 基础 |
 | 获取方式 | **Chrome 商店 / Edge 商店 / 压缩包（免费）** | 商店付费 | 商店 | 商店 |
 
 ## 三个最能省时间的能力
