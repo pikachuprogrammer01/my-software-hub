@@ -6,8 +6,8 @@
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
       "syncedAt": "2026-10-23",
-      "siteSha256": "786bee7d59077a89c334661cd8273eb442593f22f1ff23ec1a4157d5b8ede9fa",
-      "sourceSha256": "786bee7d59077a89c334661cd8273eb442593f22f1ff23ec1a4157d5b8ede9fa",
+      "siteSha256": "f02e94a77fd9307168e58068bf956fe6efabcd19bd16b21bbe29f8a008ba883e",
+      "sourceSha256": "f02e94a77fd9307168e58068bf956fe6efabcd19bd16b21bbe29f8a008ba883e",
       "pendingRelease": "2.0.2",
       "whyBehind": "应用户要求随主仓主动前进：副本含 v2.0.2 的「收紧用户可见文案」与账号锚披露，线上 update.json 仍是 v2.0.1，v2.0.2 上线前站点文案略领先于在售版本。"
     },
