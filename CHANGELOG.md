@@ -7,6 +7,12 @@
 - 行尾短哈希可 `git show <哈希>` 复核；最新一节没有哈希，因为它就是当前 HEAD 这批。
 - 根目录 md 不在发布白名单内（`config.mts` 只放 `index.md` 与 `products/**`），本文件不上线、不需要登记。
 
+## 2026-10-26
+
+- feat(table-flow): 新增「排查手册」页——按现象组织的问题定位文档（采集与导出 / Excel 填充网页 / 激活额度 / 开发者反馈），5 张真实运行截图，`data/products.json` 的 sections 登记到「常见问题」之前
+- docs(products): 排查手册扩充采集与填充两节至 38 条——列名错乱、科学计数法精度、重复行、只采到当前页、合并样式丢失、采集中断；导入失败、起始行列错位、`不填充`/`未选择` 区分、只读与不支持控件、页面自动提交、部分失败、填充变慢、模板跨设备；开发者反馈改为五步（已知边界 → 调试控制台 → 对应页签 → 导出报告 → 邮件模板），补「什么样的问题描述最有效」对照
+- chore(site): 联系邮箱更名 `2764574625@qq.com`（`data/site.json` 与 TableFlow 隐私政策镜像同步，`data/mirrors.json` 哈希与 syncedAt 更新）
+
 ## 2026-10-24
 
 - chore(aoci): 接入 AOCI 仓库认知——`aoci init` 生成 AGENTS 合同、LF 行尾属性与 `.aoci` 治理配置（目录内默认全忽略，白名单只放行 baseline/config/curation 等正式资产）

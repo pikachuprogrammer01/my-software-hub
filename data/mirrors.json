@@ -14,9 +14,9 @@
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
-      "syncedAt": "2026-10-23",
-      "siteSha256": "6abd1427c27dac244ba8662719aa56300c688514772b955fcb91e725ec897d66",
-      "sourceSha256": "6abd1427c27dac244ba8662719aa56300c688514772b955fcb91e725ec897d66",
+      "syncedAt": "2026-10-26",
+      "siteSha256": "6042a215bd054c9d511ad48e4f71664206b943a29b641d2b4497cc0ae800eddc",
+      "sourceSha256": "6042a215bd054c9d511ad48e4f71664206b943a29b641d2b4497cc0ae800eddc",
       "pendingRelease": "2.0.2",
       "whyBehind": "应用户要求随主仓主动前进：副本已是 v2.0.2 口径（账号标识哈希恢复披露、适用版本改 v2.0.2），但线上 update.json 仍是 v2.0.1、商店 v2.0.1 被驳回后待重新提交；v2.0.2 正式上线前站点文案略领先于在售版本。"
     }
