@@ -13,11 +13,11 @@
     },
     "table-flow": {
       "product": "table-flow",
-      "version": "2.0.1",
-      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.1/table-flow-v2.0.1.zip",
+      "version": "2.0.3",
+      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
       "urls": null,
-      "notes": "v2.0.1：统一表格接入架构（GridDescriptor/会话/RowSource、LBI div 网格、声明式 spec 与 conformance）；调试控制台新增 Grid 画像、报告 JSON 的 grid 段与独立 Grid JSON 导出；修复横向虚拟列投影、iframe 重载采集与 DOM 快照覆盖（列表/自定义网格/脱离文档/同源 frame/open shadow）。",
-      "fetchedAt": "2026-10-19T15:41:04.000Z"
+      "notes": "v2.0.3：增强多选下拉与复选框填充，新增当前记录单字段试填；支持采集自动重试与页面能力检测；修复翻页等待、短末页和暂停续采问题；优化免费额度恢复及多页面任务计费一致性；改进设置搜索定位，新增帮助与反馈；改善普通 HTTP 页面和旧版浏览器兼容性。",
+      "fetchedAt": "2026-11-11T12:02:48.104Z"
     },
     "auto-clicker-mac": {
       "product": "auto-clicker-mac",

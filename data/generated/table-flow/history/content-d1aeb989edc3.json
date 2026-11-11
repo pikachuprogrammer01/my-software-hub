@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "product": "table-flow",
+  "sourceRevision": "415f43f5389d4bef20c4576fdb35019b75675c64",
+  "generatedAt": "2026-11-11T12:07:26.144Z",
+  "facts": {
+    "features.autoPaging": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "features.localProcessing": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.autoPaging.maxPages": {
+      "value": 50,
+      "unit": "页",
+      "source": "client-constant:settingsStore.defaultMaxPages",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.freePaging.flows": {
+      "value": 5,
+      "unit": "次",
+      "source": "platform-default:LicenseHub 新设备默认授予的采集流程次数（采集与 Excel 填充翻页共享，实际以服务端授予为准）",
+      "effectiveFromVersion": "2.0.0"
+    },
+    "pricing.pro.monthly": {
+      "value": 5,
+      "currency": "CNY",
+      "period": "month",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "pricing.pro.yearly": {
+      "value": 40,
+      "currency": "CNY",
+      "period": "year",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "form.factor": {
+      "value": "Chromium 浏览器扩展（Manifest V3）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "桌面版 Chromium 内核浏览器：Chrome 103 起、Edge 109 为兼容目标；360 极速等须核对实际内核。没有 Firefox、Safari 与手机端版本；真实 Win7 尚待验收。",
+      "effectiveFromVersion": "2.0.3",
+      "source": "client-manifest:minimum_chrome_version 与 docs/BROWSER_BUILD_RELEASE_MATRIX.md"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
+    },
+    "version.current": {
+      "value": "2.0.3",
+      "effectiveFromVersion": "2.0.3",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "网页表格采集与导出"
+    },
+    "overview.summary": {
+      "default": "从网页已显示的表格中提取数据并导出。",
+      "variants": {
+        "table-flow-panel": "从网页表格中提取并导出数据。"
+      }
+    },
+    "features.autoPaging": {
+      "default": "支持自动翻页采集与断线续采。"
+    },
+    "features.localProcessing": {
+      "default": "采集、预览与导出默认在浏览器本地完成。"
+    },
+    "install.summary": {
+      "default": "Chrome / Edge 用户可从商店安装，其他兼容 Chromium 浏览器使用压缩包加载。"
+    },
+    "update.badge": {
+      "default": "翻页恢复更稳"
+    },
+    "update.summary": {
+      "default": "强凭据恢复额度；改进暂停继续与自动重试"
+    },
+    "update.text": {
+      "default": "免费额度用强凭据恢复，指纹与账号哈希仅作风险观察；改进采集与填充翻页的超时、暂停继续和扣费核对。"
+    },
+    "update.detail": {
+      "default": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
+    }
+  },
+  "update": {
+    "badge": "翻页恢复更稳",
+    "summary": "强凭据恢复额度；改进暂停继续与自动重试",
+    "text": "免费额度用强凭据恢复，指纹与账号哈希仅作风险观察；改进采集与填充翻页的超时、暂停继续和扣费核对。",
+    "detail": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
+  },
+  "contentRevision": "content-d1aeb989edc3",
+  "sha256": "d1aeb989edc38604d56b68907a3cf797b657db59b87b22a6bb7bf98cb0afb64b"
+}

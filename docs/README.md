@@ -1,6 +1,8 @@
-# 软件发布中心
+# 软件发布中心（历史发布仓说明副本）
 
-> 本仓库为发布产物分发站（**不含源码**），统一管理名下软件的更新与下载。
+> 本文件保留早期发布仓说明，不作为本站当前发布操作入口。本站当前下载与安装见 [TableFlow 安装页](https://hub.pikachu01.me/table-flow/install)，隐私说明见 [隐私政策](https://hub.pikachu01.me/table-flow/privacy)。
+> 下文“本仓库”均指当时的 `my-software-releases` 发布仓，不是本静态站点仓。
+> 发布仓为发布产物分发站（**不含源码**），统一管理名下软件的更新与下载。
 > 下载地址：Gitee Releases（国内快速）；各产品通过应用内更新检测读取**本仓库对应产品分支**根目录的 `update.json`。
 
 ## 仓库结构（分支管理）
@@ -48,7 +50,7 @@ my-software-releases/
 
 ## 发布说明
 
-- **一键发布**：在本仓库工作副本任意分支执行 `GITEE_TOKEN=xxx bash scripts/release.sh --zip <zip路径> [--notes "说明"]`（分支自动复用/创建 → 创建 Release → 上传附件 → 更新分支根 update.json → 推送 → 自动验证），详见 [docs/发布说明.md](./docs/发布说明.md)
+- **一键发布**：在本仓库工作副本任意分支执行 `GITEE_TOKEN=xxx bash scripts/release.sh --zip <zip路径> [--notes "说明"]`（分支自动复用/创建 → 创建 Release → 上传附件 → 更新分支根 update.json → 推送 → 自动验证），这条命令仅保留历史说明，执行前须核对发布仓当前脚本；本站的构建和部署见 [DEPLOY.md](../DEPLOY.md)
 - **命名约定**：Release tag 与附件统一为 `<产品>-v<版本>`（如 `table-flow-v1.4.3` / `table-flow-v1.4.3.zip`）
 - **分支约定**：每个产品一个分支（分支名 = 产品名），update.json 在分支根目录
 - **更新频率**：用户端自动检查有 6 小时冷却；发布后即时生效

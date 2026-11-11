@@ -20,7 +20,7 @@ pnpm sync       # 手动同步各产品的线上 update.json 到 .vitepress/rele
 
 内容一致性流水线见 [`CONTENT-PIPELINE.md`](./CONTENT-PIPELINE.md)。结构化产品内容源位于 `products/*/content.v1.source.json`，生成包位于 `data/generated/*/`。
 
-站点形态是**纯静态**，无常驻后端；曾实现过的手机服务已撤回，决策记录见 [`PHONE-RUNTIME.md`](./PHONE-RUNTIME.md)。历史任务清单见 [`AGENT-CONTINUATION-PROMPT.md`](./AGENT-CONTINUATION-PROMPT.md)（其中后端相关条目已作废）。
+站点形态是**纯静态**，无常驻后端；曾实现过的手机服务已撤回。当前内容分发与部署分别见 [内容流水线](./CONTENT-PIPELINE.md)和[静态部署说明](./DEPLOY.md)；已移除的历史决策和任务清单仅可从 Git 历史追溯，不作为当前操作入口。
 
 已实测行为：
 
@@ -58,7 +58,7 @@ scripts/changelog-guard.mjs 发布面改了却没记 CHANGELOG.md 即红（已�
 conformance/fixtures/    客户端一致性夹具（期望表，跨语言共用）
 docs/                    仓库内部笔记（发布仓 README 副本、Edge 商店文案）——不发布
 VISION.md / REQUIREMENTS.md / PRODUCTS.md / SITE-DESIGN.md / CONTRACT.md / RENAME.md 目标·需求·审计·设计·契约
-README.md / DOWNLOADS.md / CLIENT-INTEGRATION.md / PHONE-RUNTIME.md / CONTENT-PIPELINE.md / DEPLOY.md 仓库内部文档
+README.md / DOWNLOADS.md / CLIENT-INTEGRATION.md / CONTENT-PIPELINE.md / DEPLOY.md 仓库内部文档
 CHANGELOG.md             站点自身的更新日志（不是产品日志，产品日志在 products/<id>/changelog.md）
 ```
 
@@ -68,7 +68,7 @@ CHANGELOG.md             站点自身的更新日志（不是产品日志，产�
 
 本仓库没有常驻后端：公开页面由 VitePress 构建产物对外托管，客户端读的是发布仓的内容包，
 提案与审核走文件队列或 Issue。曾经实现过的手机服务（Hono + SQLite + Termux 部署链）已整体撤回，
-原因与恢复方式记在 [PHONE-RUNTIME.md](./PHONE-RUNTIME.md)。
+当前部署方式见 [DEPLOY.md](./DEPLOY.md)，内容交接见 [CONTENT-PIPELINE.md](./CONTENT-PIPELINE.md)。
 
 ```bash
 pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站点构建，一条命令
@@ -116,11 +116,11 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 
 "快速上手 / 使用提示 / FAQ"同时存在于 `products/table-flow/usage-guide.md`（最详，逐字副本）、`UsageGuideContent.vue`（面板内嵌）、`products/table-flow/quickstart.md`（站点改写版）。
 
-约定：**开发仓 `docs/USAGE_GUIDE.md` 为主源**；站点页只摘录主源，不另写一套说法。
+约定：**开发仓 `docs/USAGE_GUIDE.md` 为主源**；站点页只摘录主源，不另写一套说法。隐私政策、设备特征披露与完整使用指南三份逐字镜像登记在 `data/mirrors.json`；同步时同时复制主源、更新 SHA-256 与同步日期，并核对站点链接。
 
 ## 明确不搬进来的内容
 
-- **授权与激活的密码学细节**：`client-integration.md`、`OFFLINE_ACTIVATION_DESIGN.md`、`PRODUCTION-KEY-ROTATION.md`、`v2-pro-plan.md`、`scripts/keys/`、`license-records.json`（激活码格式、验签算法、公钥存储、服务端接口）→ 站点只讲"签名校验 / 一码一设备 / 离线授权零网络"。
+- **授权与激活的密码学细节**：`client-integration.md`、`OFFLINE_ACTIVATION_DESIGN.md`、`PRODUCTION-KEY-ROTATION.md`、`v2-pro-plan.md`、`scripts/keys/`、`license-records.json`（激活码格式、验签算法、公钥存储、服务端接口）→ 站点只讲"签名校验 / 一码一设备 / 有效离线授权本地校验"，身份准备和独立更新请求另行披露。
 - **工程内部**：`SPEC.md`、`CODE_NAVIGATION.md`、`Agents*.md`、`PLUGIN-LOADER-SPEC.md`、`CANVAS-INTERACTION-SPEC.md`、`E2E_TEST_DESIGN.md`、`DEAD_CODE_AUDIT.md`、`BUG_PRIORITY_PLAN.md`、`PROJECT_COMPLETION_GAPS.md`、`PROGRESS.md`、observability / sentry 系列、各类 `*-design.md`、`skills/`、`.trellis/`。
 - **发布操作**：`GITEE_RELEASE_REPO.md`、`RELEASE_CHECKLIST.md` 步骤部分、`release-repo/scripts/`。
 - **仓库杂物**：`dist-*`、`coverage`、`test-results`、根目录 zip / xlsx。
@@ -132,10 +132,10 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 
 ## 待你决策
 
-1. **`docs/README.md`（发布仓 README 副本）怎么处理**：含 `GITEE_TOKEN` 发布段落与一个失效链接。目前不发布——要改名瘦身成公开"下载中心"页，还是就用 `<ReleaseInfo />` + `/table-flow/install` 取代？
-2. **使用手册主源的安装章节是开发者视角**（`git clone` + `pnpm build`）。站点用改写版；主源要不要一起改？
-3. **Edge Add-ons 商店详情页 URL 与商店版本号**：文档里查不到，需要你给；给了就补进 `/table-flow/install` 与 `DOWNLOADS.md`。
-4. `file://` 本地页面采集需在 `chrome://extensions` 手动勾选"允许访问文件网址"，现有文档完全没写这条用户动作——要不要补进 `/table-flow/install`。
+1. **`docs/README.md`（发布仓 README 副本）怎么处理**：含历史 `GITEE_TOKEN` 发布段落。目前不发布——要改名瘦身成公开"下载中心"页，还是就用 `<ReleaseInfo />` + `/table-flow/install` 取代？
+2. TableFlow 使用手册主源现已包含商店、压缩包与源码构建三条路径；普通用户入口见 `/table-flow/install`。
+3. TableFlow 双商店链接已登记；版本与审核状态按每次提交独立核对，不从本地文档推断。
+4. `file://` 本地页面采集须在浏览器扩展详情中手动允许访问文件网址，安装页已补充。
 5. **WPS Enhancer 的产物名与显示名不一致**：解压得到 `wps-enhancer-go.app`，Finder/Dock 里显示「WPS 增强工具」，`Info.plist` 的 `CFBundleName` 又是 `WPS 增强工具`，而应用内卸载文案写的是第三种名字。站点文档目前按实测写（两个名字都提），但**这是产品侧该修的**，不是文档该圆场的。
 6. **Auto Clicker 的校验文件形态**：`.sha256` 里记录的是打包路径 `dist/Auto-Clicker-v1.1.0-arm64.zip`，用户下载后 `shasum -c` 必然报"找不到文件"（哈希值本身实测正确）。站点已按"比对哈希值"写，但源仓该把文件名对齐。
 
