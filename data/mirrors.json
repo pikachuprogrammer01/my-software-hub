@@ -6,25 +6,25 @@
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
       "syncedAt": "2026-11-15",
-      "siteSha256": "907d50ed9d3c93710a74a73627751cfee1b88d67de74e0fc6bc197b6f9063348",
-      "sourceSha256": "907d50ed9d3c93710a74a73627751cfee1b88d67de74e0fc6bc197b6f9063348",
-      "verificationNote": "逐字同步开发仓当前指南，新增联网请求超时设置及超时重试说明；手动翻页与新版设置为开发态，尚未据此确认发布；不改线上版本事实。"
+      "siteSha256": "df25e9f0931759fd0b47007f8c8236e71bae90c6d96f7fbed42047e41c9808ea",
+      "sourceSha256": "df25e9f0931759fd0b47007f8c8236e71bae90c6d96f7fbed42047e41c9808ea",
+      "verificationNote": "逐字同步开发仓 v2.0.4 本地候选文档，补齐联网期限、在线取码与停止/恢复反馈；未上传、部署或发布。保留此前 Gitee v2.0.3 的历史发布事实，当前生产状态未核验。"
     },
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
-      "syncedAt": "2026-11-11",
-      "siteSha256": "7a4cf98757d3f387789dec52a7636d50c61453fcdba4319a23e81f740ca80c56",
-      "sourceSha256": "7a4cf98757d3f387789dec52a7636d50c61453fcdba4319a23e81f740ca80c56",
-      "verificationNote": "同步开发仓 v2.0.3 当前文档；各渠道最终包与服务端部署仍需分别验收。Gitee update.json 于 2026-11-11 核对为 v2.0.3。"
+      "syncedAt": "2026-11-15",
+      "siteSha256": "c7fb378f974423e3a7d8f9eb6edd2e20dcdce5e365452e2db208ad91412ebc23",
+      "sourceSha256": "c7fb378f974423e3a7d8f9eb6edd2e20dcdce5e365452e2db208ad91412ebc23",
+      "verificationNote": "逐字同步开发仓 v2.0.4 本地候选文档，补齐联网期限、在线取码与停止/恢复反馈；未上传、部署或发布。保留此前 Gitee v2.0.3 的历史发布事实，当前生产状态未核验。"
     },
     {
       "site": "products/table-flow/device-fingerprint.md",
       "source": "table-flow/docs/DEVICE_FINGERPRINT_DISCLOSURE.md",
-      "syncedAt": "2026-11-11",
-      "siteSha256": "b64168eb254d3f7db26da77161bbd21272590683d0ed6b5d4b7a5d9e0c353538",
-      "sourceSha256": "b64168eb254d3f7db26da77161bbd21272590683d0ed6b5d4b7a5d9e0c353538",
-      "verificationNote": "同步开发仓 v2.0.3 当前文档；各渠道最终包与服务端部署仍需分别验收。Gitee update.json 于 2026-11-11 核对为 v2.0.3。"
+      "syncedAt": "2026-11-15",
+      "siteSha256": "86b579568bfe219fd2579331d59817ea587c746845dd1ee78bd5c1d7ddaff071",
+      "sourceSha256": "86b579568bfe219fd2579331d59817ea587c746845dd1ee78bd5c1d7ddaff071",
+      "verificationNote": "逐字同步开发仓 v2.0.4 本地候选文档，补齐联网期限、在线取码与停止/恢复反馈；未上传、部署或发布。保留此前 Gitee v2.0.3 的历史发布事实，当前生产状态未核验。"
     }
   ]
 }
