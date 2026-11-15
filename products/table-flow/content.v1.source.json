@@ -63,7 +63,7 @@
       }
     },
     "features.autoPaging": {
-      "default": "支持自动翻页采集与断线续采。"
+      "default": "连续翻页与续采；手动模式扩展尚未发布。"
     },
     "features.localProcessing": {
       "default": "采集、预览与导出默认在浏览器本地完成。"

@@ -71,7 +71,7 @@
         }
       },
       "features.autoPaging": {
-        "default": "支持自动翻页采集与断线续采。"
+        "default": "连续翻页与续采；手动模式扩展尚未发布。"
       },
       "features.localProcessing": {
         "default": "采集、预览与导出默认在浏览器本地完成。"
@@ -98,7 +98,7 @@
       "text": "免费额度用强凭据恢复，指纹与账号哈希仅作风险观察；改进采集与填充翻页的超时、暂停继续和扣费核对。",
       "detail": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
     },
-    "contentRevision": "content-d1aeb989edc3",
+    "contentRevision": "content-fb1412b05123",
     "sha256": null
   },
   "context": {

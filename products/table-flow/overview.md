@@ -7,6 +7,8 @@ description: "Chrome / Edge 扩展 TableFlow 的产品定位、与同类工具�
 
 # TableFlow — 网页表格采集与导出
 
+> 开发能力说明（2026-11-15）：手动翻页兼容扩展、页面等待设置与九类设置导航尚未据此确认已发布；请以已安装版本实际界面为准。下文标明开发态的操作不改变线上下载版本。
+
 > Chrome / Edge 浏览器扩展（Manifest V3），从网页表格中提取、预览、去重并导出数据。
 > 以浮动操作面板形态运行（Shadow DOM 隔离），支持原生表格和主流 UI 框架表格。
 
@@ -39,3 +41,7 @@ description: "Chrome / Edge 扩展 TableFlow 的产品定位、与同类工具�
 ## 相关页面
 
 [功能全景](/table-flow/features) · [适用范围与边界](/table-flow/scope) · [安装](/table-flow/install) · [快速上手](/table-flow/quickstart) · [自动更新](/table-flow/update) · [免费版与 Pro](/table-flow/pricing) · [常见问题](/table-flow/faq) · [更新日志](/table-flow/changelog) · [隐私政策](/table-flow/privacy)
+
+## 后续开发能力（尚未发布）
+
+手动翻页采集将现有原生、框架、虚拟、列表、ARIA、已登记网格、合并表与 iframe 读取连接到用户亲点网页的流程：插件先读本页，再核验用户触发的新页并累计。无需倒计时或最大页数设置；结构变化或身份不明暂停保留结果。网页填充的手动翻页与待填数据编辑遵循各自目标和源游标边界，详见[使用指南](/table-flow/usage-guide)。
