@@ -45,7 +45,7 @@
         "source": "manual:站点核定的对外形态口径"
       },
       "form.scope": {
-        "value": "桌面版 Chromium 内核浏览器：Chrome 103 起、Edge 109 为兼容目标；360 极速等须核对实际内核。没有 Firefox、Safari 与手机端版本；真实 Win7 尚待验收。",
+        "value": "桌面版 Chromium 内核浏览器：Chrome 103 起、Edge 109 为兼容目标；360 极速等须核对实际内核。Firefox、Safari 与手机端不支持。",
         "effectiveFromVersion": "2.0.3",
         "source": "client-manifest:minimum_chrome_version 与 docs/BROWSER_BUILD_RELEASE_MATRIX.md"
       },
@@ -53,6 +53,18 @@
         "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
         "effectiveFromVersion": "1.0.0",
         "source": "release-repo:table-flow/update.json"
+      },
+      "features.manualPaging": {
+        "status": "available",
+        "effectiveFromVersion": "2.0.4"
+      },
+      "features.resultDelivery": {
+        "status": "available",
+        "effectiveFromVersion": "2.0.4"
+      },
+      "features.retainedResults": {
+        "status": "available",
+        "effectiveFromVersion": "2.0.4"
       },
       "version.current": {
         "value": "2.0.3",
@@ -65,13 +77,13 @@
         "default": "网页表格采集与导出"
       },
       "overview.summary": {
-        "default": "从网页已显示的表格中提取数据并导出。",
+        "default": "采集网页表格，自动或手动翻页，保存结果并导出。",
         "variants": {
-          "table-flow-panel": "从网页表格中提取并导出数据。"
+          "table-flow-panel": "网页表格采集、翻页续采与本地导出。"
         }
       },
       "features.autoPaging": {
-        "default": "连续翻页与续采；手动模式扩展尚未发布。"
+        "default": "免费翻页确认开始扣1次，开始后不退还；同任务继续、切换和重复输出不再扣费。"
       },
       "features.localProcessing": {
         "default": "采集、预览与导出默认在浏览器本地完成。"
@@ -80,25 +92,34 @@
         "default": "Chrome / Edge 用户可从商店安装，其他兼容 Chromium 浏览器使用压缩包加载。"
       },
       "update.badge": {
-        "default": "翻页恢复更稳"
+        "default": "开始扣费与续采"
       },
       "update.summary": {
-        "default": "强凭据恢复额度；改进暂停继续与自动重试"
+        "default": "免费翻页开始扣1次，同任务继续不再扣"
       },
       "update.text": {
-        "default": "免费额度用强凭据恢复，指纹与账号哈希仅作风险观察；改进采集与填充翻页的超时、暂停继续和扣费核对。"
+        "default": "免费翻页确认开始扣1次，失败、零结果、结束或清理不退还；同任务继续、切换与输出不再扣费。在翻页模式行选择，转自动填后续页数，中央确认后直接执行；自动段完成即暂停。网页填充仍在批次开始扣费。"
       },
       "update.detail": {
-        "default": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
+        "default": "账户显示实际次数；申请赠额仅核验原未到账机会，赠额由后台审批，额外额度与续费联系开发者后台处理。Pro沿用订阅页微信/支付宝人工激活；离线激活付费，建议先在线体验目标网页。当前任务暂停后从任务操作清理，历史任务在对应条目清理。Debug须手动确认，仅跳过当前frame未来新增的纯debugger计时回调；混合业务函数、字符串和无法安全识别的回调保留，旧补丁需刷新页面移除。"
+      },
+      "features.manualPaging": {
+        "default": "先保存本页，再等你翻页；可从翻页模式行主动切换，转自动填写后续页数并在网页中央确认，转手动后可下一页、暂停或结束；取消保留原模式并暂停。"
+      },
+      "features.resultDelivery": {
+        "default": "开始扣费确认后即可完整预览与输出；显示全部只切换范围，失败或零结果不退还。"
+      },
+      "features.retainedResults": {
+        "default": "保留的采集任务可跨标签页和浏览器重启恢复输出；继续采集须回原绑定标签核对。当前任务暂停后从任务操作清理，历史任务使用对应条目的清理入口。"
       }
     },
     "update": {
-      "badge": "翻页恢复更稳",
-      "summary": "强凭据恢复额度；改进暂停继续与自动重试",
+      "badge": "开始扣费与续采",
+      "summary": "免费翻页开始扣1次，同任务继续不再扣",
       "text": "<b>加粗</b> 更新说明",
-      "detail": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
+      "detail": "账户显示实际次数；申请赠额仅核验原未到账机会，赠额由后台审批，额外额度与续费联系开发者后台处理。Pro沿用订阅页微信/支付宝人工激活；离线激活付费，建议先在线体验目标网页。当前任务暂停后从任务操作清理，历史任务在对应条目清理。Debug须手动确认，仅跳过当前frame未来新增的纯debugger计时回调；混合业务函数、字符串和无法安全识别的回调保留，旧补丁需刷新页面移除。"
     },
-    "contentRevision": "content-fb1412b05123",
+    "contentRevision": "content-9f58f3a7375c",
     "sha256": null
   },
   "context": {

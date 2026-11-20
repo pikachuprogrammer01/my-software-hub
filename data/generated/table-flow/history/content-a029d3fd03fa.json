@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "product": "table-flow",
+  "sourceRevision": "a181b53f8fdd3976bc9aa14e1c49f29fb87f2b64",
+  "generatedAt": "2026-11-18T13:33:48.083Z",
+  "facts": {
+    "features.autoPaging": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "features.localProcessing": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.autoPaging.maxPages": {
+      "value": 50,
+      "unit": "页",
+      "source": "client-constant:settingsStore.defaultMaxPages",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.freePaging.flows": {
+      "value": 5,
+      "unit": "次",
+      "source": "platform-default:LicenseHub 新设备默认授予的采集流程次数（采集与 Excel 填充翻页共享，实际以服务端授予为准）",
+      "effectiveFromVersion": "2.0.0"
+    },
+    "pricing.pro.monthly": {
+      "value": 5,
+      "currency": "CNY",
+      "period": "month",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "pricing.pro.yearly": {
+      "value": 40,
+      "currency": "CNY",
+      "period": "year",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "form.factor": {
+      "value": "Chromium 浏览器扩展（Manifest V3）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "桌面版 Chromium 内核浏览器：Chrome 103 起、Edge 109 为兼容目标；360 极速等须核对实际内核。Firefox、Safari 与手机端不支持。",
+      "effectiveFromVersion": "2.0.3",
+      "source": "client-manifest:minimum_chrome_version 与 docs/BROWSER_BUILD_RELEASE_MATRIX.md"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
+    },
+    "features.manualPaging": {
+      "status": "available",
+      "effectiveFromVersion": "2.0.4"
+    },
+    "features.resultDelivery": {
+      "status": "available",
+      "effectiveFromVersion": "2.0.4"
+    },
+    "features.retainedResults": {
+      "status": "available",
+      "effectiveFromVersion": "2.0.4"
+    },
+    "version.current": {
+      "value": "2.0.3",
+      "effectiveFromVersion": "2.0.3",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "网页表格采集与导出"
+    },
+    "overview.summary": {
+      "default": "采集网页表格，自动或手动翻页，保存结果并导出。",
+      "variants": {
+        "table-flow-panel": "网页表格采集、翻页续采与本地导出。"
+      }
+    },
+    "features.autoPaging": {
+      "default": "自动或手动翻页，暂停续采；首次完整交付结算，同一结果重复输出不再扣费。"
+    },
+    "features.localProcessing": {
+      "default": "采集、预览与导出默认在浏览器本地完成。"
+    },
+    "install.summary": {
+      "default": "Chrome / Edge 用户可从商店安装，其他兼容 Chromium 浏览器使用压缩包加载。"
+    },
+    "update.badge": {
+      "default": "续采与一次结算"
+    },
+    "update.summary": {
+      "default": "翻页先预留，完整交付结算；保留任务可恢复"
+    },
+    "update.text": {
+      "default": "自动与手动翻页可核对切换；免费翻页先预留一次，首次完整查看、导出或复制确认后结算，同一结果重复输出不再扣费。保留任务支持跨标签页、浏览器重启恢复；网页填充翻页仍在开始时扣费。"
+    },
+    "update.detail": {
+      "default": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
+    },
+    "features.manualPaging": {
+      "default": "先保存本页，再由你点击网页或面板下一页；支持核对落页后切换自动执行。"
+    },
+    "features.resultDelivery": {
+      "default": "免费翻页开始预留一次，首次完整预览、导出或复制确认后结算一次。"
+    },
+    "features.retainedResults": {
+      "default": "保留的采集任务可跨标签页和浏览器重启恢复输出，也可清理本地数据。"
+    }
+  },
+  "update": {
+    "badge": "续采与一次结算",
+    "summary": "翻页先预留，完整交付结算；保留任务可恢复",
+    "text": "自动与手动翻页可核对切换；免费翻页先预留一次，首次完整查看、导出或复制确认后结算，同一结果重复输出不再扣费。保留任务支持跨标签页、浏览器重启恢复；网页填充翻页仍在开始时扣费。",
+    "detail": "下一页按钮与页码序列采集支持设置重试次数，临时失败保留已采数据；本地存储容量预警以浏览器实际额度为准。网页填充支持多选下拉、真假值复选框与逐条新增表单；保存结果未知时暂停核对，避免直接重复提交。"
+  },
+  "contentRevision": "content-a029d3fd03fa",
+  "sha256": "a029d3fd03fa0890986de297878e3aa08ac815fdc1a68ea870700b273c21acae"
+}

@@ -1,3 +1,5 @@
+> 历史资料：下文为发布仓 README 的保留副本，用于追溯原有下载和发布说明。当前产品说明、价格与教程见 `products/table-flow/`；当前下载入口见[安装页](../products/table-flow/install.md)，站点维护与验证见[内容流水线](../CONTENT-PIPELINE.md)。下文旧版本、占位产品与发布命令不作为现行操作入口。
+
 # 软件发布中心（历史发布仓说明副本）
 
 > 本文件保留早期发布仓说明，不作为本站当前发布操作入口。本站当前下载与安装见 [TableFlow 安装页](https://hub.pikachu01.me/table-flow/install)，隐私说明见 [隐私政策](https://hub.pikachu01.me/table-flow/privacy)。

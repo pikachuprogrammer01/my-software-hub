@@ -4,7 +4,6 @@
 > 与发布仓 `my-software-releases` 成族：**发布仓是数据面**（产物与承重事实），**本仓是门户**（渲染 + 对外文案的唯一作者）。
 > 数据流严格单向：开发仓 → 发布仓 → 本仓 / 各产品客户端。**本仓不回写任何开发仓，发布脚本不碰本仓。**
 > 文档按此顺序读：`VISION.md`（为什么做、决策原则、已否决方案）→ `REQUIREMENTS.md`（PRD，FR/NFR/里程碑）→ `PRODUCTS.md`（五仓实测审计）→ `SITE-DESIGN.md`（架构与迁移阶段）→ `CONTRACT.md`（数据面契约 v1，**已冻结**）。
-> 改名与 git 落地见 `RENAME.md`（需人工执行）。
 > 渲染栈：**VitePress**。**对外文案全在数据与 markdown 里，组件不携带一句文案**：品牌与首页目录看 `data/site.json` + `data/products.json`，产品正文看 `products/<id>/`。
 
 ## 怎么跑
@@ -13,12 +12,13 @@
 pnpm install
 pnpm dev        # http://localhost:5173（未配 server.port，取 VitePress 默认），改 md 立刻生效
 pnpm build      # 前置契约自检 + 产物在 .vitepress/dist（构建时校验死链）
-pnpm validate   # 数据面契约自检；加 --strict 让「线上真值分叉」也算失败
+pnpm validate   # 契约、内容生成、漂移、lint、日志与一致性检查（内容变更先更新夹具）
+pnpm validate:strict # 仅对下载清单契约执行严格检查
 pnpm preview    # 本地看构建产物
 pnpm sync       # 手动同步各产品的线上 update.json 到 .vitepress/releases.json
 ```
 
-内容一致性流水线见 [`CONTENT-PIPELINE.md`](./CONTENT-PIPELINE.md)。结构化产品内容源位于 `products/*/content.v1.source.json`，生成包位于 `data/generated/*/`。
+内容一致性流水线与离线验证顺序见 [`CONTENT-PIPELINE.md`](./CONTENT-PIPELINE.md)。结构化产品内容源位于 `products/*/content.v1.source.json`，生成包位于 `data/generated/*/`；生成内容包后运行 `node scripts/conformance-fixtures.mjs` 更新夹具，再执行验证。文档编辑时若要保持下载清单快照，按流水线的本地缓存构建方式运行，不执行 `pnpm sync`。
 
 站点形态是**纯静态**，无常驻后端；曾实现过的手机服务已撤回。当前内容分发与部署分别见 [内容流水线](./CONTENT-PIPELINE.md)和[静态部署说明](./DEPLOY.md)；已移除的历史决策和任务清单仅可从 Git 历史追溯，不作为当前操作入口。
 
@@ -39,7 +39,7 @@ pnpm sync       # 手动同步各产品的线上 update.json 到 .vitepress/rele
 index.md                 首页 = 产品目录（<SiteHero/> + <ProductDirectory/>，文案零硬编码）
 data/site.json           站点品牌唯一真源：名称/标语/描述/图标/页脚/底部联系方式。改名只动这一个文件
 data/products.json       L1 注册表：有哪些产品、什么形态、启用哪些页面、图标路径、客户端文案预算
-data/mirrors.json        逐字副本登记表（站点路径 ↔ 开发仓源路径 + 两侧哈希 + 同步日期与落后原因）
+data/mirrors.json        逐字副本登记表（站点路径 ↔ 开发仓源路径 + 两侧哈希 + 同步日期）
 data/generated/<id>/     由内容源生成的不可变 revision 与 latest 指针
 products/<id>/           一产品一目录，全部对外页面（index + 各 section）
 products/<id>/content.v1.source.json   该产品的承重事实与客户端文案预算源
@@ -81,7 +81,7 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 1. **一篇 md = 一个页面**。路由与侧栏由 `.vitepress/config.mts` 扫 `products/` 生成；`front-matter` 决定标题、`order` 排序、SEO 描述，`draft: true` 可临时下线一页。
 2. **承重事实只在内容源里存一份，版本号例外**。价格、适用范围这类事实写在 `products/<id>/content.v1.source.json`，页面用 `<Fact product="…" id="…" />` 取；md 里出现裸版本号（`x.y.z`）lint 直接失败（IP 地址 `127.0.0.1` 不算版本号）。**版本号既不显示、也不写进源**：凡登记了 `releaseBranch` 的产品（table-flow / wps-enhancer / auto-clicker-mac），`version.current` 与带版本的下载地址都由 `packageFromSource` 从 `.vitepress/releases.json`（线上 `update.json` 快照）注入，源里只能写 `{version}` 占位；写死版本号或写死带版本的地址都会被 `content-validate` 拒绝。页面一律不渲染版本号——下载按钮写「免费下载 latest」，目录卡片与产品落地页只显示形态标签。下载入口统一用 `<ReleaseInfo product-id="…" />`。
 3. **站点的下载区由 `updateMechanism` 单一决定**：`manual` 给最新版直链、`built-in-updater` 只说明应用内检查（本站不再放第二个下载按钮）、`none` 只给获取入口且不承诺更新提示。
-4. **逐字副本登记在 `data/mirrors.json`**。它们不加 front-matter、不写占位符，以保持与开发仓逐字节一致；登记表里的哈希会在 lint 里核对——**在站点侧手改镜像文件会被挡住**。源仓跑到前面时 `pnpm validate` 只告警，因为副本里可能刻意不含未发布功能。
+4. **逐字副本登记在 `data/mirrors.json`**。它们不加 front-matter、不写占位符，以保持与开发仓逐字节一致；登记表里的哈希会在 lint 里核对——**在站点侧手改镜像文件会被挡住**。源仓与站点字节不同时 drift 会告警；文档整合完成前由主源编辑者逐字复制并更新两侧哈希，最终要求三份镜像与源一致。
 5. **更新日志**首条应与该产品 `update.json.version` 对得上，对不上时人工核对（见 `products/table-flow/changelog.md` 顶部对照表）。
 6. **图片放 `public/assets/`**，md 里用 `/assets/...` 绝对路径；产品图标固定约定 `public/assets/<id>/icon.png`，注册表里登记的就是这个路径——**图后补进去即生效，不用改代码**，缺图时目录卡片回落字母标记。
 7. **发布面是白名单**：只有 `index.md` 与 `products/**` 成页，其余 md 自动排除（见上节）。
@@ -90,7 +90,7 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 
 1. `products/<id>/foo.md` 新建，顶部写 `order: 45`、`title: "页面名"`、`description: "一句话摘要"`
 2. **把 `foo` 加进 `data/products.json` 里该产品的 `sections`**——不加会被 lint 挡住（页面存在但没登记 = 不会出现在侧栏）
-3. 正文写 markdown，需要下载入口就写 `<ReleaseInfo product-id="<id>" />`，需要版本号就写 `<Fact … />`
+3. 正文写 markdown，需要下载入口就写 `<ReleaseInfo product-id="<id>" />`，价格与上限使用 `<Fact … />` 读取，页面不硬写当前下载版本
 4. `pnpm dev` 直接看到（约 1 秒后侧栏出现新条目）；`pnpm build` 产出 `/<id>/foo`
 
 ## 加一个产品的完整动作
@@ -112,11 +112,13 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 
 新增版本：先写 `notes`（用户视角一句话）→ 补本仓库条目 → 面板横幅 / 商店 / 站点三处同源。
 
-## 文案同步纪律（三处重复源）
+## TableFlow 文档与镜像入口
 
-"快速上手 / 使用提示 / FAQ"同时存在于 `products/table-flow/usage-guide.md`（最详，逐字副本）、`UsageGuideContent.vue`（面板内嵌）、`products/table-flow/quickstart.md`（站点改写版）。
-
-约定：**开发仓 `docs/USAGE_GUIDE.md` 为主源**；站点页只摘录主源，不另写一套说法。隐私政策、设备特征披露与完整使用指南三份逐字镜像登记在 `data/mirrors.json`；同步时同时复制主源、更新 SHA-256 与同步日期，并核对站点链接。
+- 官网改写版：`products/table-flow/overview.md`、`features.md`、`scope.md`、`quickstart.md`、`pricing.md`、`faq.md`、`troubleshoot.md` 和 `update.md`；步骤按当前界面写完整，示例交代起始页、翻页次数、行数及交付结果。
+- 完整教程主源：开发仓 `docs/USAGE_GUIDE.md`。官网 `usage-guide.md`、`privacy.md`、`device-fingerprint.md` 是开发仓三份文档的逐字镜像；从源编辑，再复制与更新 `data/mirrors.json` 两侧 SHA-256。应用内帮助也在开发仓维护。
+- 功能短文案与共享事实：`products/table-flow/content.v1.source.json`。生成包和一致性夹具由脚本生成，不手改 revision、SHA 或历史包。
+- 当前翻页采集确认开始扣1次，失败/零结果/结束/清理不退；同任务恢复、切换和输出不重扣。自动段完成立即暂停，确认切换在网页中央。旧无标记任务仅保留原协议兼容。
+- 现行功能直接写产品行为，下载版本与地址仍由发布清单快照提供。历史 release、审核与验证记录保留原始事实和日期。
 
 ## 明确不搬进来的内容
 
@@ -130,9 +132,9 @@ pnpm verify          # 契约 → 内容 → 夹具 → 发布 dry-run → 站�
 版本号、直链、发布日**一律不在文档里抄**：构建时从线上 `update.json` 拉，拉不到就沿用 `.vitepress/releases.json` 并明确告警。要看当前值跑 `pnpm sync`。
 站点只挂最新版，不提供历史版本入口。早前"公开最新为 1.4.4"的判断来自开发仓签入的过期快照 `table-flow/release-repo/`，已作废（详见 `DOWNLOADS.md`）。
 
-## 待你决策
+## 维护约定
 
-1. **`docs/README.md`（发布仓 README 副本）怎么处理**：含历史 `GITEE_TOKEN` 发布段落。目前不发布——要改名瘦身成公开"下载中心"页，还是就用 `<ReleaseInfo />` + `/table-flow/install` 取代？
+1. **`docs/README.md` 为发布仓 README 历史副本**：保留原发布说明供溯源，公开下载与安装入口使用 `<ReleaseInfo />` 和 `/table-flow/install`。
 2. TableFlow 使用手册主源现已包含商店、压缩包与源码构建三条路径；普通用户入口见 `/table-flow/install`。
 3. TableFlow 双商店链接已登记；版本与审核状态按每次提交独立核对，不从本地文档推断。
 4. `file://` 本地页面采集须在浏览器扩展详情中手动允许访问文件网址，安装页已补充。

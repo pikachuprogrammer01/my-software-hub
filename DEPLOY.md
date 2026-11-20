@@ -12,6 +12,12 @@
 - 已随之补上 `sitemap: { hostname: ... }`（不填 VitePress 不产出 `sitemap.xml`）与 `public/robots.txt`。
   **换域名只改这两处。**
 
+## 文档更新与发布准备
+
+先完成产品正文、结构化内容源和 TableFlow 三份逐字镜像，再更新镜像 SHA-256，运行内容生成、夹具生成、drift、lint 和测试，最后构建静态站点。完整命令与固定本地版本快照的构建方式见[内容流水线](./CONTENT-PIPELINE.md)。
+
+文档页直接说明产品功能，历史 release 与部署证据使用原记录。镜像、内容包和下载清单分别核对：文档同步不手填版本号，已有内容 history 不改写。构建机读取下载清单时可能更新 `.vitepress/releases.json`，快照变化后要重新生成内容包、夹具并验证。
+
 ## 部署执行顺序
 
 【你】= 需要你的 Cloudflare / 阿里云账号登录态；【我】= 我可以代跑的部分。
@@ -89,11 +95,11 @@
 
 ## 版本事实的残留风险
 
-首页版本号与下载直链在**构建时**从发布仓 `update.json` 拉取，写回 `.vitepress/release.json`（快照已提交进仓库）。
+下载直链与生成包使用的版本事实在**构建时**从发布仓 `update.json` 拉取，写回 `.vitepress/releases.json`（快照已提交进仓库）。
 Pages 构建机在境外，拉 gitee raw 正常；万一拉不到，既有逻辑是明确告警并沿用仓库快照，
-于是首页可能显示上一次提交的版本而不是最新发布版本。
+于是下载入口可能仍指向上次快照中的产物。
 
-两条守卫：发布后 curl 首页比对版本号；日常验证用 `pnpm validate --strict`（线上真值分叉即失败），
+两条守卫：发布后 curl 首页比对版本号；下载清单的严格契约验证用 `pnpm validate:strict`（线上真值分叉即失败），
 不要把它塞进发布流程做第二轮判断。
 
 ## 验证清单（上线后逐条实跑）
@@ -102,7 +108,7 @@ Pages 构建机在境外，拉 gitee raw 正常；万一拉不到，既有逻辑
 - `curl -I https://hub.pikachu01.me/assets/hub/icon.svg` → 200，证明资源根与 `base` 对得上
 - `curl -I https://hub.pikachu01.me/auto-clicker-mac/install` → 200，证明非首页产品页同样成立
 - `curl -s https://hub.pikachu01.me/sitemap.xml` → 存在且每条 loc 都是 `https://hub.pikachu01.me/...`
-- 首页版本号 == 发布仓线上 `update.json` 的版本
+- 下载按钮指向发布仓 `update.json` 的 URL；生成包注入的版本与同一清单快照一致
 - 遍历 sitemap 全部链接，无 404
 - 内部文档不外泄：`/DEPLOY.html`、`/README.html`、`/PRODUCTS.html` 必须 404（发布面是白名单：只有 `index.md` 与 `products/**` 成页）
 

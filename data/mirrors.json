@@ -5,26 +5,26 @@
     {
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
-      "syncedAt": "2026-11-15",
-      "siteSha256": "df25e9f0931759fd0b47007f8c8236e71bae90c6d96f7fbed42047e41c9808ea",
-      "sourceSha256": "df25e9f0931759fd0b47007f8c8236e71bae90c6d96f7fbed42047e41c9808ea",
-      "verificationNote": "逐字同步开发仓 v2.0.4 本地候选文档，补齐联网期限、在线取码与停止/恢复反馈；未上传、部署或发布。保留此前 Gitee v2.0.3 的历史发布事实，当前生产状态未核验。"
+      "syncedAt": "2026-11-20",
+      "siteSha256": "2181c5b430ff4f3fbd70e5024565e4137f9e855dac66e060857169649516a99e",
+      "sourceSha256": "2181c5b430ff4f3fbd70e5024565e4137f9e855dac66e060857169649516a99e",
+      "verificationNote": "原样同步已修正的导出步骤：新开始扣费任务输出只暂停、不定稿，原任务可续采；旧预留任务另段说明兼容。已逐字节及双向SHA-256核对。"
     },
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
-      "syncedAt": "2026-11-15",
-      "siteSha256": "c7fb378f974423e3a7d8f9eb6edd2e20dcdce5e365452e2db208ad91412ebc23",
-      "sourceSha256": "c7fb378f974423e3a7d8f9eb6edd2e20dcdce5e365452e2db208ad91412ebc23",
-      "verificationNote": "逐字同步开发仓 v2.0.4 本地候选文档，补齐联网期限、在线取码与停止/恢复反馈；未上传、部署或发布。保留此前 Gitee v2.0.3 的历史发布事实，当前生产状态未核验。"
+      "syncedAt": "2026-11-20",
+      "siteSha256": "b5d51447ce93d9d8dea01a6d5abc24777d584ee7d2d80b54fb368a96a334e704",
+      "sourceSha256": "b5d51447ce93d9d8dea01a6d5abc24777d584ee7d2d80b54fb368a96a334e704",
+      "verificationNote": "原样同步免费额度申请→申请赠额的实际入口及固定申请说明，无用户补充文字输入；已逐字节及双向SHA-256核对。"
     },
     {
       "site": "products/table-flow/device-fingerprint.md",
       "source": "table-flow/docs/DEVICE_FINGERPRINT_DISCLOSURE.md",
-      "syncedAt": "2026-11-15",
-      "siteSha256": "86b579568bfe219fd2579331d59817ea587c746845dd1ee78bd5c1d7ddaff071",
-      "sourceSha256": "86b579568bfe219fd2579331d59817ea587c746845dd1ee78bd5c1d7ddaff071",
-      "verificationNote": "逐字同步开发仓 v2.0.4 本地候选文档，补齐联网期限、在线取码与停止/恢复反馈；未上传、部署或发布。保留此前 Gitee v2.0.3 的历史发布事实，当前生产状态未核验。"
+      "syncedAt": "2026-11-20",
+      "siteSha256": "ad84d5286f11c2d2e7c35c2d116a68d6b1f5430f468e80b3910733203daa9776",
+      "sourceSha256": "ad84d5286f11c2d2e7c35c2d116a68d6b1f5430f468e80b3910733203daa9776",
+      "verificationNote": "原样同步账户→免费额度申请的实际复核入口及设备披露；已逐字节及双向SHA-256核对。"
     }
   ]
 }

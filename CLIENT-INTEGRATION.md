@@ -9,7 +9,7 @@
 | 版本与下载（存量，勿改） | `https://gitee.com/pikachuprogrammer01/my-software-releases/raw/<releaseBranch>/update.json` | 已硬编码进分发包，URL 不可变更 |
 | 内容包（新增消费面） | `https://gitee.com/pikachuprogrammer01/my-software-releases/raw/<releaseBranch>/content-latest.v1.json` | 取 `products.json` 里的 `contentEndpoint`；发布仓分支 = 产品 `releaseBranch` |
 
-`data/products.json` 是产品与分支的唯一登记处。当前只有 `table-flow`、`wps-enhancer` 有内容包，其余产品 `contentSource: null`，客户端**不要**为它们请求内容包。
+`data/products.json` 是产品与分支的唯一登记处，当前五个产品均登记了结构化内容源。本仓生成各产品内容包；客户端的公开分发地址按 `releaseBranch`、`contentEndpoint` 与该产品的分发方式读取，没有发布仓分支的产品不拼造分支地址。
 
 ## 二、消费规则（MUST）
 
@@ -24,7 +24,7 @@
 9. 缓存 key = `version`；同一版本内的文案修订靠 `contentRevision` 失效（`If-None-Match: "<contentRevision>"` → 304）。
 10. 内置一份 fallback 快照；拉取失败时使用它，并显示"离线副本（最后同步 X）"。
 11. **失败必须可观测**，至少区分三态：`network`（请求/解析失败）、`format`（不认识或校验不过）、`latest`（无更新）。禁止把所有异常路径统一 `return null`。
-12. 检查节律：客户端在正常运行且联网时 6 小时内至少检查一次；这不是手机服务全天在线的承诺。
+12. 检查节律：客户端在正常运行且联网时 6 小时内至少检查一次；内容从静态发布仓获取。
 
 ## 三、TableFlow 面板映射
 
@@ -64,9 +64,11 @@ node scripts/test-conformance.mjs             # 跑 13 个夹具，验证规则�
 
 夹具位于 `conformance/fixtures/`，覆盖：正常、同 revision、错 product、SHA 不符、网络失败、缺可选字段、未知枚举、超预算、含 HTML、高 schema 版本、facts 渠道变体、WPS 长文本、WPS 单一升级路径。每个文件都带 `expect`，客户端团队可用同一张表跑自己的实现（跨语言不共享 SDK，一致性靠夹具）。
 
-## 七、需要客户端仓配合的事（本仓未执行）
+## 七、客户端接入历史审计清单
 
-| 产品 | 位置（来自 CONTRACT.md 台账，需客户端团队复核） | 要改什么 |
+以下为 `CONTRACT.md` 与 `PRODUCTS.md` 中的接入审计记录，保留原建议用于追溯；执行客户端任务时以其现有源码核对。官网内容编辑入口与生成步骤见[内容流水线](./CONTENT-PIPELINE.md)。
+
+| 产品 | 历史审计位置 | 当时建议 |
 |---|---|---|
 | table-flow | `src/services/updateService.ts` | 所有异常路径统一 `return null` 违反 MUST 11，需区分 network / format / latest 三态 |
 | table-flow | `src/constants/update.ts` | 保留现有 `update.json` URL 常量不动，另加内容包 URL 常量 |
@@ -76,4 +78,10 @@ node scripts/test-conformance.mjs             # 跑 13 个夹具，验证规则�
 | wps-enhancer | 发布 CI（`release.yml`） | 停止把 `notes` 固定覆盖成 `"WPS Enhancer v<version>"`，让人写的说明进得去 |
 | 两者 | 下载物完整性 | `update.json` 目前无 `sha256`，客户端对下载物零校验；发布仓补字段后再启用校验 |
 
-上述改动都在客户端仓，本仓只交付规则、映射与夹具。
+本仓交付内容源、生成包、消费规则与夹具。修改 TableFlow 文案时，先运行内容生成，再更新这 13 个派生夹具；`--check` 不会代为更新。完整顺序见[内容流水线](./CONTENT-PIPELINE.md)。
+
+## 八、TableFlow 内容同步要点
+
+TableFlow 的 `content.v1.source.json` 同步自动与手动翻页、开始扣费、不退款与同任务不重扣、保留任务恢复等文案。`update.badge/summary/text` 的预算分别为 12 / 26 / 120 字；产品功能说明不写临时发布状态，下载版本和地址仍由发布清单注入。
+
+翻页采集和网页填充均在新任务/批次开始扣费，同任务继续不重扣，旧预留任务仅作兼容。生成新内容包后先更新一致性夹具再检查，原有history revision保留不改。

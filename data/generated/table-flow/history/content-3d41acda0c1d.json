@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "product": "table-flow",
+  "sourceRevision": "a181b53f8fdd3976bc9aa14e1c49f29fb87f2b64",
+  "generatedAt": "2026-11-19T08:22:10.109Z",
+  "facts": {
+    "features.autoPaging": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "features.localProcessing": {
+      "status": "available",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.autoPaging.maxPages": {
+      "value": 50,
+      "unit": "页",
+      "source": "client-constant:settingsStore.defaultMaxPages",
+      "effectiveFromVersion": "1.0.0"
+    },
+    "limits.freePaging.flows": {
+      "value": 5,
+      "unit": "次",
+      "source": "platform-default:LicenseHub 新设备默认授予的采集流程次数（采集与 Excel 填充翻页共享，实际以服务端授予为准）",
+      "effectiveFromVersion": "2.0.0"
+    },
+    "pricing.pro.monthly": {
+      "value": 5,
+      "currency": "CNY",
+      "period": "month",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "pricing.pro.yearly": {
+      "value": 40,
+      "currency": "CNY",
+      "period": "year",
+      "since": "1.5.0",
+      "effectiveFromVersion": "1.5.0"
+    },
+    "form.factor": {
+      "value": "Chromium 浏览器扩展（Manifest V3）",
+      "effectiveFromVersion": "1.0.0",
+      "source": "manual:站点核定的对外形态口径"
+    },
+    "form.scope": {
+      "value": "桌面版 Chromium 内核浏览器：Chrome 103 起、Edge 109 为兼容目标；360 极速等须核对实际内核。Firefox、Safari 与手机端不支持。",
+      "effectiveFromVersion": "2.0.3",
+      "source": "client-manifest:minimum_chrome_version 与 docs/BROWSER_BUILD_RELEASE_MATRIX.md"
+    },
+    "download.zipUrl": {
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
+      "effectiveFromVersion": "1.0.0",
+      "source": "release-repo:table-flow/update.json"
+    },
+    "features.manualPaging": {
+      "status": "available",
+      "effectiveFromVersion": "2.0.4"
+    },
+    "features.resultDelivery": {
+      "status": "available",
+      "effectiveFromVersion": "2.0.4"
+    },
+    "features.retainedResults": {
+      "status": "available",
+      "effectiveFromVersion": "2.0.4"
+    },
+    "version.current": {
+      "value": "2.0.3",
+      "effectiveFromVersion": "2.0.3",
+      "source": "release-repo"
+    }
+  },
+  "copy": {
+    "overview.title": {
+      "default": "网页表格采集与导出"
+    },
+    "overview.summary": {
+      "default": "采集网页表格，自动或手动翻页，保存结果并导出。",
+      "variants": {
+        "table-flow-panel": "网页表格采集、翻页续采与本地导出。"
+      }
+    },
+    "features.autoPaging": {
+      "default": "免费翻页确认开始扣1次，开始后不退还；同任务继续、切换和重复输出不再扣费。"
+    },
+    "features.localProcessing": {
+      "default": "采集、预览与导出默认在浏览器本地完成。"
+    },
+    "install.summary": {
+      "default": "Chrome / Edge 用户可从商店安装，其他兼容 Chromium 浏览器使用压缩包加载。"
+    },
+    "update.badge": {
+      "default": "开始扣费与续采"
+    },
+    "update.summary": {
+      "default": "免费翻页开始扣1次，同任务继续不再扣"
+    },
+    "update.text": {
+      "default": "免费翻页确认开始扣1次，失败、零结果、结束或清理不退还；同任务继续、切换与重复输出不再扣费。中央弹窗填次数后确认直接切换，自动段完成即暂停；网页填充仍在批次开始扣费。"
+    },
+    "update.detail": {
+      "default": "账户按实际次数显示，赠额按钮只复核原未到账机会，额外额度与续费由管理员后台处理；Pro沿用微信/支付宝人工激活，离线激活付费，建议先在线试用。Debug默认不干预计时器，手动确认后仅跳过未来新增的纯debugger回调，混合业务和闭包保持原样；旧页面先刷新。"
+    },
+    "features.manualPaging": {
+      "default": "先保存本页，再等你翻页；同一模式行可切换，中央弹窗填次数并确认后直接执行，取消保留原模式并暂停。"
+    },
+    "features.resultDelivery": {
+      "default": "开始扣费确认后即可完整预览与输出；显示全部只切换范围，失败或零结果不退还。"
+    },
+    "features.retainedResults": {
+      "default": "保留的采集任务可跨标签页和浏览器重启恢复输出，也可清理本地数据。"
+    }
+  },
+  "update": {
+    "badge": "开始扣费与续采",
+    "summary": "免费翻页开始扣1次，同任务继续不再扣",
+    "text": "免费翻页确认开始扣1次，失败、零结果、结束或清理不退还；同任务继续、切换与重复输出不再扣费。中央弹窗填次数后确认直接切换，自动段完成即暂停；网页填充仍在批次开始扣费。",
+    "detail": "账户按实际次数显示，赠额按钮只复核原未到账机会，额外额度与续费由管理员后台处理；Pro沿用微信/支付宝人工激活，离线激活付费，建议先在线试用。Debug默认不干预计时器，手动确认后仅跳过未来新增的纯debugger回调，混合业务和闭包保持原样；旧页面先刷新。"
+  },
+  "contentRevision": "content-3d41acda0c1d",
+  "sha256": "3d41acda0c1dd7135f9db2234db9525c8b42dd1233aca1d781d07bbbe0332a29"
+}
