@@ -13,11 +13,11 @@
     },
     "table-flow": {
       "product": "table-flow",
-      "version": "2.0.3",
-      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
+      "version": "2.1.0",
+      "url": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.1.0/table-flow-v2.1.0.zip",
       "urls": null,
-      "notes": "v2.0.3：增强多选下拉与复选框填充，新增当前记录单字段试填；支持采集自动重试与页面能力检测；修复翻页等待、短末页和暂停续采问题；优化免费额度恢复及多页面任务计费一致性；改进设置搜索定位，新增帮助与反馈；改善普通 HTTP 页面和旧版浏览器兼容性。",
-      "fetchedAt": "2026-11-11T12:02:48.104Z"
+      "notes": "v2.1.0：新增手动翻页采集与 Excel 网页填充逐页确认，支持自动/手动切换、安全续采及跨标签、重启恢复结果；免费翻页在任务开始时扣1次，开始后不退，同任务继续、切换和重复输出不重扣；完善在线续费核验、离线激活和额度显示，优化设置与大表统计，修复误覆盖、末页漏采及取消后残留遮罩。",
+      "fetchedAt": "2026-11-24T12:40:04.749Z"
     },
     "auto-clicker-mac": {
       "product": "auto-clicker-mac",

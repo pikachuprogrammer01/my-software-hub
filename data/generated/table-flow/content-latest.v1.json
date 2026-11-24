@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "product": "table-flow",
-  "sourceRevision": "9f94ef411553c14ce36566db03e296c7ea3044ac",
-  "generatedAt": "2026-11-21T16:56:21.194Z",
+  "sourceRevision": "6d6ff2fd51f1f13cb90287f0fc215a41ddcd0ed9",
+  "generatedAt": "2026-11-24T12:40:08.758Z",
   "facts": {
     "features.autoPaging": {
       "status": "available",
@@ -49,7 +49,7 @@
       "source": "client-manifest:minimum_chrome_version 与 docs/BROWSER_BUILD_RELEASE_MATRIX.md"
     },
     "download.zipUrl": {
-      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.0.3/table-flow-v2.0.3.zip",
+      "value": "https://gitee.com/pikachuprogrammer01/my-software-releases/releases/download/table-flow-v2.1.0/table-flow-v2.1.0.zip",
       "effectiveFromVersion": "1.0.0",
       "source": "release-repo:table-flow/update.json"
     },
@@ -74,8 +74,8 @@
       "effectiveFromVersion": "2.0.4"
     },
     "version.current": {
-      "value": "2.0.3",
-      "effectiveFromVersion": "2.0.3",
+      "value": "2.1.0",
+      "effectiveFromVersion": "2.1.0",
       "source": "release-repo"
     }
   },
@@ -132,6 +132,6 @@
     "text": "免费翻页开始扣1次，失败不退；同任务继续、切换与输出不重扣。手动采集区分权限核验、翻页、加载核对、读取和保存。续费后进账户或使用在线 Pro 核验，不申请通知、不登记 Push；离线 Pro 按文件日期使用。",
     "detail": "手动采集按实际进度显示权限核验、翻页、等待网页加载核对新页、读取、保存和等待用户翻页；保存后静态等页。转自动填后续页数；结果可跨标签及重启恢复输出，续采仍需原标签。Pro沿用微信/支付宝人工付款激活；在线旧码由本机强身份与实际绑定核验服务端日期，失败不转扣免费。扩展不申请通知权限、不登记 Push。赠额仅复核原未到账机会，无套餐、凭证或补充说明表单。"
   },
-  "contentRevision": "content-16e5830ddfc8",
-  "sha256": "16e5830ddfc8a123bb3a0076292e9750e93a9f52f507264cd7e5dee3b447137e"
+  "contentRevision": "content-4f7774f7a474",
+  "sha256": "4f7774f7a474c09c68b4785f46501afc499ba2f829642da78d894d5850fe726e"
 }

@@ -133,5 +133,6 @@ function isCliEntry() {
 
 if (isCliEntry()) {
   const snapshot = await syncRelease()
-  console.log(JSON.stringify(snapshot, null, 2))
+  // --quiet 给构建与校验用：只要版本变化的那行提示，不把整份快照灌进日志。
+  if (!process.argv.includes('--quiet')) console.log(JSON.stringify(snapshot, null, 2))
 }
