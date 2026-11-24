@@ -5,26 +5,26 @@
     {
       "site": "products/table-flow/usage-guide.md",
       "source": "table-flow/docs/USAGE_GUIDE.md",
-      "syncedAt": "2026-11-20",
-      "siteSha256": "2181c5b430ff4f3fbd70e5024565e4137f9e855dac66e060857169649516a99e",
-      "sourceSha256": "2181c5b430ff4f3fbd70e5024565e4137f9e855dac66e060857169649516a99e",
-      "verificationNote": "原样同步已修正的导出步骤：新开始扣费任务输出只暂停、不定稿，原任务可续采；旧预留任务另段说明兼容。已逐字节及双向SHA-256核对。"
+      "syncedAt": "2026-11-23",
+      "siteSha256": "642f2fa5d2b0f8e3002f85442c7f991bf0d8e83f28b8fe657bc7dd12f5000c56",
+      "sourceSha256": "642f2fa5d2b0f8e3002f85442c7f991bf0d8e83f28b8fe657bc7dd12f5000c56",
+      "verificationNote": "逐字同步 TableFlow 2.1.0 文档，核对源文件与镜像 SHA-256。"
     },
     {
       "site": "products/table-flow/privacy.md",
       "source": "table-flow/docs/PRIVACY_POLICY.md",
-      "syncedAt": "2026-11-20",
-      "siteSha256": "b5d51447ce93d9d8dea01a6d5abc24777d584ee7d2d80b54fb368a96a334e704",
-      "sourceSha256": "b5d51447ce93d9d8dea01a6d5abc24777d584ee7d2d80b54fb368a96a334e704",
-      "verificationNote": "原样同步免费额度申请→申请赠额的实际入口及固定申请说明，无用户补充文字输入；已逐字节及双向SHA-256核对。"
+      "syncedAt": "2026-11-23",
+      "siteSha256": "d924a00b9a8e0e8184eb556df3efaebea9151adc61c8cbc14e8e7a93d5fbeda2",
+      "sourceSha256": "d924a00b9a8e0e8184eb556df3efaebea9151adc61c8cbc14e8e7a93d5fbeda2",
+      "verificationNote": "逐字同步 TableFlow 2.1.0 文档，核对源文件与镜像 SHA-256。"
     },
     {
       "site": "products/table-flow/device-fingerprint.md",
       "source": "table-flow/docs/DEVICE_FINGERPRINT_DISCLOSURE.md",
-      "syncedAt": "2026-11-20",
-      "siteSha256": "ad84d5286f11c2d2e7c35c2d116a68d6b1f5430f468e80b3910733203daa9776",
-      "sourceSha256": "ad84d5286f11c2d2e7c35c2d116a68d6b1f5430f468e80b3910733203daa9776",
-      "verificationNote": "原样同步账户→免费额度申请的实际复核入口及设备披露；已逐字节及双向SHA-256核对。"
+      "syncedAt": "2026-11-23",
+      "siteSha256": "32f167872b27c39d20ead1f0b63d0f2f52a9859f89fafc9a20d2717de3ab25c7",
+      "sourceSha256": "32f167872b27c39d20ead1f0b63d0f2f52a9859f89fafc9a20d2717de3ab25c7",
+      "verificationNote": "逐字同步 TableFlow 2.1.0 文档，核对源文件与镜像 SHA-256。"
     }
   ]
 }
